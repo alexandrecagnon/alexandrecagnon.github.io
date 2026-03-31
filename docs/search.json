@@ -1,0 +1,135 @@
+[
+  {
+    "objectID": "portfolio.html",
+    "href": "portfolio.html",
+    "title": "Portfolio",
+    "section": "",
+    "text": "This section is under construction."
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Home",
+    "section": "",
+    "text": "Alexandre Cagnon\n\n\nIT professional with 12 years of experience specialised in delivering performant cloud data engineering and analytics solutions.\n\n\n  \n    \n    LinkedIn\n  \n  \n    \n    Email"
+  },
+  {
+    "objectID": "index.html#bio",
+    "href": "index.html#bio",
+    "title": "Home",
+    "section": "Bio",
+    "text": "Bio\nI studied economics and management in a double degree between Edinburgh Napier University and Universite Sorbonne Paris Nord, then completed an MSc in Business Analysis and Consulting at the University of Strathclyde in Glasgow, where I was trained in operational research and cognitive mapping methods.\nMy path into data and IT started in a university library in Paris, where I stumbled on technical analysis of financial markets. The idea that recurring patterns in price data could reflect herd behaviour — and that those patterns could be modelled — stuck with me. It connected with a teenage fascination for Isaac Asimov’s psychohistory: the notion that large-scale human behaviour might be understood through data. I started using charting software (MetaStock), quickly felt limited by it, and decided to learn to code so I could work with raw data on my own terms. That led me to IT and development roles, data science and eventually to data engineering.\nOver twelve years I moved from business analysis and application support into data science, then into building and running cloud data platforms. Most recently I led a data engineering team at GeoPost, designing and operating a lakehouse on open-source technologies. I am now deepening my expertise in Microsoft Azure — I passed the Fabric Data Engineer Associate certification in early 2026 — and working on cloud-based analytics projects while looking for my next professional challenge in France or Thailand."
+  },
+  {
+    "objectID": "index.html#interests",
+    "href": "index.html#interests",
+    "title": "Home",
+    "section": "Interests",
+    "text": "Interests\nOutside of work, I read a lot of science fiction and fantasy. I actively trade equity and index markets on weekly and monthly timeframes, combining semi-automated signals with visual chart analysis — a continuation of the curiosity that got me into data in the first place. I apply cognitive mapping to both professional problems and personal thinking, a habit that started at Strathclyde and never stopped. When I can, I hike — the Pyrenees in southern France are a favourite."
+  },
+  {
+    "objectID": "index.html#blog",
+    "href": "index.html#blog",
+    "title": "Home",
+    "section": "Blog",
+    "text": "Blog\nArticles on data engineering, analytics, and lessons learned along the way. Coming soon.\nOpen the blog →"
+  },
+  {
+    "objectID": "index.html#notes",
+    "href": "index.html#notes",
+    "title": "Home",
+    "section": "Notes",
+    "text": "Notes\nShort technical notes, snippets, and references for future use. Coming soon.\nBrowse notes →"
+  },
+  {
+    "objectID": "index.html#portfolio",
+    "href": "index.html#portfolio",
+    "title": "Home",
+    "section": "Portfolio",
+    "text": "Portfolio\nSelected repositories and projects I want to highlight. Coming soon.\nOpen portfolio →"
+  },
+  {
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "About",
+    "section": "",
+    "text": "I am an IT professional with 12 years of experience. Over the last five years, I have specialised in delivering data engineering and analytics solutions from tech lead and project management positions.\nMy work covers the full scope of a data platform — from lakehouse and warehouse design on the cloud, through pipeline build, run, and delivery (CI/CD), monitoring, and serving data with query engines, BI, and APIs.\nI am currently building expertise in Microsoft Azure to deliver data engineering and analytics solutions."
+  },
+  {
+    "objectID": "about.html#competences-and-industries",
+    "href": "about.html#competences-and-industries",
+    "title": "About",
+    "section": "Competences and Industries",
+    "text": "Competences and Industries\n\n\n\n\n\nCompetences\n\n\n\n\nData Engineering\n\n\nData Analytics\n\n\nIT Project & Product Management\n\n\n\n\n\n\n\n\n\nIndustries\n\n\n\n\nLogistics\n\n\nMarket and Corporate Finance\n\n\nOil and Gas, Retail"
+  },
+  {
+    "objectID": "about.html#technical-skills",
+    "href": "about.html#technical-skills",
+    "title": "About",
+    "section": "Technical Skills",
+    "text": "Technical Skills\n\n\n\n\n\n\n\nCategory\nTechnologies\n\n\n\n\nLanguages\nSQL, Python (Polars, Pandas, PyArrow, Hamilton, Scikit-learn, Seaborn …), PySpark\n\n\nAzure\nMicrosoft Fabric Lakehouse/Warehouse/Real-Time, Azure Functions\n\n\nQuery/compute engines\nSpark, Dremio\n\n\nDatabases\nTeradata, Microsoft SQL Server, Oracle DB, PostgreSQL, Elasticsearch\n\n\nCloud Storage\nS3-compatible (Outscale OOS, Google Cloud Storage), Azure Blob Storage\n\n\nData format\nParquet, Apache Iceberg, Delta Lake, JSON, YAML, XML …\n\n\nOrchestration\nApache Airflow, Control-M\n\n\nInfrastructure and CI/CD\nGitLab CI/CD, Kubernetes, API (Flask, OpenAPI)\n\n\nDataViz & BI\nApache Superset, MicroStrategy, SAP BI\n\n\nMonitoring\nGrafana\n\n\nAI-powered code editor\nCursor\n\n\nProject management & Documentation\nJira, GitHub Projects, SharePoint, Backstage TechDocs, PowerPoint"
+  },
+  {
+    "objectID": "about.html#expatriation-period-consulting-upskilling",
+    "href": "about.html#expatriation-period-consulting-upskilling",
+    "title": "About",
+    "section": "Expatriation Period, Consulting & Upskilling",
+    "text": "Expatriation Period, Consulting & Upskilling\nBangkok, Thailand (Jul 2025 – present)\nRelocated to Thailand for personal reasons. Balancing freelance business and IT consulting with targeted upskilling in Microsoft Azure Fabric to deepen data engineering expertise.\n\nConsulting highlights\n\nCeramics shop launch (@atelierchezdede): Built full launch blueprint (positioning, product range, customer journeys), 2 regulatory registers, and financial projections (P&L + cash flow). Tracked via Kanban with weekly follow-ups.\nOdoo ERP advisory (B&T General): Audited an Odoo Online rollout for a Thai transportation firm. Delivered module/reporting customisation spikes, UAT methodology, migration strategy, and actionable recommendations to help delivery.\n\nUpskilling\n\nEarned 3 Microsoft certifications: Azure fundamentals (AZ-900 and DP-900), Fabric Data Engineer Associate (DP-700).\nBuilding this website with Quarto, GitHub Pages, and Cursor for AI-accelerated development.\nEnd-to-end Azure-based data analytics project (in-progress)."
+  },
+  {
+    "objectID": "about.html#professional-experience",
+    "href": "about.html#professional-experience",
+    "title": "About",
+    "section": "Professional Experience",
+    "text": "Professional Experience\n\nIT Project Manager / Lead Data Engineer — GeoPost SA\nIssy-les-Moulineaux, France (Oct 2019 – Jun 2025)\nDesigned and delivered a cloud data lakehouse serving GeoPost’s business units, external customers, and data scientists — from requirements analysis and architecture through production deployment. Delivered 12 live use cases across BI reporting, data science, and real-time applications calling APIs.\nTechnicals\n- Deployed medallion architecture (bronze/silver/gold) using Python, Apache Spark, and Dremio.\n- Processed +50GB/day of structured and semi-structured data (parquet, json) through micro-batch and batch ETL pipelines.\n- Managed cross-cloud storage and compute operations on Outscale and Google Cloud.\n- In-depth contribution to operations of Dremio (semantic layer design, query performance, upgrades, data governance).\nMonitoring and security\n- Optimised compute costs of Kubernetes clusters running the data platform and cloud storage.\n- Assessed and managed security and data governance of the lakehouse.\nProject management\n- Owned strategic roadmap and stakeholder management across C-suite (CTO/CIO) and operational teams; built and led a team of 3 data engineers using Agile/Scrum methodology.\n- Scaled project from zero-budget R&D initiative to a plus €500K/year budget project.\n\n\nData Scientist — EDF and Synechron\nParis, France (Nov 2018 – Aug 2019)\nEDF - Collected transactional data from Murex, performed data analysis and visualisation to detect Forex transaction patterns and anomalies for cost reduction opportunities. - Presented results to Treasury & Trading management.\nSynechron - Engineered NLP models for forex currency sentiment analysis, text classification, and text summarisation for a FinTech client. - Automated web scraping and collection of financial data and articles.\n\n\nBusiness Analyst, Developer & Support — EDF and BNPP AM\nParis, France (May 2015 – Nov 2018)\n\nGathered business requirements and delivered functional/technical evolutions for financial trading and asset management systems (Murex, Tracker).\nProvided application support for front-to-back-office users.\n\n\n\nRetail Automation Analyst & Developer — EG Group\nCergy, France (Jun 2013 – May 2015)\nProvided support for POS-BOS-HOS applications across 300+ petrol stations; automated data quality checks and anomaly detection."
+  },
+  {
+    "objectID": "about.html#certifications",
+    "href": "about.html#certifications",
+    "title": "About",
+    "section": "Certifications",
+    "text": "Certifications\nCloud & Data Engineering\n2026: Fabric Data Engineer Associate (DP-700) — Microsoft\n2025: Azure Fundamentals (AZ-900), Azure Data Fundamentals (DP-900) — Microsoft\nProject/Product Management\n2024: PRINCE2 Foundation (6th Edition) — PeopleCert\n2024: Professional Scrum Product Owner I (PSPO I) — Scrum.org\nML & Artificial Intelligence\n2019: Microsoft Professional Program for Artificial Intelligence — Microsoft\nFinance\n2014-2018: Chartered Market Technician (CMT) Program, passed Level III\n2016: Chartered Financial Analyst (CFA) Program, passed Level I"
+  },
+  {
+    "objectID": "about.html#education",
+    "href": "about.html#education",
+    "title": "About",
+    "section": "Education",
+    "text": "Education\n2010-2011: ’MSc Business Analysis and Consulting`, University of Strathclyde, Glasgow (UK)\n2008-2010: BA/BA(Hons) Business Management with Economics, Edinburgh Napier University (UK)\n2006-2009: Licence in Economics and Management, Universite Sorbonne Paris Nord (France)"
+  },
+  {
+    "objectID": "about.html#languages",
+    "href": "about.html#languages",
+    "title": "About",
+    "section": "Languages",
+    "text": "Languages\nFrench (native), English (full professional proficiency)"
+  },
+  {
+    "objectID": "about.html#availability",
+    "href": "about.html#availability",
+    "title": "About",
+    "section": "Availability",
+    "text": "Availability\nAvailable in France or Thailand, on-site or remote."
+  },
+  {
+    "objectID": "about.html#contact",
+    "href": "about.html#contact",
+    "title": "About",
+    "section": "Contact",
+    "text": "Contact\n\n  \n    \n    LinkedIn\n  \n  \n    \n    Email"
+  },
+  {
+    "objectID": "blog.html",
+    "href": "blog.html",
+    "title": "Blog",
+    "section": "",
+    "text": "This section is under construction."
+  },
+  {
+    "objectID": "notes.html",
+    "href": "notes.html",
+    "title": "Notes",
+    "section": "",
+    "text": "This section is under construction."
+  }
+]

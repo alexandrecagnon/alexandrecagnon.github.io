@@ -1,0 +1,50 @@
+<!-- Home: Pandoc emits no margin TOC when ## live only inside .home-main-column. Inject the same structure Quarto uses after post-process (nav#TOC.toc-active, h2#toc-title, ul > li > a.nav-link + data-scroll-target). Runs synchronously at parse time so quarto.js sees #TOC on DOMContentLoaded. -->
+<script>
+(function () {
+  function injectHomeMarginToc() {
+    var host = document.getElementById("quarto-margin-sidebar");
+    if (!host || host.querySelector("nav#TOC")) return;
+    var col = document.querySelector(".home-main-column");
+    if (!col) return;
+
+    var sectionList = [];
+    col.querySelectorAll("section.level2").forEach(function (s) {
+      if (s.getAttribute("id") && s.querySelector("h2.anchored")) {
+        sectionList.push(s);
+      }
+    });
+    if (!sectionList.length) return;
+
+    var nav = document.createElement("nav");
+    nav.id = "TOC";
+    nav.setAttribute("role", "doc-toc");
+    nav.className = "toc-active";
+
+    var h2 = document.createElement("h2");
+    h2.id = "toc-title";
+    h2.className = "anchored";
+    h2.setAttribute("data-anchor-id", "toc-title");
+    h2.textContent = "On this page";
+    nav.appendChild(h2);
+
+    var ul = document.createElement("ul");
+    sectionList.forEach(function (sec, i) {
+      var heading = sec.querySelector("h2.anchored");
+      var id = sec.getAttribute("id");
+      var href = "#" + id;
+      var li = document.createElement("li");
+      var a = document.createElement("a");
+      a.href = href;
+      a.id = "toc-" + id;
+      a.className = "nav-link" + (i === 0 ? " active" : "");
+      a.textContent = heading.textContent.trim();
+      a.setAttribute("data-scroll-target", href.replace(/:/g, "\\:"));
+      li.appendChild(a);
+      ul.appendChild(li);
+    });
+    nav.appendChild(ul);
+    host.appendChild(nav);
+  }
+  injectHomeMarginToc();
+})();
+</script>

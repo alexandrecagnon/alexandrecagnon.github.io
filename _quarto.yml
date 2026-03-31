@@ -1,0 +1,35 @@
+project:
+  type: website
+  output-dir: docs
+  # Authoring docs live in docs/ (Markdown for humans); do not publish them as site pages
+  render:
+    - "*.qmd"
+    - "posts/**/*"
+
+execute:
+  freeze: auto
+
+website:
+  title: "Alexandre Cagnon"
+  # Set when publishing (see docs/github-pages-public-repo.md and docs/custom-domain.md)
+  site-url: https://alexandrecagnon.github.io/
+  navbar:
+    left:
+      - text: Home
+        href: index.qmd
+      - text: About
+        href: about.qmd
+      - text: Blog
+        href: blog.qmd
+      - text: Notes
+        href: notes.qmd
+      - text: Portfolio
+        href: portfolio.qmd
+  page-footer:
+    center: "© 2026 Alexandre Cagnon · Code under [MIT](https://opensource.org/licenses/MIT) · Content under [CC BY-NC-ND 4.0](https://creativecommons.org/licenses/by-nc-nd/4.0/)"
+
+format:
+  html:
+    theme: flatly
+    toc: true
+    toc-location: right

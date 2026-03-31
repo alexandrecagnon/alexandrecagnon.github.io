@@ -1,0 +1,163 @@
+/* Home: profile rail + main column (inside #quarto-document-content). TOC lives in #quarto-margin-sidebar (Quarto article layout), not inside .home-main-column. */
+
+body.home-margin-toc #quarto-document-content > header#title-block-header.quarto-title-block {
+  display: none !important;
+}
+
+/*
+ * Single row, two columns inside main. Full article width is the center track of
+ * #quarto-content (margin TOC is a sibling of main, not stealing space from this grid).
+ */
+main#quarto-document-content {
+  display: grid;
+  grid-template-columns: minmax(0, 32%) minmax(0, 1fr);
+  column-gap: 2rem;
+  align-items: stretch;
+}
+
+main#quarto-document-content > .home-page {
+  grid-column: 1;
+  grid-row: 1;
+  min-width: 0;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  border-right: 1px solid var(--bs-border-color, rgba(0, 0, 0, 0.12));
+  padding-right: 2rem;
+}
+
+main#quarto-document-content > .home-main-column {
+  grid-column: 2;
+  grid-row: 1;
+  min-width: 0;
+}
+
+/* Margin TOC: sticky so it follows the user on scroll, same as Quarto default on other pages */
+body.home-margin-toc #quarto-margin-sidebar.sidebar.margin-sidebar {
+  position: sticky !important;
+  top: 5.5rem !important;
+  max-height: calc(100vh - 6rem) !important;
+  height: auto !important;
+  overflow-y: auto !important;
+  align-self: start;
+  z-index: 5 !important;
+  pointer-events: auto !important;
+}
+
+body.home-margin-toc #quarto-margin-sidebar #TOC a.nav-link {
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+/* Fixed navbar: in-page anchors */
+main#quarto-document-content .home-main-column section.level2 {
+  scroll-margin-top: 5.75rem;
+}
+
+/* Profile block */
+.home-page .home-sidebar {
+  padding-right: 0;
+  margin-right: 0;
+}
+
+.home-sidebar .home-photo {
+  max-width: 330px;
+  width: 100%;
+  height: auto;
+}
+
+.home-name {
+  font-size: 1.75rem;
+  line-height: 1.2;
+}
+
+.home-name p {
+  margin-bottom: 0;
+}
+
+.home-tagline {
+  font-size: 1rem;
+  line-height: 1.45;
+}
+
+.home-tagline p {
+  margin-bottom: 0;
+}
+
+.home-btn-linkedin {
+  --bs-btn-color: #fff;
+  --bs-btn-bg: #0a66c2;
+  --bs-btn-border-color: #0a66c2;
+  --bs-btn-hover-color: #fff;
+  --bs-btn-hover-bg: #004182;
+  --bs-btn-hover-border-color: #004182;
+  --bs-btn-active-color: #fff;
+  --bs-btn-active-bg: #004182;
+  --bs-btn-active-border-color: #004182;
+  color: #fff !important;
+  border-radius: 0.375rem;
+  font-weight: 500;
+}
+
+.home-btn-linkedin svg {
+  flex-shrink: 0;
+}
+
+.home-btn-email {
+  font-weight: 500;
+  border-radius: 0.375rem;
+}
+
+@media (min-width: 768px) {
+  .home-page .home-sidebar {
+    position: sticky;
+    top: 5.5rem;
+    align-self: flex-start;
+  }
+}
+
+@media (max-width: 767.98px) {
+  main#quarto-document-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1.75rem;
+  }
+
+  main#quarto-document-content > .home-page {
+    width: 100%;
+    border-right: none;
+    padding-right: 0;
+    border-bottom: 1px solid var(--bs-border-color, rgba(0, 0, 0, 0.12));
+    padding-bottom: 1.5rem;
+  }
+
+  main#quarto-document-content > .home-main-column {
+    width: 100%;
+  }
+
+  main#quarto-document-content .home-main-column section.level2 {
+    scroll-margin-top: 4.5rem;
+  }
+
+  .home-page .home-sidebar {
+    position: static;
+  }
+
+  .home-sidebar .home-photo {
+    max-width: 250px;
+  }
+
+  body.home-margin-toc #quarto-content.page-columns {
+    display: flex;
+    flex-direction: column;
+  }
+
+  body.home-margin-toc #quarto-margin-sidebar {
+    order: -1;
+    width: 100%;
+    margin-bottom: 0.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--bs-border-color, rgba(0, 0, 0, 0.1));
+  }
+}
