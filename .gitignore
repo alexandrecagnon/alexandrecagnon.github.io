@@ -2,4 +2,6 @@
 **/*.quarto_ipynb
 
 CNAME
-cv
+cv/
+!docs/cv
+
