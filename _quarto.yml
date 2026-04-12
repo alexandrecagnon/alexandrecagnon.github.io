@@ -1,6 +1,10 @@
 project:
   type: website
   output-dir: docs
+  # Copied into docs/ on every render so custom domain and CV are not wiped by quarto render
+  resources:
+    - CNAME
+    - "cv/alexandre_cagnon_cv_eng.pdf"
   # Authoring docs live in docs/ (Markdown for humans); do not publish them as site pages
   render:
     - "*.qmd"
