@@ -23,8 +23,6 @@ website:
         href: blog.qmd
       - text: Notes
         href: notes.qmd
-      - text: Portfolio
-        href: portfolio.qmd
   page-footer:
     center: "© 2026 Alexandre Cagnon · Code under [MIT](https://opensource.org/licenses/MIT) · Content under [CC BY-NC-ND 4.0](https://creativecommons.org/licenses/by-nc-nd/4.0/)"
 

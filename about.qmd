@@ -59,12 +59,12 @@ I am currently building expertise in Microsoft Azure to deliver data engineering
 
 Relocated to Thailand for personal reasons. Balancing freelance business and IT consulting with targeted upskilling in Microsoft Azure Fabric to deepen data engineering expertise.
 
-- **Consulting highlights**
+- **Business/IT Consulting**
   - **Ceramics shop launch** ([`@atelierchezdede`](https://www.instagram.com/atelierchezdede)): Built full launch blueprint (positioning, product range, customer journeys), 2 regulatory registers, and financial projections (P&L + cash flow). Tracked via Kanban with weekly follow-ups.
   - **Odoo ERP advisory** ([B&T General](https://btg.co.th)): Audited an Odoo Online rollout for a Thai transportation firm. Delivered module/reporting customisation spikes, UAT methodology, migration strategy, and actionable recommendations to help delivery.
 
 - **Upskilling**
-  - Earned 3 Microsoft certifications: Azure fundamentals (AZ-900 and DP-900), Fabric Data Engineer Associate (DP-700).
+  - Earned 3 Microsoft certifications: Azure fundamentals (AZ-900 and DP-900), **Fabric Data Engineer Associate (DP-700)**.
   - Building this website with Quarto, GitHub Pages, and Cursor for AI-accelerated development.
   - End-to-end Azure-based data analytics project (in-progress).
 
@@ -83,7 +83,7 @@ Designed and delivered a cloud data lakehouse serving GeoPost's business units, 
    
 **Monitoring and security**   
 - Optimised compute costs of Kubernetes clusters running the data platform and cloud storage.   
-- Assessed and managed security and data governance of the lakehouse.   
+- Assessed and managed security and data governance of the lakehouse, implemented GDPR data access policies.
 
 **Project management**   
 - Owned strategic roadmap and stakeholder management across C-suite (CTO/CIO) and operational teams; built and led a team of 3 data engineers using Agile/Scrum methodology.   
@@ -131,15 +131,15 @@ Provided support for POS-BOS-HOS applications across 300+ petrol stations; autom
 ## Education
   **2010-2011:** ['MSc Business Analysis and Consulting`](https://www.strath.ac.uk/courses/postgraduatetaught/businessanalysisconsulting/#coursecontent), University of Strathclyde, Glasgow (UK)   
   **2008-2010:** BA/BA(Hons) Business Management with Economics, Edinburgh Napier University (UK)   
-  **2006-2009:** Licence in Economics and Management, Universite Sorbonne Paris Nord (France)   
+  **2006-2009:** Licence in Economics and Management, Université Sorbonne Paris Nord (France)   
 
 ## Languages
 
-French (native), English (full professional proficiency)
+**French** (native), **English** (full professional proficiency).
 
-## Availability
+## Location
 
-Available in **France** or **Thailand**, on-site or remote.
+Based in **Thailand** - on-site, hybrid, full remote.
 
 ## Contact
 
