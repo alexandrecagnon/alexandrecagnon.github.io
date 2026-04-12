@@ -48,9 +48,9 @@ IT professional with 12 years of experience specialised in delivering performant
 
 I studied economics and management in a double degree between Edinburgh Napier University and Universite Sorbonne Paris Nord, then completed an MSc in Business Analysis and Consulting at the University of Strathclyde in Glasgow, where I was trained in operational research and cognitive mapping methods.
 
-My path into data and IT started in a university library in Paris, where I stumbled on technical analysis of financial markets. The idea that recurring patterns in price data could reflect herd behaviour — and that those patterns could be modelled — stuck with me. It connected with a teenage fascination for Isaac Asimov's psychohistory: the notion that large-scale human behaviour might be understood through data. I started using charting software (MetaStock), quickly felt limited by it, and decided to learn to code so I could work with raw data on my own terms. That led me to IT and development roles, data science and eventually to data engineering.
+My path into IT and data started in a university library in Paris, where I stumbled on technical analysis of financial markets. The idea that recurring patterns in price data could reflect herd behaviour — and that those patterns could be modelled — stuck with me. It connected with a teenage fascination for Isaac Asimov's psychohistory: the notion that large-scale human behaviour might be understood and influenced using data modelling. I started using a charting software (MetaStock) but quickly felt limited by it, and decided to learn to code so I could work with raw data on my own terms.
 
-Over twelve years I moved from business analysis and application support into data science, then into building and running cloud data platforms. Most recently I led a data engineering team at GeoPost, designing and operating a lakehouse on open-source technologies. I am now deepening my expertise in Microsoft Azure — I passed the Fabric Data Engineer Associate certification in early 2026 — and working on cloud-based analytics projects while looking for my next professional challenge in France or Thailand.
+Over twelve years I moved from business analysis and application support into data science, then into building and running a cloud data platform. Most recently I led a data engineering team at GeoPost, designing and operating a lakehouse on open-source technologies. I am now deepening my expertise in Microsoft Azure, AI driven development and project management. 
 
 ## Interests
 
@@ -58,20 +58,14 @@ Outside of work, I read a lot of science fiction and fantasy. I actively trade e
 
 ## Blog
 
-Articles on data engineering, analytics, and lessons learned along the way. *Coming soon.*
+Articles on data engineering, data analytics, and anything that I find interesting to write on.
 
 [Open the blog →](blog.qmd)
 
 ## Notes
 
-Short technical notes, snippets, and references for future use. *Coming soon.*
+Short technical notes, snippets, and references for future use.
 
 [Browse notes →](notes.qmd)
-
-## Portfolio
-
-Selected repositories and projects I want to highlight. *Coming soon.*
-
-[Open portfolio →](portfolio.qmd)
 
 :::
