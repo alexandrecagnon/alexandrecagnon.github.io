@@ -57,7 +57,7 @@ I am currently building expertise in Microsoft Azure to deliver data engineering
 ## Expatriation Period, Consulting & Upskilling
 *Bangkok, Thailand (Jul 2025 – present)*
 
-Relocated to Thailand for personal reasons. Balancing freelance business and IT consulting with targeted upskilling in Microsoft Azure Fabric to deepen data engineering expertise.
+Relocated to Thailand. Balancing freelance business and IT consulting with targeted upskilling in Microsoft Azure Fabric to deepen data engineering expertise.
 
 - **Business/IT Consulting**
   - **Ceramics shop launch** ([`@atelierchezdede`](https://www.instagram.com/atelierchezdede)): Built full launch blueprint (positioning, product range, customer journeys), 2 regulatory registers, and financial projections (P&L + cash flow). Tracked via Kanban with weekly follow-ups.
