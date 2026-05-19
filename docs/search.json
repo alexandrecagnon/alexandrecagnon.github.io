@@ -1,17 +1,66 @@
 [
   {
-    "objectID": "notes.html",
-    "href": "notes.html",
-    "title": "Notes",
+    "objectID": "privacy.html",
+    "href": "privacy.html",
+    "title": "Privacy Policy",
     "section": "",
-    "text": "This section is under construction."
+    "text": "Last updated: 19 May 2026\nThis privacy policy explains what data is collected when you visit alexandre.cagnon.com and how it is used."
+  },
+  {
+    "objectID": "privacy.html#hosting",
+    "href": "privacy.html#hosting",
+    "title": "Privacy Policy",
+    "section": "Hosting",
+    "text": "Hosting\nThis site is hosted on GitHub Pages. GitHub may collect technical information such as your IP address, browser type, and referring page as part of its standard server operations.\nSee GitHub’s privacy statement for details."
+  },
+  {
+    "objectID": "privacy.html#analytics-cookies",
+    "href": "privacy.html#analytics-cookies",
+    "title": "Privacy Policy",
+    "section": "Analytics & Cookies",
+    "text": "Analytics & Cookies\nThis site does not set up any first-party analytics tracking or cookies.\nGitHub may do so - see GitHub’s privacy statement for details."
+  },
+  {
+    "objectID": "privacy.html#third-party-links",
+    "href": "privacy.html#third-party-links",
+    "title": "Privacy Policy",
+    "section": "Third-party links",
+    "text": "Third-party links\nThis site contains links to external websites. I am not responsible for the privacy practices or content of those sites. I encourage you to review the privacy policies of any external site you visit."
+  },
+  {
+    "objectID": "privacy.html#international-visitors",
+    "href": "privacy.html#international-visitors",
+    "title": "Privacy Policy",
+    "section": "International visitors",
+    "text": "International visitors\nThis GitHub Pages site is operated on GitHub’s infrastructure. The exact physical server location is not publicly guaranteed as one specific place. If you are visiting from the European Economic Area or other regions with data protection laws, please be aware that your information may be transferred to and processed in the United States. By using this site, you acknowledge this transfer. I do not knowingly collect or process personal data that would be subject to GDPR, as no PII is collected."
+  },
+  {
+    "objectID": "privacy.html#contact",
+    "href": "privacy.html#contact",
+    "title": "Privacy Policy",
+    "section": "Contact",
+    "text": "Contact\nIf you have questions about this privacy policy, you can reach me at alexandre.cagnon.work@tuta.com."
+  },
+  {
+    "objectID": "privacy.html#changes-to-this-policy",
+    "href": "privacy.html#changes-to-this-policy",
+    "title": "Privacy Policy",
+    "section": "Changes to this policy",
+    "text": "Changes to this policy\nI may update this privacy policy from time to time. Changes will be reflected by the “last updated” date at the top of this page."
+  },
+  {
+    "objectID": "disclaimer.html",
+    "href": "disclaimer.html",
+    "title": "Disclaimer",
+    "section": "",
+    "text": "Opinions expressed on this site are the author’s own in his personal capacity. They do not reflect the views of any organisation or company he is associated with, including any current or former employer.\nThe content on this site is provided for informational purposes only and does not constitute professional advice. While I make reasonable efforts to ensure accuracy, I make no warranties or representations regarding the completeness, accuracy, or reliability of any information presented here.\nUse of any information on this site is at your own risk. I accept no liability for any loss or damage arising from reliance on the content of this site."
   },
   {
     "objectID": "blog.html",
     "href": "blog.html",
     "title": "Blog",
     "section": "",
-    "text": "This section is under construction."
+    "text": "No matching items"
   },
   {
     "objectID": "about.html",
@@ -91,6 +140,48 @@
     "text": "Contact\n\n  \n    \n    LinkedIn\n  \n  \n    \n    Email"
   },
   {
+    "objectID": "corrections.html",
+    "href": "corrections.html",
+    "title": "Corrections Policy",
+    "section": "",
+    "text": "I aim to keep what I publish accurate. This page describes how I handle corrections and updates.\nLast updated: 19 May 2026"
+  },
+  {
+    "objectID": "corrections.html#corrections",
+    "href": "corrections.html#corrections",
+    "title": "Corrections Policy",
+    "section": "Corrections",
+    "text": "Corrections\nWhen a factual error is found, I correct it. Material errors — those that affect meaning or conclusions — get a note on the post stating what changed and when. Typos, broken links, and formatting fixes are made without a separate notice."
+  },
+  {
+    "objectID": "corrections.html#updates",
+    "href": "corrections.html#updates",
+    "title": "Corrections Policy",
+    "section": "Updates",
+    "text": "Updates\nPosts may be updated after publication for new information or clarity. Substantive changes are reflected in the post’s last-modified date where applicable."
+  },
+  {
+    "objectID": "corrections.html#opinion-and-analysis",
+    "href": "corrections.html#opinion-and-analysis",
+    "title": "Corrections Policy",
+    "section": "Opinion and analysis",
+    "text": "Opinion and analysis\nMuch of the content on this site represents my personal opinion, analysis, or commentary. I aim to clearly distinguish between factual claims and opinion. My disclaimer applies to all content on this site."
+  },
+  {
+    "objectID": "corrections.html#reporting-errors",
+    "href": "corrections.html#reporting-errors",
+    "title": "Corrections Policy",
+    "section": "Reporting errors",
+    "text": "Reporting errors\nIf you spot a factual error, email alexandre.cagnon.work@tuta.com with:\n\nthe page URL\nwhat seems wrong\na source for the correct information, if you have one\n\nI review reports promptly."
+  },
+  {
+    "objectID": "corrections.html#scope",
+    "href": "corrections.html#scope",
+    "title": "Corrections Policy",
+    "section": "Scope",
+    "text": "Scope\nThis policy applies to content on alexandre-cagnon.com, not to external sites I link to."
+  },
+  {
     "objectID": "index.html",
     "href": "index.html",
     "title": "Home",
@@ -102,7 +193,7 @@
     "href": "index.html#bio",
     "title": "Home",
     "section": "Bio",
-    "text": "Bio\nI studied economics and management in a double degree between Edinburgh Napier University and Universite Sorbonne Paris Nord, then completed an MSc in Business Analysis and Consulting at the University of Strathclyde in Glasgow, where I was trained in operational research and cognitive mapping methods.\nMy path into IT and data started in a university library in Paris, where I stumbled on technical analysis of financial markets. The idea that recurring patterns in price data could reflect herd behaviour — and that those patterns could be modelled — stuck with me. It connected with a teenage fascination for Isaac Asimov’s psychohistory: the notion that large-scale human behaviour might be understood and influenced using data modelling. I started using a charting software (MetaStock) but quickly felt limited by it, and decided to learn to code so I could work with raw data on my own terms.\nOver twelve years I moved from business analysis and application support into data science, then into building and running a cloud data platform. Most recently I led a data engineering team at GeoPost, designing and operating a lakehouse on open-source technologies. I am now deepening my expertise in Microsoft Azure, AI driven development and project management."
+    "text": "Bio\nI studied economics and management in a double degree between Edinburgh Napier University and Universite Sorbonne Paris Nord, then completed an MSc in Business Analysis and Consulting at the University of Strathclyde in Glasgow, where I was trained in operational research and cognitive mapping methods.\nMy path into IT and data started in a university library in Paris, where I stumbled on technical analysis of financial markets. The idea that recurring patterns in price data could reflect herd behaviour — and that those patterns could be modelled — stuck with me. It connected with a teenage fascination for Isaac Asimov’s psychohistory: the notion that large-scale human behaviour might be understood and influenced using data modelling. I started using a charting software (MetaStock) but quickly felt limited by it, and decided to learn coding so I could work with raw data on my own terms.\nOver twelve years I moved from business analysis and application support into data science, then into building and running a cloud data platform. Most recently I led a data engineering team at GeoPost, designing and operating a lakehouse on open-source technologies. I am now deepening my expertise in Microsoft Azure, AI driven development and project management."
   },
   {
     "objectID": "index.html#interests",
@@ -116,13 +207,6 @@
     "href": "index.html#blog",
     "title": "Home",
     "section": "Blog",
-    "text": "Blog\nArticles on data engineering, data analytics, and anything that I find interesting to write on.\nOpen the blog →"
-  },
-  {
-    "objectID": "index.html#notes",
-    "href": "index.html#notes",
-    "title": "Home",
-    "section": "Notes",
-    "text": "Notes\nShort technical notes, snippets, and references for future use.\nBrowse notes →"
+    "text": "Blog\nOn anything I find interesting to explore and share.\nOpen the blog →"
   }
 ]
