@@ -27,7 +27,7 @@ I also had no idea how many other Node.js packages were lurking on my system. Sp
 
 
 # Trusting but checking
-I trust Microsoft's team to keep Azurite maintained. But trust-and-forget is not a security posture just a light edge on hope.
+I trust Microsoft's team to keep Azurite maintained. But trust-and-forget is not a security posture, only a light edge on hope.
 
 So let's actually check:
 
