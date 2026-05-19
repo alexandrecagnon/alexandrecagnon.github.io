@@ -6,8 +6,9 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="description" content="PowerShell helper to scan for Node.js projects on Windows">
 
-<title>Blog – Alexandre Cagnon</title>
+<title>find-node-projects.ps1 – Alexandre Cagnon</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -23,28 +24,61 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
-<script src="site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="site_libs/quarto-nav/headroom.min.js"></script>
-<script src="site_libs/clipboard/clipboard.min.js"></script>
-<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="site_libs/quarto-search/fuse.min.js"></script>
-<script src="site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="./">
-<script src="site_libs/quarto-listing/list.min.js"></script>
-<script src="site_libs/quarto-listing/quarto-listing.js"></script>
-<script src="site_libs/quarto-html/quarto.js" type="module"></script>
-<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
-<script src="site_libs/quarto-html/popper.min.js"></script>
-<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="site_libs/quarto-html/anchor.min.js"></script>
-<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-845c23b38eaddc0f92fda52bfe77a8c8.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-6b423f165eeea3787de40cb4f8e821c3.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-845c23b38eaddc0f92fda52bfe77a8c8.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-6b423f165eeea3787de40cb4f8e821c3.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -72,76 +106,18 @@ ul.task-list li input[type="checkbox"] {
     "search-label": "Search"
   }
 }</script>
-<script>
 
-  window.document.addEventListener("DOMContentLoaded", function (_event) {
-    const listingTargetEl = window.document.querySelector('#listing-listing .list');
-    if (!listingTargetEl) {
-      // No listing discovered, do not attach.
-      return; 
-    }
-
-    const options = {
-      valueNames: ['listing-date','listing-title','listing-author','listing-image','listing-description','listing-categories',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
-      
-      searchColumns: ["listing-date","listing-title","listing-author","listing-image","listing-description","listing-categories"],
-    };
-
-    window['quarto-listings'] = window['quarto-listings'] || {};
-    window['quarto-listings']['listing-listing'] = new List('listing-listing', options);
-
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  });
-
-  window.addEventListener('hashchange',() => {
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  })
-  </script>
-
-  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
-  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
-
-<script type="text/javascript">
-const typesetMath = (el) => {
-  if (window.MathJax) {
-    // MathJax Typeset
-    window.MathJax.typeset([el]);
-  } else if (window.katex) {
-    // KaTeX Render
-    var mathElements = el.getElementsByClassName("math");
-    var macros = [];
-    for (var i = 0; i < mathElements.length; i++) {
-      var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
-        window.katex.render(texText.data, mathElements[i], {
-          displayMode: mathElements[i].classList.contains('display'),
-          throwOnError: false,
-          macros: macros,
-          fleqn: false
-        });
-      }
-    }
-  }
-}
-window.Quarto = {
-  typesetMath
-};
-</script>
 
 </head>
 
-<body class="nav-fixed quarto-light">
+<body class="nav-fixed fullcontent quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
-    <a class="navbar-brand" href="./index.html">
+    <a class="navbar-brand" href="../../index.html">
     <span class="navbar-title">Alexandre Cagnon</span>
     </a>
   </div>
@@ -152,15 +128,15 @@ window.Quarto = {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="./index.html"> 
+    <a class="nav-link" href="../../index.html"> 
 <span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./about.html"> 
+    <a class="nav-link" href="../../about.html"> 
 <span class="menu-text">About</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link active" href="./blog.html" aria-current="page"> 
+    <a class="nav-link" href="../../blog.html"> 
 <span class="menu-text">Blog</span></a>
   </li>  
 </ul>
@@ -174,17 +150,20 @@ window.Quarto = {
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        
-    <h5 class="quarto-listing-category-title">Categories</h5><div class="quarto-listing-category category-default"><div class="category" data-category="">All <span class="quarto-category-count">(1)</span></div><div class="category" data-category="YXp1cml0ZQ==">azurite <span class="quarto-category-count">(1)</span></div><div class="category" data-category="bm9kZS5qcw==">node.js <span class="quarto-category-count">(1)</span></div><div class="category" data-category="bnBt">npm <span class="quarto-category-count">(1)</span></div><div class="category" data-category="c2VjdXJpdHktdXBkYXRl">security-update <span class="quarto-category-count">(1)</span></div><div class="category" data-category="d2luZG93cw==">windows <span class="quarto-category-count">(1)</span></div></div></div>
+    
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Blog</h1>
+<h1 class="title">find-node-projects.ps1</h1>
 </div>
 
+<div>
+  <div class="description">
+    PowerShell helper to scan for Node.js projects on Windows
+  </div>
+</div>
 
 
 <div class="quarto-title-meta">
@@ -199,50 +178,74 @@ window.Quarto = {
 </header>
 
 
+<p>Companion script for <a href="../../posts/2026-05-18-nodejs-npm-security-update-windows/index.html">Security upgrades on my Node.js, npm and Azurite</a>.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode powershell code-with-copy"><code class="sourceCode powershell"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># adapted from Perplexity AI (generated response, May 18, 2026)</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co"># running on PowerShell 7.6.1</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="kw">param</span><span class="op">(</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="op">[</span><span class="dt">string</span><span class="op">]</span><span class="va">$RootPath</span> <span class="op">=</span> <span class="st">"C:\Users\alexa\Documents\PRO_PROJECTS"</span><span class="op">,</span>  <span class="co"># Change to your projects folder</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="op">[</span><span class="dt">string</span><span class="op">]</span><span class="va">$csvPath</span> <span class="op">=</span> <span class="st">"C:\Users\alexa\Documents\PRO_PROJECTS\tools"</span>  <span class="co"># Change to your output folder</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="op">)</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">Write-Host</span> <span class="st">"=== Scanning for Node.js projects ==="</span> <span class="op">-</span>ForegroundColor Cyan</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">Write-Host</span> <span class="st">"Root path: </span><span class="va">$RootPath</span><span class="ch">`n</span><span class="st">"</span> <span class="op">-</span>ForegroundColor Yellow</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Find all package.json files recursively</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="va">$packageFiles</span> <span class="op">=</span> <span class="fu">Get-ChildItem</span> <span class="op">-</span>Path <span class="va">$RootPath</span> <span class="op">-</span>Recurse <span class="op">-</span>Filter <span class="st">"package.json"</span> <span class="op">-</span>ErrorAction SilentlyContinue</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="va">$projects</span> <span class="op">=</span> <span class="op">@()</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="cf">foreach</span> <span class="op">(</span><span class="va">$file</span> <span class="kw">in</span> <span class="va">$packageFiles</span><span class="op">)</span> <span class="op">{</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>    <span class="va">$projectPath</span> <span class="op">=</span> <span class="va">$file</span><span class="op">.</span><span class="fu">Directory</span><span class="op">.</span><span class="fu">FullName</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>    <span class="va">$projectName</span> <span class="op">=</span> <span class="va">$file</span><span class="op">.</span><span class="fu">Directory</span><span class="op">.</span><span class="fu">Name</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span> <span class="op">{</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Read package.json content</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>        <span class="va">$packageData</span> <span class="op">=</span> <span class="fu">Get-Content</span> <span class="va">$file</span><span class="op">.</span><span class="fu">FullName</span> <span class="op">-</span>Raw <span class="op">|</span> <span class="fu">ConvertFrom-Json</span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Check if project has lockfile (indicates it's properly set up)</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>        <span class="va">$hasLockfile</span> <span class="op">=</span> <span class="fu">Test-Path</span> <span class="op">(</span><span class="fu">Join-Path</span> <span class="va">$projectPath</span> <span class="st">"package-lock.json"</span><span class="op">)</span></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Count dependencies</span></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>        <span class="va">$depsCount</span> <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="op">(</span><span class="va">$packageData</span><span class="op">.</span><span class="fu">dependencies</span><span class="op">)</span> <span class="op">{</span> <span class="va">$depsCount</span> <span class="op">+=</span> <span class="va">$packageData</span><span class="op">.</span><span class="fu">dependencies</span><span class="op">.</span><span class="fu">PSObject</span><span class="op">.</span><span class="fu">Properties</span><span class="op">.</span><span class="fu">Count</span> <span class="op">}</span></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="op">(</span><span class="va">$packageData</span><span class="op">.</span><span class="fu">devDependencies</span><span class="op">)</span> <span class="op">{</span> <span class="va">$depsCount</span> <span class="op">+=</span> <span class="va">$packageData</span><span class="op">.</span><span class="fu">devDependencies</span><span class="op">.</span><span class="fu">PSObject</span><span class="op">.</span><span class="fu">Properties</span><span class="op">.</span><span class="fu">Count</span> <span class="op">}</span></span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>        <span class="va">$projects</span> <span class="op">+=</span> <span class="op">[</span>PSCustomObject<span class="op">]</span>@<span class="op">{</span></span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>            Project       <span class="op">=</span> <span class="va">$packageData</span><span class="op">.</span><span class="fu">name</span> <span class="op">??</span> <span class="va">$projectName</span></span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>            Version       <span class="op">=</span> <span class="va">$packageData</span><span class="op">.</span><span class="fu">version</span> <span class="op">??</span> <span class="st">"N/A"</span></span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>            Path          <span class="op">=</span> <span class="va">$projectPath</span></span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>            Dependencies  <span class="op">=</span> <span class="va">$depsCount</span></span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>            HasLockfile   <span class="op">=</span> <span class="va">$hasLockfile</span></span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>            LockedDeps    <span class="op">=</span> <span class="st">"</span><span class="op">$(</span><span class="va">$depsCount</span><span class="op">)</span><span class="st"> direct deps"</span></span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>    <span class="cf">catch</span> <span class="op">{</span></span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Skip invalid package.json files</span></span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a>        <span class="fu">Write-Warning</span> <span class="st">"Skipped invalid: </span><span class="op">$(</span><span class="va">$file</span><span class="op">.</span><span class="fu">FullName</span><span class="op">)</span><span class="st">"</span></span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a><span class="co"># Display results</span></span>
+<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a><span class="fu">Write-Host</span> <span class="st">"Total Node.js projects found: </span><span class="op">$(</span><span class="va">$projects</span><span class="op">.</span><span class="fu">Count</span><span class="op">)</span><span class="ch">`n</span><span class="st">"</span> <span class="op">-</span>ForegroundColor Green</span>
+<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="op">(</span><span class="va">$projects</span><span class="op">.</span><span class="fu">Count</span> <span class="op">-gt</span> <span class="dv">0</span><span class="op">)</span> <span class="op">{</span></span>
+<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a>    <span class="va">$projects</span> <span class="op">|</span> <span class="fu">Format-Table</span> Project<span class="op">,</span> Version<span class="op">,</span> Dependencies<span class="op">,</span> HasLockfile<span class="op">,</span> Path <span class="op">-</span>AutoSize</span>
+<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Export to CSV for review</span></span>
+<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a>    <span class="va">$projects</span> <span class="op">|</span> <span class="fu">Export-Csv</span> <span class="op">-</span>Path <span class="va">$csvPath</span> <span class="op">-</span>NoTypeInformation</span>
+<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a>    <span class="fu">Write-Host</span> <span class="st">"</span><span class="ch">`n</span><span class="st">CSV saved to: </span><span class="va">$csvPath</span><span class="st">"</span> <span class="op">-</span>ForegroundColor Cyan</span>
+<span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb1-57"><a href="#cb1-57" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Summary stats</span></span>
+<span id="cb1-58"><a href="#cb1-58" aria-hidden="true" tabindex="-1"></a>    <span class="va">$withLockfile</span> <span class="op">=</span> <span class="op">(</span><span class="va">$projects</span> <span class="op">|</span> <span class="fu">Where-Object</span> <span class="op">{</span> <span class="va">$_</span><span class="op">.</span><span class="fu">HasLockfile</span> <span class="op">}).</span><span class="fu">Count</span></span>
+<span id="cb1-59"><a href="#cb1-59" aria-hidden="true" tabindex="-1"></a>    <span class="fu">Write-Host</span> <span class="st">"Projects with lockfile: </span><span class="va">$withLockfile</span><span class="st"> / </span><span class="op">$(</span><span class="va">$projects</span><span class="op">.</span><span class="fu">Count</span><span class="op">)</span><span class="st">"</span> <span class="op">-</span>ForegroundColor <span class="op">$(</span><span class="cf">if</span> <span class="op">(</span><span class="va">$withLockfile</span> <span class="op">-eq</span> <span class="va">$projects</span><span class="op">.</span><span class="fu">Count</span><span class="op">)</span> <span class="op">{</span> <span class="st">"Green"</span> <span class="op">}</span> <span class="cf">else</span> <span class="op">{</span> <span class="st">"Yellow"</span> <span class="op">})</span></span>
+<span id="cb1-60"><a href="#cb1-60" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb1-61"><a href="#cb1-61" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span> <span class="op">{</span></span>
+<span id="cb1-62"><a href="#cb1-62" aria-hidden="true" tabindex="-1"></a>    <span class="fu">Write-Host</span> <span class="st">"No Node.js projects found in </span><span class="va">$RootPath</span><span class="st">"</span> <span class="op">-</span>ForegroundColor Red</span>
+<span id="cb1-63"><a href="#cb1-63" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 
 
 
-
-<div class="quarto-listing quarto-listing-container-default" id="listing-listing">
-<div class="list quarto-listing-default">
-<div class="quarto-post image-right" data-index="0" data-categories="bnBtJTJDbm9kZS5qcyUyQ2F6dXJpdGUlMkNzZWN1cml0eS11cGRhdGUlMkN3aW5kb3dz" data-listing-date-sort="1779123600000" data-listing-file-modified-sort="1779199408368" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="10" data-listing-word-count-sort="1840">
-<div class="thumbnail"><a href="./posts/2026-05-18-nodejs-npm-security-update-windows/index.html" class="no-external">
-
-<img loading="lazy" src="./images/blog/teddy_bear_it_rotten_roots.webp" class="thumbnail-image" alt="Teddy bear typing code with rotten roots">
-
-</a></div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="./posts/2026-05-18-nodejs-npm-security-update-windows/index.html" class="no-external">Security upgrades on my Node.js, npm and Azurite</a>
-</h3>
-<div class="listing-categories">
-
-<div class="listing-category" onclick="window.quartoListingCategory('bnBt'); return false;">npm</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('bm9kZS5qcw=='); return false;">node.js</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('YXp1cml0ZQ=='); return false;">azurite</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('c2VjdXJpdHktdXBkYXRl'); return false;">security-update</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('d2luZG93cw=='); return false;">windows</div>
-
-</div>
-<div class="delink listing-description"><a href="./posts/2026-05-18-nodejs-npm-security-update-windows/index.html" class="no-external">
-<p>A Fireship video sent me down a rabbit hole — turns out my Node.js had CVEs and my Azurite was quietly sitting on vulnerable dependencies.</p>
-</a></div>
-</div>
-<div class="metadata">
-<a href="./posts/2026-05-18-nodejs-npm-security-update-windows/index.html" class="no-external">
-<div class="listing-date">
-May 19, 2026
-</div>
-</a>
-</div>
-</div>
-</div>
-<div class="listing-no-matching d-none">No matching items</div>
-</div></main> <!-- /main -->
+</main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
     const icon = "";
@@ -650,7 +653,7 @@ May 19, 2026
       &nbsp;
     </div>   
     <div class="nav-footer-center">
-<p>© 2026 Alexandre Cagnon · Code under <a href="https://opensource.org/licenses/MIT">MIT</a> · Content under <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/">CC BY-NC-ND 4.0</a> · <a href=".\disclaimer.html">Disclaimer</a> · <a href=".\privacy.html">Privacy</a> · <a href=".\corrections.html">Corrections</a></p>
+<p>© 2026 Alexandre Cagnon · Code under <a href="https://opensource.org/licenses/MIT">MIT</a> · Content under <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/">CC BY-NC-ND 4.0</a> · <a href="../..\disclaimer.html">Disclaimer</a> · <a href="../..\privacy.html">Privacy</a> · <a href="../..\corrections.html">Corrections</a></p>
 </div>
     <div class="nav-footer-right">
       &nbsp;

@@ -1,0 +1,76 @@
+---
+title: "find-node-projects.ps1"
+description: "PowerShell helper to scan for Node.js projects on Windows"
+search: false
+format:
+  html:
+    toc: false
+---
+
+Companion script for [Security upgrades on my Node.js, npm and Azurite](index.qmd).
+
+```powershell
+# adapted from Perplexity AI (generated response, May 18, 2026)
+# running on PowerShell 7.6.1
+param(
+    [string]$RootPath = "C:\Users\alexa\Documents\PRO_PROJECTS",  # Change to your projects folder
+	[string]$csvPath = "C:\Users\alexa\Documents\PRO_PROJECTS\tools"  # Change to your output folder
+)
+
+Write-Host "=== Scanning for Node.js projects ===" -ForegroundColor Cyan
+Write-Host "Root path: $RootPath`n" -ForegroundColor Yellow
+
+# Find all package.json files recursively
+$packageFiles = Get-ChildItem -Path $RootPath -Recurse -Filter "package.json" -ErrorAction SilentlyContinue
+
+$projects = @()
+
+foreach ($file in $packageFiles) {
+    $projectPath = $file.Directory.FullName
+    $projectName = $file.Directory.Name
+    
+    try {
+        # Read package.json content
+        $packageData = Get-Content $file.FullName -Raw | ConvertFrom-Json
+        
+        # Check if project has lockfile (indicates it's properly set up)
+        $hasLockfile = Test-Path (Join-Path $projectPath "package-lock.json")
+        
+        # Count dependencies
+        $depsCount = 0
+        if ($packageData.dependencies) { $depsCount += $packageData.dependencies.PSObject.Properties.Count }
+        if ($packageData.devDependencies) { $depsCount += $packageData.devDependencies.PSObject.Properties.Count }
+        
+        $projects += [PSCustomObject]@{
+            Project       = $packageData.name ?? $projectName
+            Version       = $packageData.version ?? "N/A"
+            Path          = $projectPath
+            Dependencies  = $depsCount
+            HasLockfile   = $hasLockfile
+            LockedDeps    = "$($depsCount) direct deps"
+        }
+    }
+    catch {
+        # Skip invalid package.json files
+        Write-Warning "Skipped invalid: $($file.FullName)"
+    }
+}
+
+# Display results
+Write-Host "Total Node.js projects found: $($projects.Count)`n" -ForegroundColor Green
+
+if ($projects.Count -gt 0) {
+    $projects | Format-Table Project, Version, Dependencies, HasLockfile, Path -AutoSize
+    
+    # Export to CSV for review
+    $projects | Export-Csv -Path $csvPath -NoTypeInformation
+    Write-Host "`nCSV saved to: $csvPath" -ForegroundColor Cyan
+    
+    # Summary stats
+    $withLockfile = ($projects | Where-Object { $_.HasLockfile }).Count
+    Write-Host "Projects with lockfile: $withLockfile / $($projects.Count)" -ForegroundColor $(if ($withLockfile -eq $projects.Count) { "Green" } else { "Yellow" })
+}
+else {
+    Write-Host "No Node.js projects found in $RootPath" -ForegroundColor Red
+}
+```

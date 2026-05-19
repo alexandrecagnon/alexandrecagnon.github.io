@@ -60,7 +60,7 @@
     "href": "blog.html",
     "title": "Blog",
     "section": "",
-    "text": "No matching items"
+    "text": "Security upgrades on my Node.js, npm and Azurite\n\n\n\nnpm\n\nnode.js\n\nazurite\n\nsecurity-update\n\nwindows\n\n\n\nA Fireship video sent me down a rabbit hole — turns out my Node.js had CVEs and my Azurite was quietly sitting on vulnerable dependencies.\n\n\n\n\n\nMay 19, 2026\n\n\n\n\n\nNo matching items"
   },
   {
     "objectID": "about.html",
@@ -208,5 +208,89 @@
     "title": "Home",
     "section": "Blog",
     "text": "Blog\nOn anything I find interesting to explore and share.\nOpen the blog →"
+  },
+  {
+    "objectID": "posts/2026-05-18-nodejs-npm-security-update-windows/index.html",
+    "href": "posts/2026-05-18-nodejs-npm-security-update-windows/index.html",
+    "title": "Security upgrades on my Node.js, npm and Azurite",
+    "section": "",
+    "text": "A few days back Fireship dropped “A single PR just hijacked the NPM registry…” - as always, educational and alarming in equal measures.\nI’d already been keeping an eye on supply chain risks after the xz/liblzma near-disaster that almost took down the internet.\nAnd the numbers back up the paranoia: Sonatype reports that “over 99% of open source malware occurred on npm”.\nSo naturally I started wondering: what about my machine?"
+  },
+  {
+    "objectID": "posts/2026-05-18-nodejs-npm-security-update-windows/index.html#what-i-was-running",
+    "href": "posts/2026-05-18-nodejs-npm-security-update-windows/index.html#what-i-was-running",
+    "title": "Security upgrades on my Node.js, npm and Azurite",
+    "section": "What I was running",
+    "text": "What I was running\nC:\\&gt;npm -v\n11.14.1\n\nC:\\&gt;node -v\nv24.14.0\nFindings:\n\nOK. npm was already on the latest version\n\nNot OK. Node.js was not latest → v24.14.1 and v24.15.0 were both available\n\nOK. npm was ahead of the Node.js‑bundled npm (e.g. v11.12.1 in Node v24.15.0) — a newer patch/minor than what ships with node.js v24.14 or v24.15"
+  },
+  {
+    "objectID": "posts/2026-05-18-nodejs-npm-security-update-windows/index.html#risk-of-node.js-v24.14.0-vs.-lts-v24.15.0",
+    "href": "posts/2026-05-18-nodejs-npm-security-update-windows/index.html#risk-of-node.js-v24.14.0-vs.-lts-v24.15.0",
+    "title": "Security upgrades on my Node.js, npm and Azurite",
+    "section": "Risk of node.js v24.14.0 vs. LTS v24.15.0 ?",
+    "text": "Risk of node.js v24.14.0 vs. LTS v24.15.0 ?\nv24.14.1 is a proper security release — 2 high CVEs, 4 medium, 2 low. That alone was enough to act.\nv24.15.0 looked even better: per Perplexity (May 18, 2026), it’s “mainly a hardening release — low-level fixes in crypto, http, tls, stream, zlib, plus refreshed bundled deps including npm and root certificates.” No breaking changes reported, so it became the target."
+  },
+  {
+    "objectID": "posts/2026-05-18-nodejs-npm-security-update-windows/index.html#why-was-node.js-outdated",
+    "href": "posts/2026-05-18-nodejs-npm-security-update-windows/index.html#why-was-node.js-outdated",
+    "title": "Security upgrades on my Node.js, npm and Azurite",
+    "section": "Why was node.js outdated?",
+    "text": "Why was node.js outdated?\nI installed Node.js from the .msi installer (Cf. default node.exe path below). Turns out the .msi installer from nodejs.org (rightfully) has no auto-update mechanism. No reminder, no update.\nC:\\&gt;where node\nC:\\Program Files\\nodejs\\node.exe"
+  },
+  {
+    "objectID": "posts/2026-05-18-nodejs-npm-security-update-windows/index.html#updating-node.js",
+    "href": "posts/2026-05-18-nodejs-npm-security-update-windows/index.html#updating-node.js",
+    "title": "Security upgrades on my Node.js, npm and Azurite",
+    "section": "Updating node.js",
+    "text": "Updating node.js\nInstalling additional tools (nvm-windows, Chocolatey…) to manage the node.js update is out of scope for this post so I’ll just run the node-v24.15.0-x64.msi from nodejs.org.\nAfter installation:\nC:\\&gt;node -v\nv24.15.0"
+  },
+  {
+    "objectID": "posts/2026-05-18-nodejs-npm-security-update-windows/index.html#global-packages",
+    "href": "posts/2026-05-18-nodejs-npm-security-update-windows/index.html#global-packages",
+    "title": "Security upgrades on my Node.js, npm and Azurite",
+    "section": "Global packages",
+    "text": "Global packages\nC:\\&gt;npm list -g\nC:\\Users\\xxx\\AppData\\Roaming\\npm\n+-- azurite@3.35.0\n`-- npm@11.14.1\n\nC:\\&gt;npm list --parseable -g --depth=0\nC:\\Users\\xxx\\AppData\\Roaming\\npm\nC:\\Users\\xxx\\AppData\\Roaming\\npm\\node_modules\\azurite\nC:\\Users\\xxx\\AppData\\Roaming\\npm\\node_modules\\npm\nI only had one global package: Azurite. Good enough for now."
+  },
+  {
+    "objectID": "posts/2026-05-18-nodejs-npm-security-update-windows/index.html#local-packages",
+    "href": "posts/2026-05-18-nodejs-npm-security-update-windows/index.html#local-packages",
+    "title": "Security upgrades on my Node.js, npm and Azurite",
+    "section": "Local packages",
+    "text": "Local packages\nThis PowerShell script is used to find all node.js projects on my machine.\nOutput:\nPS C:\\&gt; C:\\...\\find-node-projects.ps1\n=== Scanning for Node.js projects ===\nRoot path: C:\\...\\projects\n\nTotal Node.js projects found: 0\nNo local packages of node.js projects found."
+  },
+  {
+    "objectID": "posts/2026-05-18-nodejs-npm-security-update-windows/index.html#is-azurite-up-to-date",
+    "href": "posts/2026-05-18-nodejs-npm-security-update-windows/index.html#is-azurite-up-to-date",
+    "title": "Security upgrades on my Node.js, npm and Azurite",
+    "section": "Is Azurite up to date?",
+    "text": "Is Azurite up to date?\nC:\\&gt;azurite --version\n3.35.0\nIt’s the latest released version of Azurite on GitHub releases, so it’s up to date."
+  },
+  {
+    "objectID": "posts/2026-05-18-nodejs-npm-security-update-windows/index.html#compatibility-check",
+    "href": "posts/2026-05-18-nodejs-npm-security-update-windows/index.html#compatibility-check",
+    "title": "Security upgrades on my Node.js, npm and Azurite",
+    "section": "Compatibility check",
+    "text": "Compatibility check\nC:\\&gt;npm view azurite engines\n{ node: '&gt;=10.0.0', vscode: '^1.39.0' }\nSystem’s node.js is &gt;=10.0.0 so it’s compatible with Azurite."
+  },
+  {
+    "objectID": "posts/2026-05-18-nodejs-npm-security-update-windows/index.html#any-outdated-packages",
+    "href": "posts/2026-05-18-nodejs-npm-security-update-windows/index.html#any-outdated-packages",
+    "title": "Security upgrades on my Node.js, npm and Azurite",
+    "section": "Any outdated packages?",
+    "text": "Any outdated packages?\nC:\\&gt;npm outdated package check\n \nNo outdated packages found. There’s only one global package and it’s latest’ (latestlatest), so obviously up to date in this case."
+  },
+  {
+    "objectID": "posts/2026-05-18-nodejs-npm-security-update-windows/index.html#signature-verification",
+    "href": "posts/2026-05-18-nodejs-npm-security-update-windows/index.html#signature-verification",
+    "title": "Security upgrades on my Node.js, npm and Azurite",
+    "section": "Signature verification",
+    "text": "Signature verification\nC:\\Users\\xxx\\AppData\\Roaming\\npm\\node_modules\\azurite&gt;npm audit signatures\naudited 374 packages in 4s\n\n374 packages have verified registry signatures\n\n25 packages have verified attestations\n(use --json --include-attestations to view attestation details)\nNo missing signatures found - which would be a sign of a malicious package."
+  },
+  {
+    "objectID": "posts/2026-05-18-nodejs-npm-security-update-windows/index.html#running-npm-audit",
+    "href": "posts/2026-05-18-nodejs-npm-security-update-windows/index.html#running-npm-audit",
+    "title": "Security upgrades on my Node.js, npm and Azurite",
+    "section": "Running npm audit",
+    "text": "Running npm audit\n\nFirst pass: everything\nC:\\Users\\xxx\\AppData\\Roaming\\npm\\node_modules\\azurite&gt;npm audit --no-package-lock\n# npm audit report\n\n[...]\n\n56 vulnerabilities (10 moderate, 8 high, 38 critical)\n\nTo address issues that do not require attention, run:\n  npm audit fix\n\nTo address all issues possible (including breaking changes), run:\n  npm audit fix --force\n\nSome issues need review, and may require choosing\na different dependency.\n38 critical. That can’t be so bad, after all it’s a Microsoft-maintained emulator that thousands of people use daily, which means either the world is on fire, or — more likely — npm audit is over-counting in some ways.\nThere’s a catch: need to filter out dev dependencies to get to what actually matters at runtime.\n\n\nSecond pass: runtime only\nC:\\Users\\xxx\\AppData\\Roaming\\npm\\node_modules\\azurite&gt;npm audit --no-package-lock --omit=dev\n# npm audit report\n\n[...]\n\n10 vulnerabilities (6 moderate, 4 high)\n\nTo address issues that do not require attention, run:\n  npm audit fix\n\nTo address all issues (including breaking changes), run:\n  npm audit fix --force\n\nHigh severity vulnerabilities\n\n\n\n\n\n\n\n\nPackage\nVulnerability Summary\nFix Available\n\n\n\n\nlodash\nCode Injection via _.template; Prototype Pollution via _.unset/_.omit\nnpm audit fix\n\n\npath-to-regexp\nReDoS via multiple route parameters\nnpm audit fix\n\n\naxios\n15+ issues: SSRF, CSRF, Credential Leakage, No_Proxy Bypass, Prototype Pollution, DoS, Metadata Exfiltration\nnpm audit fix –force\n\n\n\n\n\nModerate severity vulnerabilities\n\n\n\n\n\n\n\n\nPackage\nVulnerability Summary\nFix Available\n\n\n\n\nbrace-expansion\nZero-step sequence → process hang & memory exhaustion (ReDoS)\nnpm audit fix\n\n\nfollow-redirects\nLeaks Custom Auth Headers to Cross-Domain Redirect Targets\nnpm audit fix\n\n\n@azure/identity\nElevation of Privilege (Azure Identity & MSAL)\nnpm audit fix –force\n\n\ntough-cookie\nPrototype Pollution\nnpm audit fix –force\n\n\nxml2js\nPrototype Pollution\nnpm audit fix –force\n\n\n\n\n\n\nUnderstanding the blast radius\nLet’s take 2 examples to illustrate the use of the package dependency tree before fixing any package.\nExample 1: Simple case The package brace-expansion is only in 1 copy in the azurite dependency tree. The blast radius in case of vulnerabilities and fix is relatively limited. Running a npm audit fix will likely be without issues.\nC:\\Users\\xxx\\AppData\\Roaming\\npm\\node_modules\\azurite&gt;npm ls brace-expansion\nazurite@3.35.0 C:\\Users\\xxx\\AppData\\Roaming\\npm\\node_modules\\azurite\n`-- rimraf@3.0.2\n  `-- glob@7.2.3\n    `-- minimatch@3.1.5\n      `-- brace-expansion@1.1.12\nExample 2: Multiple copies case\nC:\\Users\\xxx\\AppData\\Roaming\\npm\\node_modules\\azurite&gt;npm ls follow-redirects\nazurite@3.35.0 C:\\Users\\xxx\\AppData\\Roaming\\npm\\node_modules\\azurite\n+-- @azure/ms-rest-js@1.11.2\n| `-- axios@0.21.4\n|   `-- follow-redirects@1.15.11 deduped\n`-- axios@0.27.2\n  `-- follow-redirects@1.15.11\nThe axios package is in 2 verisons and based on the same follow-redirects package. An issue with the follow-redirects package will have a higher blast radius in case of vulnerability and fix issues. Implementation of a fix could also be more complex due to more applications being impacted. In this case, follow-redirects is a transitive dependency can easily be updated with a npm audit fix.\n\n\nTo fix or not to fix\nGitHub issue #2500 has been tracking these vulnerabilities for a while with no ETA. The maintainers are presumably making a risk call: fix cost vs. actual exposure. Fair enough — I have to make the same call for my system.\n\n\nThe fix plan\nNon-breaking fix: covers 2/3 of the high-severity issues and 2/5 of the moderates. Low risk, clear win.\nBreaking fix (--force): would tackle the rest, but risks silently breaking Azurite. My usage is purely local — with appropriate host 127.0.0.1 and port 10000, no production data, no risky network exposure. The risk of a broken emulator outweighs the marginal security gain. I’ll revisit when the maintainers ship a proper fix (Cf. set a reminder in my calendar).\n\n\nApplying the safe fixes\nIn my context, let’s use a minimal sanity check test before and after applying the audit fix, no sandboxing — KISS.\nAzurite run test — successful\nC:\\Users\\xxx&gt;azurite --blobHost 127.0.0.1 --blobPort 10000\nAzurite Blob service is starting at http://127.0.0.1:10000\nAzurite Blob service is successfully listening at http://127.0.0.1:10000\nAzurite Queue service is starting at http://127.0.0.1:10001\nAzurite Queue service is successfully listening at http://127.0.0.1:10001\nAzurite Table service is starting at http://127.0.0.1:10002\nAzurite Table service is successfully listening at http://127.0.0.1:10002\n[CTRL-C to stop Azurite]\nAzurite Blob service is closing...\nAzurite Queue service is closing...\nAzurite Table service is closing...\nAzurite Table service successfully closed\nAzurite Blob service successfully closed\nAzurite Queue service successfully closed\nVersions of packages before audit fix\nC:\\Users\\xxx\\AppData\\Roaming\\npm\\node_modules\\azurite&gt;npm ls lodash\nazurite@3.35.0 C:\\Users\\xxx\\AppData\\Roaming\\npm\\node_modules\\azurite\n`-- sequelize@6.37.8\n  `-- lodash@4.17.23\n\n[...]\n\n\n\nPackage\nVersion\n\n\n\n\nlodash\n4.17.23\n\n\npath-to-regexp\n0.1.12\n\n\nbrace-expansion\n1.1.12\n\n\nfollow-redirects\n1.15.11\n\n\n\nApply audit fix\nAzurite being a global package on my system, the npm audit fix command cannot be used (adding a lock file as in a local Azurite package is not a good practice). So npm install -g azurite@latest is used instead.\nC:\\&gt;npm install -g azurite@latest\n\n[npm warn deprecated messages...]\n\nremoved 5 packages, and changed 370 packages in 11s\n\nC:\\&gt;azurite --version\n3.35.0\nChecking non-breaking fix success\nC:\\Users\\xxx\\AppData\\Roaming\\npm\\node_modules\\azurite&gt;npm ls lodash\nazurite@3.35.0 C:\\Users\\xxx\\AppData\\Roaming\\npm\\node_modules\\azurite\n`-- sequelize@6.37.8\n  `-- lodash@4.18.1\n\n[...]\n\n\n\nPackage\nVersion Before Update\nVersion After Update\n\n\n\n\nlodash\n4.17.23\n4.18.1\n\n\npath-to-regexp\n0.1.12\n0.1.13\n\n\nbrace-expansion\n1.1.12\n1.1.14\n\n\nfollow-redirects\n1.15.11\n1.16.0\n\n\n\nAll 4 packages bumped to patched versions, and the associated vulnerabilities disappeared from the audit report. The breaking-fix issues remain, as expected.\nC:\\Users\\xxx\\AppData\\Roaming\\npm\\node_modules\\azurite&gt;npm audit --no-package-lock --omit=dev\n# npm audit report\n\n@azure/identity  &lt;4.2.1\nSeverity: moderate\n[...]\n\naxios  &lt;=0.31.0\nSeverity: high\n[...]\n\ntough-cookie  &lt;4.1.3\nSeverity: moderate\n[...]\n\nxml2js  &lt;0.5.0\nSeverity: moderate\n[...]\n\n6 vulnerabilities (4 moderate, 2 high)\n\nTo address all issues (including breaking changes), run:\n  npm audit fix --force\nAzurite run test — successful\nC:\\Users\\xxx&gt;azurite --blobHost 127.0.0.1 --blobPort 10000\nAzurite Blob service is starting at http://127.0.0.1:10000\nAzurite Blob service is successfully listening at http://127.0.0.1:10000\nAzurite Queue service is starting at http://127.0.0.1:10001\nAzurite Queue service is successfully listening at http://127.0.0.1:10001\nAzurite Table service is starting at http://127.0.0.1:10002\nAzurite Table service is successfully listening at http://127.0.0.1:10002\nAzurite Blob service is closing...\nAzurite Queue service is closing...\nAzurite Table service is closing...\nAzurite Table service successfully closed\nAzurite Blob service successfully closed\nAzurite Queue service successfully closed"
   }
 ]
