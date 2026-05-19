@@ -1,0 +1,10 @@
+---
+title: "Disclaimer"
+description: Legal disclaimer — opinions expressed are the author's own and do not reflect the views of any affiliated organisation.
+---
+
+Opinions expressed on this site are the author's own in his personal capacity. They do not reflect the views of any organisation or company he is associated with, including any current or former employer.
+
+The content on this site is provided for informational purposes only and does not constitute professional advice. While I make reasonable efforts to ensure accuracy, I make no warranties or representations regarding the completeness, accuracy, or reliability of any information presented here.
+
+Use of any information on this site is at your own risk. I accept no liability for any loss or damage arising from reliance on the content of this site.

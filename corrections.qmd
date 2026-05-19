@@ -1,0 +1,36 @@
+---
+title: "Corrections Policy"
+description: How errors are handled and corrected on this site.
+format:
+  html:
+    toc: true
+    toc-location: right
+    toc-title: "On this page"
+---
+
+I aim to keep what I publish accurate. This page describes how I handle corrections and updates.
+
+_Last updated: 19 May 2026_
+
+## Corrections
+When a factual error is found, I correct it. Material errors — those that affect meaning or conclusions — get a note on the post stating what changed and when. Typos, broken links, and formatting fixes are made without a separate notice.
+
+## Updates
+Posts may be updated after publication for new information or clarity. Substantive changes are reflected in the post’s last-modified date where applicable.
+
+## Opinion and analysis
+Much of the content on this site represents my personal opinion, analysis, or commentary. I aim to clearly distinguish between factual claims and opinion. [My disclaimer](/disclaimer.html) applies to all content on this site.
+
+## Reporting errors
+
+If you spot a factual error, email [alexandre.cagnon.work@tuta.com](mailto:alexandre.cagnon.work@tuta.com) with:
+
+- the page URL
+- what seems wrong
+- a source for the correct information, if you have one
+
+I review reports promptly.
+
+## Scope
+
+This policy applies to content on [alexandre-cagnon.com](https://alexandre-cagnon.com), not to external sites I link to.

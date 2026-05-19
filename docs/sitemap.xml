@@ -1,19 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://alexandrecagnon.github.io/notes.html</loc>
-    <lastmod>2026-03-31T19:26:28.579Z</lastmod>
+    <loc>https://alexandrecagnon.github.io/privacy.html</loc>
+    <lastmod>2026-05-19T10:46:14.700Z</lastmod>
+  </url>
+  <url>
+    <loc>https://alexandrecagnon.github.io/disclaimer.html</loc>
+    <lastmod>2026-05-19T10:40:36.815Z</lastmod>
   </url>
   <url>
     <loc>https://alexandrecagnon.github.io/blog.html</loc>
-    <lastmod>2026-03-31T19:26:27.987Z</lastmod>
+    <lastmod>2026-05-19T11:25:43.460Z</lastmod>
   </url>
   <url>
     <loc>https://alexandrecagnon.github.io/about.html</loc>
     <lastmod>2026-04-14T19:44:49.368Z</lastmod>
   </url>
   <url>
+    <loc>https://alexandrecagnon.github.io/corrections.html</loc>
+    <lastmod>2026-05-19T14:01:50.150Z</lastmod>
+  </url>
+  <url>
     <loc>https://alexandrecagnon.github.io/index.html</loc>
-    <lastmod>2026-04-12T21:21:26.583Z</lastmod>
+    <lastmod>2026-05-19T10:50:14.265Z</lastmod>
   </url>
 </urlset>

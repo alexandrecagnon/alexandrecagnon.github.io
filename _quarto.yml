@@ -25,10 +25,8 @@ website:
         href: about.qmd
       - text: Blog
         href: blog.qmd
-      - text: Notes
-        href: notes.qmd
   page-footer:
-    center: "© 2026 Alexandre Cagnon · Code under [MIT](https://opensource.org/licenses/MIT) · Content under [CC BY-NC-ND 4.0](https://creativecommons.org/licenses/by-nc-nd/4.0/)"
+    center: "© 2026 Alexandre Cagnon · Code under [MIT](https://opensource.org/licenses/MIT) · Content under [CC BY-NC-ND 4.0](https://creativecommons.org/licenses/by-nc-nd/4.0/) · [Disclaimer](/disclaimer.html) · [Privacy](/privacy.html) · [Corrections](/corrections.html)"
 
 format:
   html:
