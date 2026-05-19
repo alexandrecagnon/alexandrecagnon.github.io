@@ -1,0 +1,1065 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.36">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="dcterms.date" content="2026-05-19">
+<meta name="description" content="A Fireship video sent me down a rabbit hole — turns out my Node.js had CVEs and my Azurite was quietly sitting on vulnerable dependencies.">
+
+<title>Security upgrades on my Node.js, npm and Azurite – Alexandre Cagnon</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-845c23b38eaddc0f92fda52bfe77a8c8.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-6b423f165eeea3787de40cb4f8e821c3.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+</head>
+
+<body class="nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Alexandre Cagnon</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../index.html"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html"> 
+<span class="menu-text">About</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../blog.html"> 
+<span class="menu-text">Blog</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#supply-chain-attacks" id="toc-supply-chain-attacks" class="nav-link active" data-scroll-target="#supply-chain-attacks">Supply chain attacks</a></li>
+  <li><a href="#how-node.js-ended-up-on-my-machine" id="toc-how-node.js-ended-up-on-my-machine" class="nav-link" data-scroll-target="#how-node.js-ended-up-on-my-machine">How Node.js ended up on my machine</a></li>
+  <li><a href="#trusting-but-checking" id="toc-trusting-but-checking" class="nav-link" data-scroll-target="#trusting-but-checking">Trusting but checking</a></li>
+  <li><a href="#updating-node.js-and-npm" id="toc-updating-node.js-and-npm" class="nav-link" data-scroll-target="#updating-node.js-and-npm">Updating Node.js and npm</a>
+  <ul class="collapse">
+  <li><a href="#what-i-was-running" id="toc-what-i-was-running" class="nav-link" data-scroll-target="#what-i-was-running">What I was running</a></li>
+  <li><a href="#risk-of-node.js-v24.14.0-vs.-lts-v24.15.0" id="toc-risk-of-node.js-v24.14.0-vs.-lts-v24.15.0" class="nav-link" data-scroll-target="#risk-of-node.js-v24.14.0-vs.-lts-v24.15.0">Risk of node.js v24.14.0 vs.&nbsp;LTS v24.15.0 ?</a></li>
+  <li><a href="#why-was-node.js-outdated" id="toc-why-was-node.js-outdated" class="nav-link" data-scroll-target="#why-was-node.js-outdated">Why was node.js outdated?</a></li>
+  <li><a href="#updating-node.js" id="toc-updating-node.js" class="nav-link" data-scroll-target="#updating-node.js">Updating node.js</a></li>
+  </ul></li>
+  <li><a href="#whats-actually-installed" id="toc-whats-actually-installed" class="nav-link" data-scroll-target="#whats-actually-installed">What’s actually installed?</a>
+  <ul class="collapse">
+  <li><a href="#global-packages" id="toc-global-packages" class="nav-link" data-scroll-target="#global-packages">Global packages</a></li>
+  <li><a href="#local-packages" id="toc-local-packages" class="nav-link" data-scroll-target="#local-packages">Local packages</a></li>
+  </ul></li>
+  <li><a href="#auditing-azurite" id="toc-auditing-azurite" class="nav-link" data-scroll-target="#auditing-azurite">Auditing Azurite</a>
+  <ul class="collapse">
+  <li><a href="#is-azurite-up-to-date" id="toc-is-azurite-up-to-date" class="nav-link" data-scroll-target="#is-azurite-up-to-date">Is Azurite up to date?</a></li>
+  <li><a href="#compatibility-check" id="toc-compatibility-check" class="nav-link" data-scroll-target="#compatibility-check">Compatibility check</a></li>
+  <li><a href="#any-outdated-packages" id="toc-any-outdated-packages" class="nav-link" data-scroll-target="#any-outdated-packages">Any outdated packages?</a></li>
+  <li><a href="#signature-verification" id="toc-signature-verification" class="nav-link" data-scroll-target="#signature-verification">Signature verification</a></li>
+  <li><a href="#running-npm-audit" id="toc-running-npm-audit" class="nav-link" data-scroll-target="#running-npm-audit">Running npm audit</a>
+  <ul class="collapse">
+  <li><a href="#first-pass-everything" id="toc-first-pass-everything" class="nav-link" data-scroll-target="#first-pass-everything">First pass: everything</a></li>
+  <li><a href="#second-pass-runtime-only" id="toc-second-pass-runtime-only" class="nav-link" data-scroll-target="#second-pass-runtime-only">Second pass: runtime only</a></li>
+  <li><a href="#understanding-the-blast-radius" id="toc-understanding-the-blast-radius" class="nav-link" data-scroll-target="#understanding-the-blast-radius">Understanding the blast radius</a></li>
+  <li><a href="#to-fix-or-not-to-fix" id="toc-to-fix-or-not-to-fix" class="nav-link" data-scroll-target="#to-fix-or-not-to-fix">To fix or not to fix</a></li>
+  <li><a href="#the-fix-plan" id="toc-the-fix-plan" class="nav-link" data-scroll-target="#the-fix-plan">The fix plan</a></li>
+  <li><a href="#applying-the-safe-fixes" id="toc-applying-the-safe-fixes" class="nav-link" data-scroll-target="#applying-the-safe-fixes">Applying the safe fixes</a></li>
+  </ul></li>
+  </ul></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Security upgrades on my Node.js, npm and Azurite</h1>
+  <div class="quarto-categories">
+    <div class="quarto-category">npm</div>
+    <div class="quarto-category">node.js</div>
+    <div class="quarto-category">azurite</div>
+    <div class="quarto-category">security-update</div>
+    <div class="quarto-category">windows</div>
+  </div>
+  </div>
+
+<div>
+  <div class="description">
+    A Fireship video sent me down a rabbit hole — turns out my Node.js had CVEs and my Azurite was quietly sitting on vulnerable dependencies.
+  </div>
+</div>
+
+
+<div class="quarto-title-meta">
+
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">May 19, 2026</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="supply-chain-attacks" class="level1">
+<h1>Supply chain attacks</h1>
+<p>A few days back <a href="https://www.youtube.com/@Fireship">Fireship</a> dropped <a href="https://youtu.be/gwTQLZSIlsU?si=tuvB6pf2RX3Wq29m">“A single PR just hijacked the NPM registry…”</a> - as always, educational and alarming in equal measures.</p>
+<p>I’d already been keeping an eye on supply chain risks after the <a href="https://youtu.be/aoag03mSuXQ?si=XaY2rYktkrwHZ34_">xz/liblzma near-disaster</a> that almost took down the internet.</p>
+<p>And the numbers back up the paranoia: Sonatype reports that <a href="https://www.sonatype.com/state-of-the-software-supply-chain/2026/open-source-malware">“over 99% of open source malware occurred on npm”</a>.</p>
+<p>So naturally I started wondering: what about my machine?</p>
+</section>
+<section id="how-node.js-ended-up-on-my-machine" class="level1">
+<h1>How Node.js ended up on my machine</h1>
+<p>I’m not a heavy Node.js user — it landed on my Windows machine in November 2024 mostly as collateral from installing other tooling. The last time I consciously updated it was February 2026; npm got a bump in March.</p>
+<p>The main reason it’s there at all: I run <a href="https://github.com/Azure/Azurite">Azurite</a> locally to emulate Azure Blob Storage alongside Python Azure Functions tests. Azurite is used alongside Python Azure Functions and generates network traffic, so it’s a bit sensitive and needs to be kept in check.</p>
+<p>I also had no idea how many other Node.js packages were lurking on my system. Spoiler: a few.</p>
+</section>
+<section id="trusting-but-checking" class="level1">
+<h1>Trusting but checking</h1>
+<p>I trust Microsoft’s team to keep Azurite maintained. But trust-and-forget is not a security posture just a light edge on hope.</p>
+<p>So let’s actually check:</p>
+<ul>
+<li>my local npm, node.js, and Azurite security status, and update them if needed<br>
+</li>
+<li>the node.js packages on my system and run security checks to detect vulnerabilities</li>
+<li>fix security vulnerabilities</li>
+</ul>
+</section>
+<section id="updating-node.js-and-npm" class="level1">
+<h1>Updating Node.js and npm</h1>
+<section id="what-i-was-running" class="level2">
+<h2 class="anchored" data-anchor-id="what-i-was-running">What I was running</h2>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode dosbat code-with-copy"><code class="sourceCode dosbat"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>C:\<span class="kw">&gt;</span>npm <span class="at">-v</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>11.14.1</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>C:\<span class="kw">&gt;</span>node <span class="at">-v</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>v24.14.0</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Findings:</p>
+<ul>
+<li><strong>OK.</strong> npm was already on the latest version<br>
+</li>
+<li><strong>Not OK.</strong> Node.js was not latest → <a href="https://nodejs.org/en/download/archive/v24.14.1">v24.14.1</a> and <a href="https://nodejs.org/en/download/archive/v24.15.0">v24.15.0</a> were both available<br>
+</li>
+<li><strong>OK.</strong> npm was ahead of the Node.js‑bundled npm (e.g.&nbsp;v11.12.1 in <a href="https://nodejs.org/en/download/archive/v24.15.0">Node v24.15.0</a>) — a newer patch/minor than what ships with node.js v24.14 or v24.15</li>
+</ul>
+</section>
+<section id="risk-of-node.js-v24.14.0-vs.-lts-v24.15.0" class="level2">
+<h2 class="anchored" data-anchor-id="risk-of-node.js-v24.14.0-vs.-lts-v24.15.0">Risk of node.js v24.14.0 vs.&nbsp;LTS v24.15.0 ?</h2>
+<p><a href="https://nodejs.org/en/blog/release/v24.14.1">v24.14.1</a> is a proper security release — 2 high CVEs, 4 medium, 2 low. That alone was enough to act.</p>
+<p><a href="https://nodejs.org/en/blog/release/v24.15.0">v24.15.0</a> looked even better: per Perplexity (May 18, 2026), it’s “mainly a hardening release — low-level fixes in crypto, http, tls, stream, zlib, plus refreshed bundled deps including npm and root certificates.” No breaking changes reported, so it became the target.</p>
+</section>
+<section id="why-was-node.js-outdated" class="level2">
+<h2 class="anchored" data-anchor-id="why-was-node.js-outdated">Why was node.js outdated?</h2>
+<p>I installed Node.js from the .msi installer (Cf. default node.exe path below). Turns out the <code>.msi</code> installer from nodejs.org (rightfully) has no auto-update mechanism. No reminder, no update.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode dosbat code-with-copy"><code class="sourceCode dosbat"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>C:\<span class="kw">&gt;</span>where node</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>C:\Program Files\nodejs\node.exe</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="updating-node.js" class="level2">
+<h2 class="anchored" data-anchor-id="updating-node.js">Updating node.js</h2>
+<p>Installing additional tools (nvm-windows, Chocolatey…) to manage the node.js update is out of scope for this post so I’ll just run the node-v24.15.0-x64.msi from nodejs.org.</p>
+<p><strong>After installation:</strong></p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode dosbat code-with-copy"><code class="sourceCode dosbat"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>C:\<span class="kw">&gt;</span>node <span class="at">-v</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>v24.15.0</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+</section>
+<section id="whats-actually-installed" class="level1">
+<h1>What’s actually installed?</h1>
+<section id="global-packages" class="level2">
+<h2 class="anchored" data-anchor-id="global-packages">Global packages</h2>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode dosbat code-with-copy"><code class="sourceCode dosbat"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>C:\<span class="kw">&gt;</span>npm list <span class="at">-g</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>C:\Users\xxx\AppData\Roaming\npm</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>+-- azurite@3.35.0</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>`-- npm@11.14.1</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>C:\<span class="kw">&gt;</span>npm list -<span class="at">-parseable</span> <span class="at">-g</span> -<span class="at">-depth</span>=0</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>C:\Users\xxx\AppData\Roaming\npm</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>C:\Users\xxx\AppData\Roaming\npm\node_modules\azurite</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>C:\Users\xxx\AppData\Roaming\npm\node_modules\npm</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>I only had one global package: Azurite. Good enough for now.</p>
+</section>
+<section id="local-packages" class="level2">
+<h2 class="anchored" data-anchor-id="local-packages">Local packages</h2>
+<p>This <a href="../../posts/2026-05-18-nodejs-npm-security-update-windows/find-node-projects.html">PowerShell script</a> is used to find all node.js projects on my machine.</p>
+<p>Output:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode powershell code-with-copy"><code class="sourceCode powershell"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">PS</span> C<span class="op">:</span>\<span class="op">&gt;</span> C<span class="op">:</span>\<span class="op">...</span>\find-node-projects<span class="op">.</span><span class="fu">ps1</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="op">===</span> Scanning <span class="cf">for</span> Node<span class="op">.</span><span class="fu">js</span> projects <span class="op">===</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>Root path<span class="op">:</span> C<span class="op">:</span>\<span class="op">...</span>\projects</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>Total Node<span class="op">.</span><span class="fu">js</span> projects found<span class="op">:</span> <span class="dv">0</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>No local packages of node.js projects found.</p>
+</section>
+</section>
+<section id="auditing-azurite" class="level1">
+<h1>Auditing Azurite</h1>
+<p>Checking Azurite for known vulnerabilities is unlikely to uncover serious threats — it’s a maintained Microsoft package and I’m not a security researcher. But version freshness and known CVEs in its dependency tree are worth a look.</p>
+<section id="is-azurite-up-to-date" class="level2">
+<h2 class="anchored" data-anchor-id="is-azurite-up-to-date">Is Azurite up to date?</h2>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode dosbat code-with-copy"><code class="sourceCode dosbat"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>C:\<span class="kw">&gt;</span>azurite -<span class="at">-version</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>3.35.0</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>It’s the latest released version of Azurite on <a href="https://github.com/Azure/Azurite/releases">GitHub releases</a>, so it’s up to date.</p>
+</section>
+<section id="compatibility-check" class="level2">
+<h2 class="anchored" data-anchor-id="compatibility-check">Compatibility check</h2>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode dosbat code-with-copy"><code class="sourceCode dosbat"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>C:\<span class="kw">&gt;</span>npm view azurite engines</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>{ node: '<span class="kw">&gt;</span>=10.0.0', vscode: '<span class="sc">^1</span>.39.0' }</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>System’s node.js is &gt;=10.0.0 so it’s compatible with Azurite.</p>
+</section>
+<section id="any-outdated-packages" class="level2">
+<h2 class="anchored" data-anchor-id="any-outdated-packages">Any outdated packages?</h2>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode dosbat code-with-copy"><code class="sourceCode dosbat"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>C:\<span class="kw">&gt;</span>npm outdated package check</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a> </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>No outdated packages found. There’s only one global package and it’s latest’ (latestlatest), so obviously up to date in this case.</p>
+</section>
+<section id="signature-verification" class="level2">
+<h2 class="anchored" data-anchor-id="signature-verification">Signature verification</h2>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode dosbat code-with-copy"><code class="sourceCode dosbat"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>C:\Users\xxx\AppData\Roaming\npm\node_modules\azurite<span class="kw">&gt;</span>npm audit signatures</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>audited 374 packages in 4s</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>374 packages have verified registry signatures</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>25 packages have verified attestations</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="kw">(</span>use -<span class="at">-json</span> -<span class="at">-include-attestations</span> to view attestation details<span class="kw">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>No missing signatures found - which would be a sign of a malicious package.</p>
+</section>
+<section id="running-npm-audit" class="level2">
+<h2 class="anchored" data-anchor-id="running-npm-audit">Running npm audit</h2>
+<section id="first-pass-everything" class="level3">
+<h3 class="anchored" data-anchor-id="first-pass-everything">First pass: everything</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode dosbat code-with-copy"><code class="sourceCode dosbat"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>C:\Users\xxx\AppData\Roaming\npm\node_modules\azurite<span class="kw">&gt;</span>npm audit -<span class="at">-no-package-lock</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a># npm audit report</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>[...]</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>56 vulnerabilities (10 moderate, 8 high, 38 critical<span class="kw">)</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>To address issues that do not require attention, run:</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>  npm audit fix</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>To address all issues possible (including breaking changes<span class="kw">)</span>, run:</span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>  npm audit fix -<span class="at">-force</span></span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>Some issues need review, and may require choosing</span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>a different dependency.</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>38 critical. That can’t be so bad, after all it’s a Microsoft-maintained emulator that thousands of people use daily, which means either the world is on fire, or — more likely — <code>npm audit</code> is over-counting in some ways.</p>
+<p>There’s a catch: need to filter out dev dependencies to get to what actually matters at runtime.</p>
+</section>
+<section id="second-pass-runtime-only" class="level3">
+<h3 class="anchored" data-anchor-id="second-pass-runtime-only">Second pass: runtime only</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode dosbat code-with-copy"><code class="sourceCode dosbat"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>C:\Users\xxx\AppData\Roaming\npm\node_modules\azurite<span class="kw">&gt;</span>npm audit -<span class="at">-no-package-lock</span> -<span class="at">-omit</span>=dev</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a># npm audit report</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>[...]</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>10 vulnerabilities (6 moderate, 4 high<span class="kw">)</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>To address issues that do not require attention, run:</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>  npm audit fix</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>To address all issues (including breaking changes<span class="kw">)</span>, run:</span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>  npm audit fix -<span class="at">-force</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<section id="high-severity-vulnerabilities" class="level4">
+<h4 class="anchored" data-anchor-id="high-severity-vulnerabilities">High severity vulnerabilities</h4>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Package</th>
+<th>Vulnerability Summary</th>
+<th>Fix Available</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>lodash</td>
+<td>Code Injection via <code>_.template</code>; Prototype Pollution via <code>_.unset</code>/<code>_.omit</code></td>
+<td>npm audit fix</td>
+</tr>
+<tr class="even">
+<td>path-to-regexp</td>
+<td>ReDoS via multiple route parameters</td>
+<td>npm audit fix</td>
+</tr>
+<tr class="odd">
+<td>axios</td>
+<td>15+ issues: SSRF, CSRF, Credential Leakage, No_Proxy Bypass, Prototype Pollution, DoS, Metadata Exfiltration</td>
+<td>npm audit fix –force</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="moderate-severity-vulnerabilities" class="level4">
+<h4 class="anchored" data-anchor-id="moderate-severity-vulnerabilities">Moderate severity vulnerabilities</h4>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Package</th>
+<th>Vulnerability Summary</th>
+<th>Fix Available</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>brace-expansion</td>
+<td>Zero-step sequence → process hang &amp; memory exhaustion (ReDoS)</td>
+<td>npm audit fix</td>
+</tr>
+<tr class="even">
+<td>follow-redirects</td>
+<td>Leaks Custom Auth Headers to Cross-Domain Redirect Targets</td>
+<td>npm audit fix</td>
+</tr>
+<tr class="odd">
+<td><code>@azure/identity</code></td>
+<td>Elevation of Privilege (Azure Identity &amp; MSAL)</td>
+<td>npm audit fix –force</td>
+</tr>
+<tr class="even">
+<td>tough-cookie</td>
+<td>Prototype Pollution</td>
+<td>npm audit fix –force</td>
+</tr>
+<tr class="odd">
+<td>xml2js</td>
+<td>Prototype Pollution</td>
+<td>npm audit fix –force</td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="understanding-the-blast-radius" class="level3">
+<h3 class="anchored" data-anchor-id="understanding-the-blast-radius">Understanding the blast radius</h3>
+<p>Let’s take 2 examples to illustrate the use of the package dependency tree before fixing any package.</p>
+<p><strong>Example 1: Simple case</strong> The package brace-expansion is only in 1 copy in the azurite dependency tree. The blast radius in case of vulnerabilities and fix is relatively limited. Running a npm audit fix will likely be without issues.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode dosbat code-with-copy"><code class="sourceCode dosbat"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>C:\Users\xxx\AppData\Roaming\npm\node_modules\azurite<span class="kw">&gt;</span>npm ls brace<span class="at">-expansion</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>azurite@3.35.0 C:\Users\xxx\AppData\Roaming\npm\node_modules\azurite</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>`-- rimraf@3.0.2</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  `-- glob@7.2.3</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    `-- minimatch@3.1.5</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>      `-- brace<span class="at">-expansion</span>@1.1.12</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><strong>Example 2: Multiple copies case</strong></p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode dosbat code-with-copy"><code class="sourceCode dosbat"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>C:\Users\xxx\AppData\Roaming\npm\node_modules\azurite<span class="kw">&gt;</span>npm ls follow<span class="at">-redirects</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>azurite@3.35.0 C:\Users\xxx\AppData\Roaming\npm\node_modules\azurite</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>+-- @azure<span class="at">/ms-rest-js</span>@1.11.2</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="kw">|</span> `-- axios@0.21.4</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="kw">|</span>   `-- follow<span class="at">-redirects</span>@1.15.11 deduped</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>`-- axios@0.27.2</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>  `-- follow<span class="at">-redirects</span>@1.15.11</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>The axios package is in 2 verisons and based on the same follow-redirects package. An issue with the follow-redirects package will have a higher blast radius in case of vulnerability and fix issues. Implementation of a fix could also be more complex due to more applications being impacted. In this case, follow-redirects is a transitive dependency can easily be updated with a npm audit fix.</p>
+</section>
+<section id="to-fix-or-not-to-fix" class="level3">
+<h3 class="anchored" data-anchor-id="to-fix-or-not-to-fix">To fix or not to fix</h3>
+<p><a href="https://github.com/Azure/Azurite/issues/2500">GitHub issue #2500</a> has been tracking these vulnerabilities for a while with no ETA. The maintainers are presumably making a risk call: fix cost vs.&nbsp;actual exposure. Fair enough — I have to make the same call for my system.</p>
+</section>
+<section id="the-fix-plan" class="level3">
+<h3 class="anchored" data-anchor-id="the-fix-plan">The fix plan</h3>
+<p><strong>Non-breaking fix:</strong> covers 2/3 of the high-severity issues and 2/5 of the moderates. Low risk, clear win.</p>
+<p><strong>Breaking fix (<code>--force</code>):</strong> would tackle the rest, but risks silently breaking Azurite. My usage is purely local — with appropriate host <code>127.0.0.1</code> and port <code>10000</code>, no production data, no risky network exposure. The risk of a broken emulator outweighs the marginal security gain. I’ll revisit when the maintainers ship a proper fix (Cf. set a reminder in my calendar).</p>
+</section>
+<section id="applying-the-safe-fixes" class="level3">
+<h3 class="anchored" data-anchor-id="applying-the-safe-fixes">Applying the safe fixes</h3>
+<p>In my context, let’s use a minimal sanity check test before and after applying the audit fix, no sandboxing — <a href="https://en.wikipedia.org/wiki/KISS_principle">KISS</a>.</p>
+<p><strong>Azurite run test — successful</strong></p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode dosbat code-with-copy"><code class="sourceCode dosbat"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>C:\Users\xxx<span class="kw">&gt;</span>azurite -<span class="at">-blobHost</span> 127.0.0.1 -<span class="at">-blobPort</span> 10000</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>Azurite Blob service is starting at http:/<span class="at">/127</span>.0.0.1:10000</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>Azurite Blob service is successfully listening at http:/<span class="at">/127</span>.0.0.1:10000</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>Azurite Queue service is starting at http:/<span class="at">/127</span>.0.0.1:10001</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>Azurite Queue service is successfully listening at http:/<span class="at">/127</span>.0.0.1:10001</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>Azurite Table service is starting at http:/<span class="at">/127</span>.0.0.1:10002</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>Azurite Table service is successfully listening at http:/<span class="at">/127</span>.0.0.1:10002</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>[CTRL-C to stop Azurite]</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>Azurite Blob service is closing...</span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>Azurite Queue service is closing...</span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>Azurite Table service is closing...</span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>Azurite Table service successfully closed</span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>Azurite Blob service successfully closed</span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>Azurite Queue service successfully closed</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><strong>Versions of packages before audit fix</strong></p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="sourceCode dosbat code-with-copy"><code class="sourceCode dosbat"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>C:\Users\xxx\AppData\Roaming\npm\node_modules\azurite<span class="kw">&gt;</span>npm ls lodash</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>azurite@3.35.0 C:\Users\xxx\AppData\Roaming\npm\node_modules\azurite</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>`-- sequelize@6.37.8</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>  `-- lodash@4.17.23</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>[...]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Package</th>
+<th>Version</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>lodash</td>
+<td>4.17.23</td>
+</tr>
+<tr class="even">
+<td>path-to-regexp</td>
+<td>0.1.12</td>
+</tr>
+<tr class="odd">
+<td>brace-expansion</td>
+<td>1.1.12</td>
+</tr>
+<tr class="even">
+<td>follow-redirects</td>
+<td>1.15.11</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Apply audit fix</strong></p>
+<p>Azurite being a global package on my system, the <em>npm audit fix</em> command cannot be used (adding a lock file as in a local Azurite package is not a good practice). So <em>npm install -g azurite@latest</em> is used instead.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="sourceCode dosbat code-with-copy"><code class="sourceCode dosbat"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>C:\<span class="kw">&gt;</span>npm install <span class="at">-g</span> azurite@latest</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>[npm warn deprecated messages...]</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>removed 5 packages, and changed 370 packages in 11s</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>C:\<span class="kw">&gt;</span>azurite -<span class="at">-version</span></span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>3.35.0</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><strong>Checking non-breaking fix success</strong></p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="sourceCode dosbat code-with-copy"><code class="sourceCode dosbat"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>C:\Users\xxx\AppData\Roaming\npm\node_modules\azurite<span class="kw">&gt;</span>npm ls lodash</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>azurite@3.35.0 C:\Users\xxx\AppData\Roaming\npm\node_modules\azurite</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>`-- sequelize@6.37.8</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>  `-- lodash@4.18.1</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>[...]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Package</th>
+<th>Version Before Update</th>
+<th>Version After Update</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>lodash</td>
+<td>4.17.23</td>
+<td>4.18.1</td>
+</tr>
+<tr class="even">
+<td>path-to-regexp</td>
+<td>0.1.12</td>
+<td>0.1.13</td>
+</tr>
+<tr class="odd">
+<td>brace-expansion</td>
+<td>1.1.12</td>
+<td>1.1.14</td>
+</tr>
+<tr class="even">
+<td>follow-redirects</td>
+<td>1.15.11</td>
+<td>1.16.0</td>
+</tr>
+</tbody>
+</table>
+<p>All 4 packages bumped to patched versions, and the associated vulnerabilities disappeared from the audit report. The breaking-fix issues remain, as expected.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="sourceCode dosbat code-with-copy"><code class="sourceCode dosbat"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>C:\Users\xxx\AppData\Roaming\npm\node_modules\azurite<span class="kw">&gt;</span>npm audit -<span class="at">-no-package-lock</span> -<span class="at">-omit</span>=dev</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a># npm audit report</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="kw">@</span>azure/identity  <span class="kw">&lt;</span>4.2.1</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>Severity: moderate</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>[...]</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>axios  <span class="kw">&lt;</span>=0.31.0</span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>Severity: high</span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>[...]</span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>tough-cookie  <span class="kw">&lt;</span>4.1.3</span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>Severity: moderate</span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a>[...]</span>
+<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a>xml2js  <span class="kw">&lt;</span>0.5.0</span>
+<span id="cb18-17"><a href="#cb18-17" aria-hidden="true" tabindex="-1"></a>Severity: moderate</span>
+<span id="cb18-18"><a href="#cb18-18" aria-hidden="true" tabindex="-1"></a>[...]</span>
+<span id="cb18-19"><a href="#cb18-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-20"><a href="#cb18-20" aria-hidden="true" tabindex="-1"></a>6 vulnerabilities (4 moderate, 2 high<span class="kw">)</span></span>
+<span id="cb18-21"><a href="#cb18-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-22"><a href="#cb18-22" aria-hidden="true" tabindex="-1"></a>To address all issues (including breaking changes<span class="kw">)</span>, run:</span>
+<span id="cb18-23"><a href="#cb18-23" aria-hidden="true" tabindex="-1"></a>  npm audit fix -<span class="at">-force</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><strong>Azurite run test — successful</strong></p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="sourceCode dosbat code-with-copy"><code class="sourceCode dosbat"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>C:\Users\xxx<span class="kw">&gt;</span>azurite -<span class="at">-blobHost</span> 127.0.0.1 -<span class="at">-blobPort</span> 10000</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>Azurite Blob service is starting at http:/<span class="at">/127</span>.0.0.1:10000</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>Azurite Blob service is successfully listening at http:/<span class="at">/127</span>.0.0.1:10000</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>Azurite Queue service is starting at http:/<span class="at">/127</span>.0.0.1:10001</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>Azurite Queue service is successfully listening at http:/<span class="at">/127</span>.0.0.1:10001</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>Azurite Table service is starting at http:/<span class="at">/127</span>.0.0.1:10002</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>Azurite Table service is successfully listening at http:/<span class="at">/127</span>.0.0.1:10002</span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>Azurite Blob service is closing...</span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>Azurite Queue service is closing...</span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>Azurite Table service is closing...</span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a>Azurite Table service successfully closed</span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a>Azurite Blob service successfully closed</span>
+<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a>Azurite Queue service successfully closed</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+</section>
+</section>
+<section id="conclusion" class="level1">
+<h1>Conclusion</h1>
+<p>Node.js was behind and carrying 2 high CVEs. Azurite had a longer list of issues, some of which the non-breaking fix took care of — the remainder require changes the maintainers haven’t shipped yet, and my risk profile doesn’t require immediate action.</p>
+<p>The number that surprised me most wasn’t the CVE count for Azurite but the fact that its release label was the same <em>latest</em> <code>3.35.0</code> both before and after the update. The same <code>3.35.0</code> Azurite release label can in fact have different nested packages underneath. That’s the kind of “false sense of security” that quietly bites you: being on the <em>latest release</em> doesn’t mean you have the <em>latest dependencies</em>. Worth keeping in mind whenever you’re evaluating your own npm packages supply chain exposure.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/alexandrecagnon\.github\.io\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">
+<p>© 2026 Alexandre Cagnon · Code under <a href="https://opensource.org/licenses/MIT">MIT</a> · Content under <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/">CC BY-NC-ND 4.0</a> · <a href="../..\disclaimer.html">Disclaimer</a> · <a href="../..\privacy.html">Privacy</a> · <a href="../..\corrections.html">Corrections</a></p>
+</div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
+
+
+
+
+</body></html>
