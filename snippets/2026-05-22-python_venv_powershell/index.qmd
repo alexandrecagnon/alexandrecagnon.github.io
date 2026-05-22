@@ -1,0 +1,72 @@
+---
+title: "Create a Python .venv on Windows"
+date: 2026-05-22
+description: "Robust PowerShell script to create a Python virtual environment with pyenv."
+categories: [Python, Powershell, pyenv]
+draft: false
+---
+
+I use this script whenever I set up a new project on Windows. It pins the Python version with pyenv, creates the `.venv`, and installs `requirements.txt` in one go — and it fails loudly with the exact step and exit code if anything goes wrong.
+
+# List available Python versions
+
+```powershell
+pyenv install --list
+```
+
+# The script
+
+Copy the script and run it from the project directory that contains `requirements.txt`. Adjust `$pyVer` to the Python version you want.
+
+Possible outcomes:
+
+- **Success:** prints *success creating .venv* and leaves the virtualenv activated.
+- **Failure:** prints *failure creating .venv* followed by the failing step and its exit code (e.g. `failed command: pip install -r requirements.txt (exit code 1)`).
+
+```powershell
+$pyVer = "3.13.8"
+function Invoke-Step {
+    param([scriptblock]$Action)
+    & $Action
+    if ($LASTEXITCODE -ne 0) { throw "failed command: $($Action.ToString().Trim()) (exit code $LASTEXITCODE)" }
+}
+
+try {
+    $ErrorActionPreference = 'Stop'
+    Invoke-Step { pyenv install $pyVer }
+    Invoke-Step { pyenv local $pyVer }
+    Invoke-Step { pyenv exec python -m venv .venv }
+    Invoke-Step { . .\\.venv\\Scripts\\Activate.ps1 }
+    Invoke-Step { python -m pip install --upgrade pip setuptools wheel }
+    Invoke-Step { pip install -r requirements.txt }
+    Write-Host "success creating .venv"
+}
+catch {
+    Write-Host "failure creating .venv"
+    Write-Host $_.Exception.Message
+}
+finally {
+    Remove-Variable pyVer -ErrorAction SilentlyContinue
+    Remove-Item function:Invoke-Step -ErrorAction SilentlyContinue
+}
+```
+
+# Verifying failure output
+
+Two quick ways to trigger and inspect failure output:
+
+**Missing `requirements.txt`** — run the script in a directory without one:
+```powershell
+failure creating .venv
+failed command: pip install -r requirements.txt (exit code 1)
+```
+
+**Bad Python version** — set `$pyVer = "42.0.0"`:
+```powershell
+:: [Info] ::  Mirror: https://www.python.org/ftp/python
+pyenv-install: definition not found: 42.0.0
+
+See all available versions with `pyenv install --list'.
+failure creating .venv
+failed command:  pyenv install $pyVer  (exit code 1)
+```

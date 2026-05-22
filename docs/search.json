@@ -1,5 +1,12 @@
 [
   {
+    "objectID": "snippets/2026-05-22-python_venv_powershell/index.html",
+    "href": "snippets/2026-05-22-python_venv_powershell/index.html",
+    "title": "Create a Python .venv on Windows",
+    "section": "",
+    "text": "I use this script whenever I set up a new project on Windows. It pins the Python version with pyenv, creates the .venv, and installs requirements.txt in one go — and it fails loudly with the exact step and exit code if anything goes wrong.\n\nList available Python versions\npyenv install --list\n\n\nThe script\nCopy the script and run it from the project directory that contains requirements.txt. Adjust $pyVer to the Python version you want.\nPossible outcomes:\n\nSuccess: prints success creating .venv and leaves the virtualenv activated.\nFailure: prints failure creating .venv followed by the failing step and its exit code (e.g. failed command: pip install -r requirements.txt (exit code 1)).\n\n$pyVer = \"3.13.8\"\nfunction Invoke-Step {\n    param([scriptblock]$Action)\n    & $Action\n    if ($LASTEXITCODE -ne 0) { throw \"failed command: $($Action.ToString().Trim()) (exit code $LASTEXITCODE)\" }\n}\n\ntry {\n    $ErrorActionPreference = 'Stop'\n    Invoke-Step { pyenv install $pyVer }\n    Invoke-Step { pyenv local $pyVer }\n    Invoke-Step { pyenv exec python -m venv .venv }\n    Invoke-Step { . .\\\\.venv\\\\Scripts\\\\Activate.ps1 }\n    Invoke-Step { python -m pip install --upgrade pip setuptools wheel }\n    Invoke-Step { pip install -r requirements.txt }\n    Write-Host \"success creating .venv\"\n}\ncatch {\n    Write-Host \"failure creating .venv\"\n    Write-Host $_.Exception.Message\n}\nfinally {\n    Remove-Variable pyVer -ErrorAction SilentlyContinue\n    Remove-Item function:Invoke-Step -ErrorAction SilentlyContinue\n}\n\n\nVerifying failure output\nTwo quick ways to trigger and inspect failure output:\nMissing requirements.txt — run the script in a directory without one:\nfailure creating .venv\nfailed command: pip install -r requirements.txt (exit code 1)\nBad Python version — set $pyVer = \"42.0.0\":\n:: [Info] ::  Mirror: https://www.python.org/ftp/python\npyenv-install: definition not found: 42.0.0\n\nSee all available versions with `pyenv install --list'.\nfailure creating .venv\nfailed command:  pyenv install $pyVer  (exit code 1)"
+  },
+  {
     "objectID": "privacy.html",
     "href": "privacy.html",
     "title": "Privacy Policy",
@@ -47,167 +54,6 @@
     "title": "Privacy Policy",
     "section": "Changes to this policy",
     "text": "Changes to this policy\nI may update this privacy policy from time to time. Changes will be reflected by the “last updated” date at the top of this page."
-  },
-  {
-    "objectID": "disclaimer.html",
-    "href": "disclaimer.html",
-    "title": "Disclaimer",
-    "section": "",
-    "text": "Opinions expressed on this site are the author’s own in his personal capacity. They do not reflect the views of any organisation or company he is associated with, including any current or former employer.\nThe content on this site is provided for informational purposes only and does not constitute professional advice. While I make reasonable efforts to ensure accuracy, I make no warranties or representations regarding the completeness, accuracy, or reliability of any information presented here.\nUse of any information on this site is at your own risk. I accept no liability for any loss or damage arising from reliance on the content of this site."
-  },
-  {
-    "objectID": "blog.html",
-    "href": "blog.html",
-    "title": "Blog",
-    "section": "",
-    "text": "Security upgrades on my Node.js, npm and Azurite\n\n\n\nnpm\n\nnode.js\n\nazurite\n\nsecurity-update\n\nwindows\n\n\n\nA Fireship video sent me down a rabbit hole — turns out my Node.js had CVEs and my Azurite was quietly sitting on vulnerable dependencies.\n\n\n\n\n\nMay 19, 2026\n\n\n\n\n\nNo matching items"
-  },
-  {
-    "objectID": "about.html",
-    "href": "about.html",
-    "title": "About",
-    "section": "",
-    "text": "I am an IT professional with 12 years of experience. Over the last five years, I have specialised in delivering data engineering and analytics solutions from tech lead and project management positions.\nMy work covers the full scope of a data platform — from lakehouse and warehouse design on the cloud, through pipeline build, run, and delivery (CI/CD), monitoring, and serving data with query engines, BI, and APIs.\nI am currently building expertise in Microsoft Azure to deliver data engineering and analytics solutions."
-  },
-  {
-    "objectID": "about.html#competences-and-industries",
-    "href": "about.html#competences-and-industries",
-    "title": "About",
-    "section": "Competences and Industries",
-    "text": "Competences and Industries\n\n\n\n\n\nCompetences\n\n\n\n\nData Engineering\n\n\nData Analytics\n\n\nIT Project & Product Management\n\n\n\n\n\n\n\n\n\nIndustries\n\n\n\n\nLogistics\n\n\nMarket and Corporate Finance\n\n\nOil and Gas, Retail"
-  },
-  {
-    "objectID": "about.html#technical-skills",
-    "href": "about.html#technical-skills",
-    "title": "About",
-    "section": "Technical Skills",
-    "text": "Technical Skills\n\n\n\n\n\n\n\nCategory\nTechnologies\n\n\n\n\nLanguages\nSQL, Python (Polars, Pandas, PyArrow, Hamilton, Scikit-learn, Seaborn …), PySpark\n\n\nAzure\nMicrosoft Fabric Lakehouse/Warehouse/Real-Time, Azure Functions\n\n\nQuery/compute engines\nSpark, Dremio\n\n\nDatabases\nTeradata, Microsoft SQL Server, Oracle DB, PostgreSQL, Elasticsearch\n\n\nCloud Storage\nS3-compatible (Outscale OOS, Google Cloud Storage), Azure Blob Storage\n\n\nData format\nParquet, Apache Iceberg, Delta Lake, JSON, YAML, XML …\n\n\nOrchestration\nApache Airflow, Control-M\n\n\nInfrastructure and CI/CD\nGitLab CI/CD, Kubernetes, API (Flask, OpenAPI)\n\n\nDataViz & BI\nApache Superset, MicroStrategy, SAP BI\n\n\nMonitoring\nGrafana\n\n\nAI-powered code editor\nCursor\n\n\nProject management & Documentation\nJira, GitHub Projects, SharePoint, Backstage TechDocs, PowerPoint"
-  },
-  {
-    "objectID": "about.html#expatriation-period-consulting-upskilling",
-    "href": "about.html#expatriation-period-consulting-upskilling",
-    "title": "About",
-    "section": "Expatriation Period, Consulting & Upskilling",
-    "text": "Expatriation Period, Consulting & Upskilling\nBangkok, Thailand (Jul 2025 – present)\nRelocated to Thailand. Balancing freelance business and IT consulting with targeted upskilling in Microsoft Azure Fabric to deepen data engineering expertise.\n\nBusiness/IT Consulting\n\nCeramics shop launch (@atelierchezdede): Built full launch blueprint (positioning, product range, customer journeys), 2 regulatory registers, and financial projections (P&L + cash flow). Tracked via Kanban with weekly follow-ups.\nOdoo ERP advisory (B&T General): Audited an Odoo Online rollout for a Thai transportation firm. Delivered module/reporting customisation spikes, UAT methodology, migration strategy, and actionable recommendations to help delivery.\n\nUpskilling\n\nEarned 3 Microsoft certifications: Azure fundamentals (AZ-900 and DP-900), Fabric Data Engineer Associate (DP-700).\nBuilding this website with Quarto, GitHub Pages, and Cursor for AI-accelerated development.\nEnd-to-end Azure-based data analytics project (in-progress)."
-  },
-  {
-    "objectID": "about.html#professional-experience",
-    "href": "about.html#professional-experience",
-    "title": "About",
-    "section": "Professional Experience",
-    "text": "Professional Experience\n\nIT Project Manager / Lead Data Engineer — GeoPost SA\nIssy-les-Moulineaux, France (Oct 2019 – Jun 2025)\nDesigned and delivered a cloud data lakehouse serving GeoPost’s business units, external customers, and data scientists — from requirements analysis and architecture through production deployment. Delivered 12 live use cases across BI reporting, data science, and real-time applications calling APIs.\nTechnicals\n- Deployed medallion architecture (bronze/silver/gold) using Python, Apache Spark, and Dremio.\n- Processed +50GB/day of structured and semi-structured data (parquet, json) through micro-batch and batch ETL pipelines.\n- Managed cross-cloud storage and compute operations on Outscale and Google Cloud.\n- In-depth contribution to operations of Dremio (semantic layer design, query performance, upgrades, data governance).\nMonitoring and security\n- Optimised compute costs of Kubernetes clusters running the data platform and cloud storage.\n- Assessed and managed security and data governance of the lakehouse, implemented GDPR data access policies.\nProject management\n- Owned strategic roadmap and stakeholder management across C-suite (CTO/CIO) and operational teams; built and led a team of 3 data engineers using Agile/Scrum methodology.\n- Scaled project from zero-budget R&D initiative to a plus €500K/year budget project.\n\n\nData Scientist — EDF and Synechron\nParis, France (Nov 2018 – Aug 2019)\nEDF - Collected transactional data from Murex, performed data analysis and visualisation to detect Forex transaction patterns and anomalies for cost reduction opportunities. - Presented results to Treasury & Trading management.\nSynechron - Engineered NLP models for forex currency sentiment analysis, text classification, and text summarisation for a FinTech client. - Automated web scraping and collection of financial data and articles.\n\n\nBusiness Analyst, Developer & Support — EDF and BNPP AM\nParis, France (May 2015 – Nov 2018)\n\nGathered business requirements and delivered functional/technical evolutions for financial trading and asset management systems (Murex, Tracker).\nProvided application support for front-to-back-office users.\n\n\n\nRetail Automation Analyst & Developer — EG Group\nCergy, France (Jun 2013 – May 2015)\nProvided support for POS-BOS-HOS applications across 300+ petrol stations; automated data quality checks and anomaly detection."
-  },
-  {
-    "objectID": "about.html#certifications",
-    "href": "about.html#certifications",
-    "title": "About",
-    "section": "Certifications",
-    "text": "Certifications\nCloud & Data Engineering\n2026: Fabric Data Engineer Associate (DP-700) — Microsoft\n2025: Azure Fundamentals (AZ-900), Azure Data Fundamentals (DP-900) — Microsoft\nProject/Product Management\n2024: PRINCE2 Foundation (6th Edition) — PeopleCert\n2024: Professional Scrum Product Owner I (PSPO I) — Scrum.org\nML & Artificial Intelligence\n2019: Microsoft Professional Program for Artificial Intelligence — Microsoft\nFinance\n2014-2018: Chartered Market Technician (CMT) Program, passed Level III\n2016: Chartered Financial Analyst (CFA) Program, passed Level I"
-  },
-  {
-    "objectID": "about.html#education",
-    "href": "about.html#education",
-    "title": "About",
-    "section": "Education",
-    "text": "Education\n2010-2011: ’MSc Business Analysis and Consulting`, University of Strathclyde, Glasgow (UK)\n2008-2010: BA/BA(Hons) Business Management with Economics, Edinburgh Napier University (UK)\n2006-2009: Licence in Economics and Management, Université Sorbonne Paris Nord (France)"
-  },
-  {
-    "objectID": "about.html#languages",
-    "href": "about.html#languages",
-    "title": "About",
-    "section": "Languages",
-    "text": "Languages\nFrench (native), English (full professional proficiency)."
-  },
-  {
-    "objectID": "about.html#location",
-    "href": "about.html#location",
-    "title": "About",
-    "section": "Location",
-    "text": "Location\nBased in Thailand - on-site, hybrid, full remote."
-  },
-  {
-    "objectID": "about.html#download-cv",
-    "href": "about.html#download-cv",
-    "title": "About",
-    "section": "Download CV",
-    "text": "Download CV\n\n  \n    \n    PDF formatted CV"
-  },
-  {
-    "objectID": "about.html#contact",
-    "href": "about.html#contact",
-    "title": "About",
-    "section": "Contact",
-    "text": "Contact\n\n  \n    \n    LinkedIn\n  \n  \n    \n    Email"
-  },
-  {
-    "objectID": "corrections.html",
-    "href": "corrections.html",
-    "title": "Corrections Policy",
-    "section": "",
-    "text": "I aim to keep what I publish accurate. This page describes how I handle corrections and updates.\nLast updated: 19 May 2026"
-  },
-  {
-    "objectID": "corrections.html#corrections",
-    "href": "corrections.html#corrections",
-    "title": "Corrections Policy",
-    "section": "Corrections",
-    "text": "Corrections\nWhen a factual error is found, I correct it. Material errors — those that affect meaning or conclusions — get a note on the post stating what changed and when. Typos, broken links, and formatting fixes are made without a separate notice."
-  },
-  {
-    "objectID": "corrections.html#updates",
-    "href": "corrections.html#updates",
-    "title": "Corrections Policy",
-    "section": "Updates",
-    "text": "Updates\nPosts may be updated after publication for new information or clarity. Substantive changes are reflected in the post’s last-modified date where applicable."
-  },
-  {
-    "objectID": "corrections.html#opinion-and-analysis",
-    "href": "corrections.html#opinion-and-analysis",
-    "title": "Corrections Policy",
-    "section": "Opinion and analysis",
-    "text": "Opinion and analysis\nMuch of the content on this site represents my personal opinion, analysis, or commentary. I aim to clearly distinguish between factual claims and opinion. My disclaimer applies to all content on this site."
-  },
-  {
-    "objectID": "corrections.html#reporting-errors",
-    "href": "corrections.html#reporting-errors",
-    "title": "Corrections Policy",
-    "section": "Reporting errors",
-    "text": "Reporting errors\nIf you spot a factual error, email alexandre.cagnon.work@tuta.com with:\n\nthe page URL\nwhat seems wrong\na source for the correct information, if you have one\n\nI review reports promptly."
-  },
-  {
-    "objectID": "corrections.html#scope",
-    "href": "corrections.html#scope",
-    "title": "Corrections Policy",
-    "section": "Scope",
-    "text": "Scope\nThis policy applies to content on alexandre-cagnon.com, not to external sites I link to."
-  },
-  {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "Home",
-    "section": "",
-    "text": "Alexandre Cagnon\n\n\nIT professional with 12 years of experience specialised in delivering performant cloud data engineering and analytics solutions.\n\n\n  \n    \n    LinkedIn\n  \n  \n    \n    Email\n  \n  \n    \n    CV"
-  },
-  {
-    "objectID": "index.html#bio",
-    "href": "index.html#bio",
-    "title": "Home",
-    "section": "Bio",
-    "text": "Bio\nI studied economics and management in a double degree between Edinburgh Napier University and Universite Sorbonne Paris Nord, then completed an MSc in Business Analysis and Consulting at the University of Strathclyde in Glasgow, where I was trained in operational research and cognitive mapping methods.\nMy path into IT and data started in a university library in Paris, where I stumbled on technical analysis of financial markets. The idea that recurring patterns in price data could reflect herd behaviour — and that those patterns could be modelled — stuck with me. It connected with a teenage fascination for Isaac Asimov’s psychohistory: the notion that large-scale human behaviour might be understood and influenced using data modelling. I started using a charting software (MetaStock) but quickly felt limited by it, and decided to learn coding so I could work with raw data on my own terms.\nOver twelve years I moved from business analysis and application support into data science, then into building and running a cloud data platform. Most recently I led a data engineering team at GeoPost, designing and operating a lakehouse on open-source technologies. I am now deepening my expertise in Microsoft Azure, AI driven development and project management."
-  },
-  {
-    "objectID": "index.html#interests",
-    "href": "index.html#interests",
-    "title": "Home",
-    "section": "Interests",
-    "text": "Interests\nOutside of work, I read a lot of science fiction and fantasy. I actively trade equity and index markets on weekly and monthly timeframes, combining semi-automated signals with visual chart analysis — a continuation of the curiosity that got me into data in the first place. I apply cognitive mapping to both professional problems and personal thinking, a habit that started at Strathclyde and never stopped. When I can, I hike — the Pyrenees in southern France are a favourite."
-  },
-  {
-    "objectID": "index.html#blog",
-    "href": "index.html#blog",
-    "title": "Home",
-    "section": "Blog",
-    "text": "Blog\nOn anything I find interesting to explore and share.\nOpen the blog →"
   },
   {
     "objectID": "posts/2026-05-18-nodejs-npm-security-update-windows/index.html",
@@ -292,5 +138,180 @@
     "title": "Security upgrades on my Node.js, npm and Azurite",
     "section": "Running npm audit",
     "text": "Running npm audit\n\nFirst pass: everything\nC:\\Users\\xxx\\AppData\\Roaming\\npm\\node_modules\\azurite&gt;npm audit --no-package-lock\n# npm audit report\n\n[...]\n\n56 vulnerabilities (10 moderate, 8 high, 38 critical)\n\nTo address issues that do not require attention, run:\n  npm audit fix\n\nTo address all issues possible (including breaking changes), run:\n  npm audit fix --force\n\nSome issues need review, and may require choosing\na different dependency.\n38 critical. That can’t be so bad, after all it’s a Microsoft-maintained emulator that thousands of people use daily, which means either the world is on fire, or — more likely — npm audit is over-counting in some ways.\nThere’s a catch: need to filter out dev dependencies to get to what actually matters at runtime.\n\n\nSecond pass: runtime only\nC:\\Users\\xxx\\AppData\\Roaming\\npm\\node_modules\\azurite&gt;npm audit --no-package-lock --omit=dev\n# npm audit report\n\n[...]\n\n10 vulnerabilities (6 moderate, 4 high)\n\nTo address issues that do not require attention, run:\n  npm audit fix\n\nTo address all issues (including breaking changes), run:\n  npm audit fix --force\n\nHigh severity vulnerabilities\n\n\n\n\n\n\n\n\nPackage\nVulnerability Summary\nFix Available\n\n\n\n\nlodash\nCode Injection via _.template; Prototype Pollution via _.unset/_.omit\nnpm audit fix\n\n\npath-to-regexp\nReDoS via multiple route parameters\nnpm audit fix\n\n\naxios\n15+ issues: SSRF, CSRF, Credential Leakage, No_Proxy Bypass, Prototype Pollution, DoS, Metadata Exfiltration\nnpm audit fix –force\n\n\n\n\n\nModerate severity vulnerabilities\n\n\n\n\n\n\n\n\nPackage\nVulnerability Summary\nFix Available\n\n\n\n\nbrace-expansion\nZero-step sequence → process hang & memory exhaustion (ReDoS)\nnpm audit fix\n\n\nfollow-redirects\nLeaks Custom Auth Headers to Cross-Domain Redirect Targets\nnpm audit fix\n\n\n@azure/identity\nElevation of Privilege (Azure Identity & MSAL)\nnpm audit fix –force\n\n\ntough-cookie\nPrototype Pollution\nnpm audit fix –force\n\n\nxml2js\nPrototype Pollution\nnpm audit fix –force\n\n\n\n\n\n\nUnderstanding the blast radius\nLet’s take 2 examples to illustrate the use of the package dependency tree before fixing any package.\nExample 1: Simple case The package brace-expansion is only in 1 copy in the azurite dependency tree. The blast radius in case of vulnerabilities and fix is relatively limited. Running a npm audit fix will likely be without issues.\nC:\\Users\\xxx\\AppData\\Roaming\\npm\\node_modules\\azurite&gt;npm ls brace-expansion\nazurite@3.35.0 C:\\Users\\xxx\\AppData\\Roaming\\npm\\node_modules\\azurite\n`-- rimraf@3.0.2\n  `-- glob@7.2.3\n    `-- minimatch@3.1.5\n      `-- brace-expansion@1.1.12\nExample 2: Multiple copies case\nC:\\Users\\xxx\\AppData\\Roaming\\npm\\node_modules\\azurite&gt;npm ls follow-redirects\nazurite@3.35.0 C:\\Users\\xxx\\AppData\\Roaming\\npm\\node_modules\\azurite\n+-- @azure/ms-rest-js@1.11.2\n| `-- axios@0.21.4\n|   `-- follow-redirects@1.15.11 deduped\n`-- axios@0.27.2\n  `-- follow-redirects@1.15.11\nThe axios package is in 2 verisons and based on the same follow-redirects package. An issue with the follow-redirects package will have a higher blast radius in case of vulnerability and fix issues. Implementation of a fix could also be more complex due to more applications being impacted. In this case, follow-redirects is a transitive dependency can easily be updated with a npm audit fix.\n\n\nTo fix or not to fix\nGitHub issue #2500 has been tracking these vulnerabilities for a while with no ETA. The maintainers are presumably making a risk call: fix cost vs. actual exposure. Fair enough — I have to make the same call for my system.\n\n\nThe fix plan\nNon-breaking fix: covers 2/3 of the high-severity issues and 2/5 of the moderates. Low risk, clear win.\nBreaking fix (--force): would tackle the rest, but risks silently breaking Azurite. My usage is purely local — with appropriate host 127.0.0.1 and port 10000, no production data, no risky network exposure. The risk of a broken emulator outweighs the marginal security gain. I’ll revisit when the maintainers ship a proper fix (Cf. set a reminder in my calendar).\n\n\nApplying the safe fixes\nIn my context, let’s use a minimal sanity check test before and after applying the audit fix, no sandboxing — KISS.\nAzurite run test — successful\nC:\\Users\\xxx&gt;azurite --blobHost 127.0.0.1 --blobPort 10000\nAzurite Blob service is starting at http://127.0.0.1:10000\nAzurite Blob service is successfully listening at http://127.0.0.1:10000\nAzurite Queue service is starting at http://127.0.0.1:10001\nAzurite Queue service is successfully listening at http://127.0.0.1:10001\nAzurite Table service is starting at http://127.0.0.1:10002\nAzurite Table service is successfully listening at http://127.0.0.1:10002\n[CTRL-C to stop Azurite]\nAzurite Blob service is closing...\nAzurite Queue service is closing...\nAzurite Table service is closing...\nAzurite Table service successfully closed\nAzurite Blob service successfully closed\nAzurite Queue service successfully closed\nVersions of packages before audit fix\nC:\\Users\\xxx\\AppData\\Roaming\\npm\\node_modules\\azurite&gt;npm ls lodash\nazurite@3.35.0 C:\\Users\\xxx\\AppData\\Roaming\\npm\\node_modules\\azurite\n`-- sequelize@6.37.8\n  `-- lodash@4.17.23\n\n[...]\n\n\n\nPackage\nVersion\n\n\n\n\nlodash\n4.17.23\n\n\npath-to-regexp\n0.1.12\n\n\nbrace-expansion\n1.1.12\n\n\nfollow-redirects\n1.15.11\n\n\n\nApply audit fix\nAzurite being a global package on my system, the npm audit fix command cannot be used (adding a lock file as in a local Azurite package is not a good practice). So npm install -g azurite@latest is used instead.\nC:\\&gt;npm install -g azurite@latest\n\n[npm warn deprecated messages...]\n\nremoved 5 packages, and changed 370 packages in 11s\n\nC:\\&gt;azurite --version\n3.35.0\nChecking non-breaking fix success\nC:\\Users\\xxx\\AppData\\Roaming\\npm\\node_modules\\azurite&gt;npm ls lodash\nazurite@3.35.0 C:\\Users\\xxx\\AppData\\Roaming\\npm\\node_modules\\azurite\n`-- sequelize@6.37.8\n  `-- lodash@4.18.1\n\n[...]\n\n\n\nPackage\nVersion Before Update\nVersion After Update\n\n\n\n\nlodash\n4.17.23\n4.18.1\n\n\npath-to-regexp\n0.1.12\n0.1.13\n\n\nbrace-expansion\n1.1.12\n1.1.14\n\n\nfollow-redirects\n1.15.11\n1.16.0\n\n\n\nAll 4 packages bumped to patched versions, and the associated vulnerabilities disappeared from the audit report. The breaking-fix issues remain, as expected.\nC:\\Users\\xxx\\AppData\\Roaming\\npm\\node_modules\\azurite&gt;npm audit --no-package-lock --omit=dev\n# npm audit report\n\n@azure/identity  &lt;4.2.1\nSeverity: moderate\n[...]\n\naxios  &lt;=0.31.0\nSeverity: high\n[...]\n\ntough-cookie  &lt;4.1.3\nSeverity: moderate\n[...]\n\nxml2js  &lt;0.5.0\nSeverity: moderate\n[...]\n\n6 vulnerabilities (4 moderate, 2 high)\n\nTo address all issues (including breaking changes), run:\n  npm audit fix --force\nAzurite run test — successful\nC:\\Users\\xxx&gt;azurite --blobHost 127.0.0.1 --blobPort 10000\nAzurite Blob service is starting at http://127.0.0.1:10000\nAzurite Blob service is successfully listening at http://127.0.0.1:10000\nAzurite Queue service is starting at http://127.0.0.1:10001\nAzurite Queue service is successfully listening at http://127.0.0.1:10001\nAzurite Table service is starting at http://127.0.0.1:10002\nAzurite Table service is successfully listening at http://127.0.0.1:10002\nAzurite Blob service is closing...\nAzurite Queue service is closing...\nAzurite Table service is closing...\nAzurite Table service successfully closed\nAzurite Blob service successfully closed\nAzurite Queue service successfully closed"
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Home",
+    "section": "",
+    "text": "Alexandre Cagnon\n\n\nIT professional with 12 years of experience specialised in delivering performant cloud data engineering and analytics solutions.\n\n\n  \n    \n    LinkedIn\n  \n  \n    \n    Email\n  \n  \n    \n    CV"
+  },
+  {
+    "objectID": "index.html#bio",
+    "href": "index.html#bio",
+    "title": "Home",
+    "section": "Bio",
+    "text": "Bio\nI studied economics and management in a double degree between Edinburgh Napier University and Universite Sorbonne Paris Nord, then completed an MSc in Business Analysis and Consulting at the University of Strathclyde in Glasgow, where I was trained in operational research and cognitive mapping methods.\nMy path into IT and data started in a university library in Paris, where I stumbled on technical analysis of financial markets. The idea that recurring patterns in price data could reflect herd behaviour — and that those patterns could be modelled — stuck with me. It connected with a teenage fascination for Isaac Asimov’s psychohistory: the notion that large-scale human behaviour might be understood and influenced using data modelling. I started using a charting software (MetaStock) but quickly felt limited by it, and decided to learn coding so I could work with raw data on my own terms.\nOver twelve years I moved from business analysis and application support into data science, then into building and running a cloud data platform. Most recently I led a data engineering team at GeoPost, designing and operating a lakehouse on open-source technologies. I am now deepening my expertise in Microsoft Azure, AI driven development and project management."
+  },
+  {
+    "objectID": "index.html#interests",
+    "href": "index.html#interests",
+    "title": "Home",
+    "section": "Interests",
+    "text": "Interests\nOutside of work, I read a lot of science fiction and fantasy. I actively trade equity and index markets on weekly and monthly timeframes, combining semi-automated signals with visual chart analysis — a continuation of the curiosity that got me into data in the first place. I apply cognitive mapping to both professional problems and personal thinking, a habit that started at Strathclyde and never stopped. When I can, I hike — the Pyrenees in southern France are a favourite."
+  },
+  {
+    "objectID": "index.html#blog",
+    "href": "index.html#blog",
+    "title": "Home",
+    "section": "Blog",
+    "text": "Blog\nOn anything I find interesting to explore and share.\nOpen the blog →"
+  },
+  {
+    "objectID": "index.html#snippets",
+    "href": "index.html#snippets",
+    "title": "Home",
+    "section": "Snippets",
+    "text": "Snippets\nShort reusable code snippets and technical notes — commands, configuration fragments, and small how-tos.\nOpen snippets →"
+  },
+  {
+    "objectID": "corrections.html",
+    "href": "corrections.html",
+    "title": "Corrections Policy",
+    "section": "",
+    "text": "I aim to keep what I publish accurate. This page describes how I handle corrections and updates.\nLast updated: 19 May 2026"
+  },
+  {
+    "objectID": "corrections.html#corrections",
+    "href": "corrections.html#corrections",
+    "title": "Corrections Policy",
+    "section": "Corrections",
+    "text": "Corrections\nWhen a factual error is found, I correct it. Material errors — those that affect meaning or conclusions — get a note on the post stating what changed and when. Typos, broken links, and formatting fixes are made without a separate notice."
+  },
+  {
+    "objectID": "corrections.html#updates",
+    "href": "corrections.html#updates",
+    "title": "Corrections Policy",
+    "section": "Updates",
+    "text": "Updates\nPosts may be updated after publication for new information or clarity. Substantive changes are reflected in the post’s last-modified date where applicable."
+  },
+  {
+    "objectID": "corrections.html#opinion-and-analysis",
+    "href": "corrections.html#opinion-and-analysis",
+    "title": "Corrections Policy",
+    "section": "Opinion and analysis",
+    "text": "Opinion and analysis\nMuch of the content on this site represents my personal opinion, analysis, or commentary. I aim to clearly distinguish between factual claims and opinion. My disclaimer applies to all content on this site."
+  },
+  {
+    "objectID": "corrections.html#reporting-errors",
+    "href": "corrections.html#reporting-errors",
+    "title": "Corrections Policy",
+    "section": "Reporting errors",
+    "text": "Reporting errors\nIf you spot a factual error, email alexandre.cagnon.work@tuta.com with:\n\nthe page URL\nwhat seems wrong\na source for the correct information, if you have one\n\nI review reports promptly."
+  },
+  {
+    "objectID": "corrections.html#scope",
+    "href": "corrections.html#scope",
+    "title": "Corrections Policy",
+    "section": "Scope",
+    "text": "Scope\nThis policy applies to content on alexandre-cagnon.com, not to external sites I link to."
+  },
+  {
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "About",
+    "section": "",
+    "text": "I am an IT professional with 12 years of experience. Over the last five years, I have specialised in delivering data engineering and analytics solutions from tech lead and project management positions.\nMy work covers the full scope of a data platform — from lakehouse and warehouse design on the cloud, through pipeline build, run, and delivery (CI/CD), monitoring, and serving data with query engines, BI, and APIs.\nI am currently building expertise in Microsoft Azure to deliver data engineering and analytics solutions."
+  },
+  {
+    "objectID": "about.html#competences-and-industries",
+    "href": "about.html#competences-and-industries",
+    "title": "About",
+    "section": "Competences and Industries",
+    "text": "Competences and Industries\n\n\n\n\n\nCompetences\n\n\n\n\nData Engineering\n\n\nData Analytics\n\n\nIT Project & Product Management\n\n\n\n\n\n\n\n\n\nIndustries\n\n\n\n\nLogistics\n\n\nMarket and Corporate Finance\n\n\nOil and Gas, Retail"
+  },
+  {
+    "objectID": "about.html#technical-skills",
+    "href": "about.html#technical-skills",
+    "title": "About",
+    "section": "Technical Skills",
+    "text": "Technical Skills\n\n\n\n\n\n\n\nCategory\nTechnologies\n\n\n\n\nLanguages\nSQL, Python (Polars, Pandas, PyArrow, Hamilton, Scikit-learn, Seaborn …), PySpark\n\n\nAzure\nMicrosoft Fabric Lakehouse/Warehouse/Real-Time, Azure Functions\n\n\nQuery/compute engines\nSpark, Dremio\n\n\nDatabases\nTeradata, Microsoft SQL Server, Oracle DB, PostgreSQL, Elasticsearch\n\n\nCloud Storage\nS3-compatible (Outscale OOS, Google Cloud Storage), Azure Blob Storage\n\n\nData format\nParquet, Apache Iceberg, Delta Lake, JSON, YAML, XML …\n\n\nOrchestration\nApache Airflow, Control-M\n\n\nInfrastructure and CI/CD\nGitLab CI/CD, Kubernetes, API (Flask, OpenAPI)\n\n\nDataViz & BI\nApache Superset, MicroStrategy, SAP BI\n\n\nMonitoring\nGrafana\n\n\nAI-powered code editor\nCursor\n\n\nProject management & Documentation\nJira, GitHub Projects, SharePoint, Backstage TechDocs, PowerPoint"
+  },
+  {
+    "objectID": "about.html#expatriation-period-consulting-upskilling",
+    "href": "about.html#expatriation-period-consulting-upskilling",
+    "title": "About",
+    "section": "Expatriation Period, Consulting & Upskilling",
+    "text": "Expatriation Period, Consulting & Upskilling\nBangkok, Thailand (Jul 2025 – present)\nRelocated to Thailand. Balancing freelance business and IT consulting with targeted upskilling in Microsoft Azure Fabric to deepen data engineering expertise.\n\nBusiness/IT Consulting\n\nCeramics shop launch (@atelierchezdede): Built full launch blueprint (positioning, product range, customer journeys), 2 regulatory registers, and financial projections (P&L + cash flow). Tracked via Kanban with weekly follow-ups.\nOdoo ERP advisory (B&T General): Audited an Odoo Online rollout for a Thai transportation firm. Delivered module/reporting customisation spikes, UAT methodology, migration strategy, and actionable recommendations to help delivery.\n\nUpskilling\n\nEarned 3 Microsoft certifications: Azure fundamentals (AZ-900 and DP-900), Fabric Data Engineer Associate (DP-700).\nBuilding this website with Quarto, GitHub Pages, and Cursor for AI-accelerated development.\nEnd-to-end Azure-based data analytics project (in-progress)."
+  },
+  {
+    "objectID": "about.html#professional-experience",
+    "href": "about.html#professional-experience",
+    "title": "About",
+    "section": "Professional Experience",
+    "text": "Professional Experience\n\nIT Project Manager / Lead Data Engineer — GeoPost SA\nIssy-les-Moulineaux, France (Oct 2019 – Jun 2025)\nDesigned and delivered a cloud data lakehouse serving GeoPost’s business units, external customers, and data scientists — from requirements analysis and architecture through production deployment. Delivered 12 live use cases across BI reporting, data science, and real-time applications calling APIs.\nTechnicals\n- Deployed medallion architecture (bronze/silver/gold) using Python, Apache Spark, and Dremio.\n- Processed +50GB/day of structured and semi-structured data (parquet, json) through micro-batch and batch ETL pipelines.\n- Managed cross-cloud storage and compute operations on Outscale and Google Cloud.\n- In-depth contribution to operations of Dremio (semantic layer design, query performance, upgrades, data governance).\nMonitoring and security\n- Optimised compute costs of Kubernetes clusters running the data platform and cloud storage.\n- Assessed and managed security and data governance of the lakehouse, implemented GDPR data access policies.\nProject management\n- Owned strategic roadmap and stakeholder management across C-suite (CTO/CIO) and operational teams; built and led a team of 3 data engineers using Agile/Scrum methodology.\n- Scaled project from zero-budget R&D initiative to a plus €500K/year budget project.\n\n\nData Scientist — EDF and Synechron\nParis, France (Nov 2018 – Aug 2019)\nEDF - Collected transactional data from Murex, performed data analysis and visualisation to detect Forex transaction patterns and anomalies for cost reduction opportunities. - Presented results to Treasury & Trading management.\nSynechron - Engineered NLP models for forex currency sentiment analysis, text classification, and text summarisation for a FinTech client. - Automated web scraping and collection of financial data and articles.\n\n\nBusiness Analyst, Developer & Support — EDF and BNPP AM\nParis, France (May 2015 – Nov 2018)\n\nGathered business requirements and delivered functional/technical evolutions for financial trading and asset management systems (Murex, Tracker).\nProvided application support for front-to-back-office users.\n\n\n\nRetail Automation Analyst & Developer — EG Group\nCergy, France (Jun 2013 – May 2015)\nProvided support for POS-BOS-HOS applications across 300+ petrol stations; automated data quality checks and anomaly detection."
+  },
+  {
+    "objectID": "about.html#certifications",
+    "href": "about.html#certifications",
+    "title": "About",
+    "section": "Certifications",
+    "text": "Certifications\nCloud & Data Engineering\n2026: Fabric Data Engineer Associate (DP-700) — Microsoft\n2025: Azure Fundamentals (AZ-900), Azure Data Fundamentals (DP-900) — Microsoft\nProject/Product Management\n2024: PRINCE2 Foundation (6th Edition) — PeopleCert\n2024: Professional Scrum Product Owner I (PSPO I) — Scrum.org\nML & Artificial Intelligence\n2019: Microsoft Professional Program for Artificial Intelligence — Microsoft\nFinance\n2014-2018: Chartered Market Technician (CMT) Program, passed Level III\n2016: Chartered Financial Analyst (CFA) Program, passed Level I"
+  },
+  {
+    "objectID": "about.html#education",
+    "href": "about.html#education",
+    "title": "About",
+    "section": "Education",
+    "text": "Education\n2010-2011: ’MSc Business Analysis and Consulting`, University of Strathclyde, Glasgow (UK)\n2008-2010: BA/BA(Hons) Business Management with Economics, Edinburgh Napier University (UK)\n2006-2009: Licence in Economics and Management, Université Sorbonne Paris Nord (France)"
+  },
+  {
+    "objectID": "about.html#languages",
+    "href": "about.html#languages",
+    "title": "About",
+    "section": "Languages",
+    "text": "Languages\nFrench (native), English (full professional proficiency)."
+  },
+  {
+    "objectID": "about.html#location",
+    "href": "about.html#location",
+    "title": "About",
+    "section": "Location",
+    "text": "Location\nBased in Thailand - on-site, hybrid, full remote."
+  },
+  {
+    "objectID": "about.html#download-cv",
+    "href": "about.html#download-cv",
+    "title": "About",
+    "section": "Download CV",
+    "text": "Download CV\n\n  \n    \n    PDF formatted CV"
+  },
+  {
+    "objectID": "about.html#contact",
+    "href": "about.html#contact",
+    "title": "About",
+    "section": "Contact",
+    "text": "Contact\n\n  \n    \n    LinkedIn\n  \n  \n    \n    Email"
+  },
+  {
+    "objectID": "blog.html",
+    "href": "blog.html",
+    "title": "Blog",
+    "section": "",
+    "text": "Security upgrades on my Node.js, npm and Azurite\n\n\n\nnpm\n\nNode.js\n\nAzurite\n\nSecurity update\n\nWindows\n\n\n\nA Fireship video sent me down a rabbit hole — turns out my Node.js had CVEs and my Azurite was quietly sitting on vulnerable dependencies.\n\n\n\n\n\nMay 19, 2026\n\n\n\n\n\nNo matching items"
+  },
+  {
+    "objectID": "disclaimer.html",
+    "href": "disclaimer.html",
+    "title": "Disclaimer",
+    "section": "",
+    "text": "Opinions expressed on this site are the author’s own in his personal capacity. They do not reflect the views of any organisation or company he is associated with, including any current or former employer.\nThe content on this site is provided for informational purposes only and does not constitute professional advice. While I make reasonable efforts to ensure accuracy, I make no warranties or representations regarding the completeness, accuracy, or reliability of any information presented here.\nUse of any information on this site is at your own risk. I accept no liability for any loss or damage arising from reliance on the content of this site."
+  },
+  {
+    "objectID": "snippets.html",
+    "href": "snippets.html",
+    "title": "Snippets",
+    "section": "",
+    "text": "Short reusable code snippets and technical notes — commands, configuration fragments, and small how-tos.\n\n\n\n\n\n\n   \n    \n    \n      Order By\n      Default\n      \n        Date - Oldest\n      \n      \n        Date - Newest\n      \n      \n        Title\n      \n    \n  \n\n\n\n\n\n\nDate\n\n\n\nTitle\n\n\n\nDescription\n\n\n\n\n\n\n\n\nMay 22, 2026\n\n\nCreate a Python .venv on Windows\n\n\nRobust PowerShell script to create a Python virtual environment with pyenv.\n\n\n\n\n\n\nNo matching items"
   }
 ]

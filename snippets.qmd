@@ -1,0 +1,17 @@
+---
+title: "Snippets"
+listing:
+  contents: "snippets/**/index.qmd"
+  sort: "date desc"
+  type: table
+  fields: [date, title, description]
+  date-format: "MMM D, YYYY"
+  categories: true
+  filter-ui: false
+  page-size: 0
+format:
+  html:
+    toc: false
+---
+
+Short reusable code snippets and technical notes — commands, configuration fragments, and small how-tos.
