@@ -66,4 +66,10 @@ On anything I find interesting to explore and share.
 
 [Open the blog →](blog.qmd)
 
+## Snippets
+
+Short reusable code snippets and technical notes — commands, configuration fragments, and small how-tos.
+
+[Open snippets →](snippets.qmd)
+
 :::

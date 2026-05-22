@@ -6,9 +6,10 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="description" content="Legal disclaimer — opinions expressed are the author’s own and do not reflect the views of any affiliated organisation.">
+<meta name="dcterms.date" content="2026-05-22">
+<meta name="description" content="Robust PowerShell script to create a Python virtual environment with pyenv.">
 
-<title>Disclaimer – Alexandre Cagnon</title>
+<title>Create a Python .venv on Windows – Alexandre Cagnon</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -24,26 +25,61 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
-<script src="site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="site_libs/quarto-nav/headroom.min.js"></script>
-<script src="site_libs/clipboard/clipboard.min.js"></script>
-<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="site_libs/quarto-search/fuse.min.js"></script>
-<script src="site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="./">
-<script src="site_libs/quarto-html/quarto.js" type="module"></script>
-<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
-<script src="site_libs/quarto-html/popper.min.js"></script>
-<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="site_libs/quarto-html/anchor.min.js"></script>
-<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-845c23b38eaddc0f92fda52bfe77a8c8.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-6b423f165eeea3787de40cb4f8e821c3.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-845c23b38eaddc0f92fda52bfe77a8c8.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-6b423f165eeea3787de40cb4f8e821c3.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -82,7 +118,7 @@ ul.task-list li input[type="checkbox"] {
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
-    <a class="navbar-brand" href="./index.html">
+    <a class="navbar-brand" href="../../index.html">
     <span class="navbar-title">Alexandre Cagnon</span>
     </a>
   </div>
@@ -93,19 +129,19 @@ ul.task-list li input[type="checkbox"] {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="./index.html"> 
+    <a class="nav-link" href="../../index.html"> 
 <span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./about.html"> 
+    <a class="nav-link" href="../../about.html"> 
 <span class="menu-text">About</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./blog.html"> 
+    <a class="nav-link" href="../../blog.html"> 
 <span class="menu-text">Blog</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./snippets.html"> 
+    <a class="nav-link" href="../../snippets.html"> 
 <span class="menu-text">Snippets</span></a>
   </li>  
 </ul>
@@ -119,20 +155,33 @@ ul.task-list li input[type="checkbox"] {
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#list-available-python-versions" id="toc-list-available-python-versions" class="nav-link active" data-scroll-target="#list-available-python-versions">List available Python versions</a></li>
+  <li><a href="#the-script" id="toc-the-script" class="nav-link" data-scroll-target="#the-script">The script</a></li>
+  <li><a href="#verifying-failure-output" id="toc-verifying-failure-output" class="nav-link" data-scroll-target="#verifying-failure-output">Verifying failure output</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Disclaimer</h1>
-</div>
+<h1 class="title">Create a Python .venv on Windows</h1>
+  <div class="quarto-categories">
+    <div class="quarto-category">Python</div>
+    <div class="quarto-category">Powershell</div>
+    <div class="quarto-category">pyenv</div>
+  </div>
+  </div>
 
 <div>
   <div class="description">
-    Legal disclaimer — opinions expressed are the author’s own and do not reflect the views of any affiliated organisation.
+    Robust PowerShell script to create a Python virtual environment with pyenv.
   </div>
 </div>
 
@@ -140,6 +189,12 @@ ul.task-list li input[type="checkbox"] {
 <div class="quarto-title-meta">
 
     
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">May 22, 2026</p>
+    </div>
+  </div>
   
     
   </div>
@@ -149,11 +204,61 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<p>Opinions expressed on this site are the author’s own in his personal capacity. They do not reflect the views of any organisation or company he is associated with, including any current or former employer.</p>
-<p>The content on this site is provided for informational purposes only and does not constitute professional advice. While I make reasonable efforts to ensure accuracy, I make no warranties or representations regarding the completeness, accuracy, or reliability of any information presented here.</p>
-<p>Use of any information on this site is at your own risk. I accept no liability for any loss or damage arising from reliance on the content of this site.</p>
+<p>I use this script whenever I set up a new project on Windows. It pins the Python version with pyenv, creates the <code>.venv</code>, and installs <code>requirements.txt</code> in one go — and it fails loudly with the exact step and exit code if anything goes wrong.</p>
+<section id="list-available-python-versions" class="level1">
+<h1>List available Python versions</h1>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode powershell code-with-copy"><code class="sourceCode powershell"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>pyenv install <span class="op">--</span>list</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="the-script" class="level1">
+<h1>The script</h1>
+<p>Copy the script and run it from the project directory that contains <code>requirements.txt</code>. Adjust <code>$pyVer</code> to the Python version you want.</p>
+<p>Possible outcomes:</p>
+<ul>
+<li><strong>Success:</strong> prints <em>success creating .venv</em> and leaves the virtualenv activated.</li>
+<li><strong>Failure:</strong> prints <em>failure creating .venv</em> followed by the failing step and its exit code (e.g.&nbsp;<code>failed command: pip install -r requirements.txt (exit code 1)</code>).</li>
+</ul>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode powershell code-with-copy"><code class="sourceCode powershell"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="va">$pyVer</span> <span class="op">=</span> <span class="st">"3.13.8"</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> Invoke-Step <span class="op">{</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">param</span><span class="op">([</span>scriptblock<span class="op">]</span><span class="va">$Action</span><span class="op">)</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="op">&amp;</span> <span class="va">$Action</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="op">(</span><span class="va">$LASTEXITCODE</span> <span class="op">-ne</span> <span class="dv">0</span><span class="op">)</span> <span class="op">{</span> <span class="cf">throw</span> <span class="st">"failed command: </span><span class="op">$(</span><span class="va">$Action</span><span class="op">.</span><span class="fu">ToString</span><span class="op">()</span><span class="st">.Trim()) (exit code </span><span class="va">$LASTEXITCODE</span><span class="st">)"</span> <span class="op">}</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="cf">try</span> <span class="op">{</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    <span class="va">$ErrorActionPreference</span> <span class="op">=</span> <span class="st">'Stop'</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    Invoke-Step <span class="op">{</span> pyenv install <span class="va">$pyVer</span> <span class="op">}</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    Invoke-Step <span class="op">{</span> pyenv local <span class="va">$pyVer</span> <span class="op">}</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    Invoke-Step <span class="op">{</span> pyenv exec python <span class="op">-</span>m venv <span class="op">.</span><span class="fu">venv</span> <span class="op">}</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    Invoke-Step <span class="op">{</span> <span class="op">.</span> <span class="op">.</span>\\<span class="op">.</span><span class="fu">venv</span>\\Scripts\\Activate<span class="op">.</span><span class="fu">ps1</span> <span class="op">}</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>    Invoke-Step <span class="op">{</span> python <span class="op">-</span>m pip install <span class="op">--</span>upgrade pip setuptools wheel <span class="op">}</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>    Invoke-Step <span class="op">{</span> pip install <span class="op">-</span>r requirements<span class="op">.</span><span class="fu">txt</span> <span class="op">}</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>    <span class="fu">Write-Host</span> <span class="st">"success creating .venv"</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a><span class="cf">catch</span> <span class="op">{</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>    <span class="fu">Write-Host</span> <span class="st">"failure creating .venv"</span></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>    <span class="fu">Write-Host</span> <span class="va">$_</span><span class="op">.</span><span class="fu">Exception</span><span class="op">.</span><span class="fu">Message</span></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a><span class="cf">finally</span> <span class="op">{</span></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>    <span class="fu">Remove-Variable</span> pyVer <span class="op">-</span>ErrorAction SilentlyContinue</span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>    <span class="fu">Remove-Item</span> function<span class="op">:</span>Invoke-Step <span class="op">-</span>ErrorAction SilentlyContinue</span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="verifying-failure-output" class="level1">
+<h1>Verifying failure output</h1>
+<p>Two quick ways to trigger and inspect failure output:</p>
+<p><strong>Missing <code>requirements.txt</code></strong> — run the script in a directory without one:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode powershell code-with-copy"><code class="sourceCode powershell"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>failure creating <span class="op">.</span><span class="fu">venv</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>failed command<span class="op">:</span> pip install <span class="op">-</span>r requirements<span class="op">.</span><span class="fu">txt</span> <span class="op">(</span><span class="cf">exit</span> code <span class="dv">1</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><strong>Bad Python version</strong> — set <code>$pyVer = "42.0.0"</code>:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode powershell code-with-copy"><code class="sourceCode powershell"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="op">::</span> <span class="op">[</span>Info<span class="op">]</span> <span class="op">::</span>  Mirror<span class="op">:</span> https<span class="op">://</span>www<span class="op">.</span><span class="fu">python</span><span class="op">.</span><span class="fu">org</span><span class="op">/</span>ftp<span class="op">/</span>python</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>pyenv-install<span class="op">:</span> definition not found<span class="op">:</span> <span class="dv">42.0</span><span class="op">.</span><span class="dv">0</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="dt">See</span> all available versions with <span class="ch">`p</span>yenv install <span class="op">--</span>list<span class="st">'.</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="st">failure creating .venv</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="st">failed command:  pyenv install $pyVer  (exit code 1)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -563,7 +668,7 @@ ul.task-list li input[type="checkbox"] {
       &nbsp;
     </div>   
     <div class="nav-footer-center">
-<p>© 2026 Alexandre Cagnon · Code under <a href="https://opensource.org/licenses/MIT">MIT</a> · Content under <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/">CC BY-NC-ND 4.0</a> · <a href=".\disclaimer.html">Disclaimer</a> · <a href=".\privacy.html">Privacy</a> · <a href=".\corrections.html">Corrections</a></p>
+<p>© 2026 Alexandre Cagnon · Code under <a href="https://opensource.org/licenses/MIT">MIT</a> · Content under <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/">CC BY-NC-ND 4.0</a> · <a href="../..\disclaimer.html">Disclaimer</a> · <a href="../..\privacy.html">Privacy</a> · <a href="../..\corrections.html">Corrections</a></p>
 </div>
     <div class="nav-footer-right">
       &nbsp;

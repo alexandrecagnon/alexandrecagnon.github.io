@@ -4,5 +4,11 @@
     "items": [
       "/posts/2026-05-18-nodejs-npm-security-update-windows/index.html"
     ]
+  },
+  {
+    "listing": "/snippets.html",
+    "items": [
+      "/snippets/2026-05-22-python_venv_powershell/index.html"
+    ]
   }
 ]
