@@ -1,14 +1,15 @@
 [
   {
-    "listing": "/blog.html",
+    "listing": "/snippets.html",
     "items": [
-      "/posts/2026-05-18-nodejs-npm-security-update-windows/index.html"
+      "/snippets/2026-05-18-find-nodejs-projects-powershell/index.html",
+      "/snippets/2026-05-22-python_venv_powershell/index.html"
     ]
   },
   {
-    "listing": "/snippets.html",
+    "listing": "/blog.html",
     "items": [
-      "/snippets/2026-05-22-python_venv_powershell/index.html"
+      "/posts/2026-05-18-nodejs-npm-security-update-windows/index.html"
     ]
   }
 ]

@@ -2,142 +2,16 @@
   {
     "objectID": "snippets/2026-05-22-python_venv_powershell/index.html",
     "href": "snippets/2026-05-22-python_venv_powershell/index.html",
-    "title": "Create a Python .venv on Windows",
+    "title": "Create a Python venv on Windows",
     "section": "",
     "text": "I use this script whenever I set up a new project on Windows. It pins the Python version with pyenv, creates the .venv, and installs requirements.txt in one go — and it fails loudly with the exact step and exit code if anything goes wrong.\n\nList available Python versions\npyenv install --list\n\n\nThe script\nCopy the script and run it from the project directory that contains requirements.txt. Adjust $pyVer to the Python version you want.\nPossible outcomes:\n\nSuccess: prints success creating .venv and leaves the virtualenv activated.\nFailure: prints failure creating .venv followed by the failing step and its exit code (e.g. failed command: pip install -r requirements.txt (exit code 1)).\n\n$pyVer = \"3.13.8\"\nfunction Invoke-Step {\n    param([scriptblock]$Action)\n    & $Action\n    if ($LASTEXITCODE -ne 0) { throw \"failed command: $($Action.ToString().Trim()) (exit code $LASTEXITCODE)\" }\n}\n\ntry {\n    $ErrorActionPreference = 'Stop'\n    Invoke-Step { pyenv install $pyVer }\n    Invoke-Step { pyenv local $pyVer }\n    Invoke-Step { pyenv exec python -m venv .venv }\n    Invoke-Step { . .\\\\.venv\\\\Scripts\\\\Activate.ps1 }\n    Invoke-Step { python -m pip install --upgrade pip setuptools wheel }\n    Invoke-Step { pip install -r requirements.txt }\n    Write-Host \"success creating .venv\"\n}\ncatch {\n    Write-Host \"failure creating .venv\"\n    Write-Host $_.Exception.Message\n}\nfinally {\n    Remove-Variable pyVer -ErrorAction SilentlyContinue\n    Remove-Item function:Invoke-Step -ErrorAction SilentlyContinue\n}\n\n\nVerifying failure output\nTwo quick ways to trigger and inspect failure output:\nMissing requirements.txt — run the script in a directory without one:\nfailure creating .venv\nfailed command: pip install -r requirements.txt (exit code 1)\nBad Python version — set $pyVer = \"42.0.0\":\n:: [Info] ::  Mirror: https://www.python.org/ftp/python\npyenv-install: definition not found: 42.0.0\n\nSee all available versions with `pyenv install --list'.\nfailure creating .venv\nfailed command:  pyenv install $pyVer  (exit code 1)"
   },
   {
-    "objectID": "privacy.html",
-    "href": "privacy.html",
-    "title": "Privacy Policy",
+    "objectID": "snippets.html",
+    "href": "snippets.html",
+    "title": "Snippets",
     "section": "",
-    "text": "Last updated: 19 May 2026\nThis privacy policy explains what data is collected when you visit alexandre.cagnon.com and how it is used."
-  },
-  {
-    "objectID": "privacy.html#hosting",
-    "href": "privacy.html#hosting",
-    "title": "Privacy Policy",
-    "section": "Hosting",
-    "text": "Hosting\nThis site is hosted on GitHub Pages. GitHub may collect technical information such as your IP address, browser type, and referring page as part of its standard server operations.\nSee GitHub’s privacy statement for details."
-  },
-  {
-    "objectID": "privacy.html#analytics-cookies",
-    "href": "privacy.html#analytics-cookies",
-    "title": "Privacy Policy",
-    "section": "Analytics & Cookies",
-    "text": "Analytics & Cookies\nThis site does not set up any first-party analytics tracking or cookies.\nGitHub may do so - see GitHub’s privacy statement for details."
-  },
-  {
-    "objectID": "privacy.html#third-party-links",
-    "href": "privacy.html#third-party-links",
-    "title": "Privacy Policy",
-    "section": "Third-party links",
-    "text": "Third-party links\nThis site contains links to external websites. I am not responsible for the privacy practices or content of those sites. I encourage you to review the privacy policies of any external site you visit."
-  },
-  {
-    "objectID": "privacy.html#international-visitors",
-    "href": "privacy.html#international-visitors",
-    "title": "Privacy Policy",
-    "section": "International visitors",
-    "text": "International visitors\nThis GitHub Pages site is operated on GitHub’s infrastructure. The exact physical server location is not publicly guaranteed as one specific place. If you are visiting from the European Economic Area or other regions with data protection laws, please be aware that your information may be transferred to and processed in the United States. By using this site, you acknowledge this transfer. I do not knowingly collect or process personal data that would be subject to GDPR, as no PII is collected."
-  },
-  {
-    "objectID": "privacy.html#contact",
-    "href": "privacy.html#contact",
-    "title": "Privacy Policy",
-    "section": "Contact",
-    "text": "Contact\nIf you have questions about this privacy policy, you can reach me at alexandre.cagnon.work@tuta.com."
-  },
-  {
-    "objectID": "privacy.html#changes-to-this-policy",
-    "href": "privacy.html#changes-to-this-policy",
-    "title": "Privacy Policy",
-    "section": "Changes to this policy",
-    "text": "Changes to this policy\nI may update this privacy policy from time to time. Changes will be reflected by the “last updated” date at the top of this page."
-  },
-  {
-    "objectID": "posts/2026-05-18-nodejs-npm-security-update-windows/index.html",
-    "href": "posts/2026-05-18-nodejs-npm-security-update-windows/index.html",
-    "title": "Security upgrades on my Node.js, npm and Azurite",
-    "section": "",
-    "text": "A few days back Fireship dropped “A single PR just hijacked the NPM registry…” - as always, educational and alarming in equal measures.\nI’d already been keeping an eye on supply chain risks after the xz/liblzma near-disaster that almost took down the internet.\nAnd the numbers back up the paranoia: Sonatype reports that “over 99% of open source malware occurred on npm”.\nSo naturally I started wondering: what about my machine?"
-  },
-  {
-    "objectID": "posts/2026-05-18-nodejs-npm-security-update-windows/index.html#what-i-was-running",
-    "href": "posts/2026-05-18-nodejs-npm-security-update-windows/index.html#what-i-was-running",
-    "title": "Security upgrades on my Node.js, npm and Azurite",
-    "section": "What I was running",
-    "text": "What I was running\nC:\\&gt;npm -v\n11.14.1\n\nC:\\&gt;node -v\nv24.14.0\nFindings:\n\nOK. npm was already on the latest version\n\nNot OK. Node.js was not latest → v24.14.1 and v24.15.0 were both available\n\nOK. npm was ahead of the Node.js‑bundled npm (e.g. v11.12.1 in Node v24.15.0) — a newer patch/minor than what ships with node.js v24.14 or v24.15"
-  },
-  {
-    "objectID": "posts/2026-05-18-nodejs-npm-security-update-windows/index.html#risk-of-node.js-v24.14.0-vs.-lts-v24.15.0",
-    "href": "posts/2026-05-18-nodejs-npm-security-update-windows/index.html#risk-of-node.js-v24.14.0-vs.-lts-v24.15.0",
-    "title": "Security upgrades on my Node.js, npm and Azurite",
-    "section": "Risk of node.js v24.14.0 vs. LTS v24.15.0 ?",
-    "text": "Risk of node.js v24.14.0 vs. LTS v24.15.0 ?\nv24.14.1 is a proper security release — 2 high CVEs, 4 medium, 2 low. That alone was enough to act.\nv24.15.0 looked even better: per Perplexity (May 18, 2026), it’s “mainly a hardening release — low-level fixes in crypto, http, tls, stream, zlib, plus refreshed bundled deps including npm and root certificates.” No breaking changes reported, so it became the target."
-  },
-  {
-    "objectID": "posts/2026-05-18-nodejs-npm-security-update-windows/index.html#why-was-node.js-outdated",
-    "href": "posts/2026-05-18-nodejs-npm-security-update-windows/index.html#why-was-node.js-outdated",
-    "title": "Security upgrades on my Node.js, npm and Azurite",
-    "section": "Why was node.js outdated?",
-    "text": "Why was node.js outdated?\nI installed Node.js from the .msi installer (Cf. default node.exe path below). Turns out the .msi installer from nodejs.org (rightfully) has no auto-update mechanism. No reminder, no update.\nC:\\&gt;where node\nC:\\Program Files\\nodejs\\node.exe"
-  },
-  {
-    "objectID": "posts/2026-05-18-nodejs-npm-security-update-windows/index.html#updating-node.js",
-    "href": "posts/2026-05-18-nodejs-npm-security-update-windows/index.html#updating-node.js",
-    "title": "Security upgrades on my Node.js, npm and Azurite",
-    "section": "Updating node.js",
-    "text": "Updating node.js\nInstalling additional tools (nvm-windows, Chocolatey…) to manage the node.js update is out of scope for this post so I’ll just run the node-v24.15.0-x64.msi from nodejs.org.\nAfter installation:\nC:\\&gt;node -v\nv24.15.0"
-  },
-  {
-    "objectID": "posts/2026-05-18-nodejs-npm-security-update-windows/index.html#global-packages",
-    "href": "posts/2026-05-18-nodejs-npm-security-update-windows/index.html#global-packages",
-    "title": "Security upgrades on my Node.js, npm and Azurite",
-    "section": "Global packages",
-    "text": "Global packages\nC:\\&gt;npm list -g\nC:\\Users\\xxx\\AppData\\Roaming\\npm\n+-- azurite@3.35.0\n`-- npm@11.14.1\n\nC:\\&gt;npm list --parseable -g --depth=0\nC:\\Users\\xxx\\AppData\\Roaming\\npm\nC:\\Users\\xxx\\AppData\\Roaming\\npm\\node_modules\\azurite\nC:\\Users\\xxx\\AppData\\Roaming\\npm\\node_modules\\npm\nI only had one global package: Azurite. Good enough for now."
-  },
-  {
-    "objectID": "posts/2026-05-18-nodejs-npm-security-update-windows/index.html#local-packages",
-    "href": "posts/2026-05-18-nodejs-npm-security-update-windows/index.html#local-packages",
-    "title": "Security upgrades on my Node.js, npm and Azurite",
-    "section": "Local packages",
-    "text": "Local packages\nThis PowerShell script is used to find all node.js projects on my machine.\nOutput:\nPS C:\\&gt; C:\\...\\find-node-projects.ps1\n=== Scanning for Node.js projects ===\nRoot path: C:\\...\\projects\n\nTotal Node.js projects found: 0\nNo local packages of node.js projects found."
-  },
-  {
-    "objectID": "posts/2026-05-18-nodejs-npm-security-update-windows/index.html#is-azurite-up-to-date",
-    "href": "posts/2026-05-18-nodejs-npm-security-update-windows/index.html#is-azurite-up-to-date",
-    "title": "Security upgrades on my Node.js, npm and Azurite",
-    "section": "Is Azurite up to date?",
-    "text": "Is Azurite up to date?\nC:\\&gt;azurite --version\n3.35.0\nIt’s the latest released version of Azurite on GitHub releases, so it’s up to date."
-  },
-  {
-    "objectID": "posts/2026-05-18-nodejs-npm-security-update-windows/index.html#compatibility-check",
-    "href": "posts/2026-05-18-nodejs-npm-security-update-windows/index.html#compatibility-check",
-    "title": "Security upgrades on my Node.js, npm and Azurite",
-    "section": "Compatibility check",
-    "text": "Compatibility check\nC:\\&gt;npm view azurite engines\n{ node: '&gt;=10.0.0', vscode: '^1.39.0' }\nSystem’s node.js is &gt;=10.0.0 so it’s compatible with Azurite."
-  },
-  {
-    "objectID": "posts/2026-05-18-nodejs-npm-security-update-windows/index.html#any-outdated-packages",
-    "href": "posts/2026-05-18-nodejs-npm-security-update-windows/index.html#any-outdated-packages",
-    "title": "Security upgrades on my Node.js, npm and Azurite",
-    "section": "Any outdated packages?",
-    "text": "Any outdated packages?\nC:\\&gt;npm outdated package check\n \nNo outdated packages found. There’s only one global package and it’s latest’ (latestlatest), so obviously up to date in this case."
-  },
-  {
-    "objectID": "posts/2026-05-18-nodejs-npm-security-update-windows/index.html#signature-verification",
-    "href": "posts/2026-05-18-nodejs-npm-security-update-windows/index.html#signature-verification",
-    "title": "Security upgrades on my Node.js, npm and Azurite",
-    "section": "Signature verification",
-    "text": "Signature verification\nC:\\Users\\xxx\\AppData\\Roaming\\npm\\node_modules\\azurite&gt;npm audit signatures\naudited 374 packages in 4s\n\n374 packages have verified registry signatures\n\n25 packages have verified attestations\n(use --json --include-attestations to view attestation details)\nNo missing signatures found - which would be a sign of a malicious package."
-  },
-  {
-    "objectID": "posts/2026-05-18-nodejs-npm-security-update-windows/index.html#running-npm-audit",
-    "href": "posts/2026-05-18-nodejs-npm-security-update-windows/index.html#running-npm-audit",
-    "title": "Security upgrades on my Node.js, npm and Azurite",
-    "section": "Running npm audit",
-    "text": "Running npm audit\n\nFirst pass: everything\nC:\\Users\\xxx\\AppData\\Roaming\\npm\\node_modules\\azurite&gt;npm audit --no-package-lock\n# npm audit report\n\n[...]\n\n56 vulnerabilities (10 moderate, 8 high, 38 critical)\n\nTo address issues that do not require attention, run:\n  npm audit fix\n\nTo address all issues possible (including breaking changes), run:\n  npm audit fix --force\n\nSome issues need review, and may require choosing\na different dependency.\n38 critical. That can’t be so bad, after all it’s a Microsoft-maintained emulator that thousands of people use daily, which means either the world is on fire, or — more likely — npm audit is over-counting in some ways.\nThere’s a catch: need to filter out dev dependencies to get to what actually matters at runtime.\n\n\nSecond pass: runtime only\nC:\\Users\\xxx\\AppData\\Roaming\\npm\\node_modules\\azurite&gt;npm audit --no-package-lock --omit=dev\n# npm audit report\n\n[...]\n\n10 vulnerabilities (6 moderate, 4 high)\n\nTo address issues that do not require attention, run:\n  npm audit fix\n\nTo address all issues (including breaking changes), run:\n  npm audit fix --force\n\nHigh severity vulnerabilities\n\n\n\n\n\n\n\n\nPackage\nVulnerability Summary\nFix Available\n\n\n\n\nlodash\nCode Injection via _.template; Prototype Pollution via _.unset/_.omit\nnpm audit fix\n\n\npath-to-regexp\nReDoS via multiple route parameters\nnpm audit fix\n\n\naxios\n15+ issues: SSRF, CSRF, Credential Leakage, No_Proxy Bypass, Prototype Pollution, DoS, Metadata Exfiltration\nnpm audit fix –force\n\n\n\n\n\nModerate severity vulnerabilities\n\n\n\n\n\n\n\n\nPackage\nVulnerability Summary\nFix Available\n\n\n\n\nbrace-expansion\nZero-step sequence → process hang & memory exhaustion (ReDoS)\nnpm audit fix\n\n\nfollow-redirects\nLeaks Custom Auth Headers to Cross-Domain Redirect Targets\nnpm audit fix\n\n\n@azure/identity\nElevation of Privilege (Azure Identity & MSAL)\nnpm audit fix –force\n\n\ntough-cookie\nPrototype Pollution\nnpm audit fix –force\n\n\nxml2js\nPrototype Pollution\nnpm audit fix –force\n\n\n\n\n\n\nUnderstanding the blast radius\nLet’s take 2 examples to illustrate the use of the package dependency tree before fixing any package.\nExample 1: Simple case The package brace-expansion is only in 1 copy in the azurite dependency tree. The blast radius in case of vulnerabilities and fix is relatively limited. Running a npm audit fix will likely be without issues.\nC:\\Users\\xxx\\AppData\\Roaming\\npm\\node_modules\\azurite&gt;npm ls brace-expansion\nazurite@3.35.0 C:\\Users\\xxx\\AppData\\Roaming\\npm\\node_modules\\azurite\n`-- rimraf@3.0.2\n  `-- glob@7.2.3\n    `-- minimatch@3.1.5\n      `-- brace-expansion@1.1.12\nExample 2: Multiple copies case\nC:\\Users\\xxx\\AppData\\Roaming\\npm\\node_modules\\azurite&gt;npm ls follow-redirects\nazurite@3.35.0 C:\\Users\\xxx\\AppData\\Roaming\\npm\\node_modules\\azurite\n+-- @azure/ms-rest-js@1.11.2\n| `-- axios@0.21.4\n|   `-- follow-redirects@1.15.11 deduped\n`-- axios@0.27.2\n  `-- follow-redirects@1.15.11\nThe axios package is in 2 verisons and based on the same follow-redirects package. An issue with the follow-redirects package will have a higher blast radius in case of vulnerability and fix issues. Implementation of a fix could also be more complex due to more applications being impacted. In this case, follow-redirects is a transitive dependency can easily be updated with a npm audit fix.\n\n\nTo fix or not to fix\nGitHub issue #2500 has been tracking these vulnerabilities for a while with no ETA. The maintainers are presumably making a risk call: fix cost vs. actual exposure. Fair enough — I have to make the same call for my system.\n\n\nThe fix plan\nNon-breaking fix: covers 2/3 of the high-severity issues and 2/5 of the moderates. Low risk, clear win.\nBreaking fix (--force): would tackle the rest, but risks silently breaking Azurite. My usage is purely local — with appropriate host 127.0.0.1 and port 10000, no production data, no risky network exposure. The risk of a broken emulator outweighs the marginal security gain. I’ll revisit when the maintainers ship a proper fix (Cf. set a reminder in my calendar).\n\n\nApplying the safe fixes\nIn my context, let’s use a minimal sanity check test before and after applying the audit fix, no sandboxing — KISS.\nAzurite run test — successful\nC:\\Users\\xxx&gt;azurite --blobHost 127.0.0.1 --blobPort 10000\nAzurite Blob service is starting at http://127.0.0.1:10000\nAzurite Blob service is successfully listening at http://127.0.0.1:10000\nAzurite Queue service is starting at http://127.0.0.1:10001\nAzurite Queue service is successfully listening at http://127.0.0.1:10001\nAzurite Table service is starting at http://127.0.0.1:10002\nAzurite Table service is successfully listening at http://127.0.0.1:10002\n[CTRL-C to stop Azurite]\nAzurite Blob service is closing...\nAzurite Queue service is closing...\nAzurite Table service is closing...\nAzurite Table service successfully closed\nAzurite Blob service successfully closed\nAzurite Queue service successfully closed\nVersions of packages before audit fix\nC:\\Users\\xxx\\AppData\\Roaming\\npm\\node_modules\\azurite&gt;npm ls lodash\nazurite@3.35.0 C:\\Users\\xxx\\AppData\\Roaming\\npm\\node_modules\\azurite\n`-- sequelize@6.37.8\n  `-- lodash@4.17.23\n\n[...]\n\n\n\nPackage\nVersion\n\n\n\n\nlodash\n4.17.23\n\n\npath-to-regexp\n0.1.12\n\n\nbrace-expansion\n1.1.12\n\n\nfollow-redirects\n1.15.11\n\n\n\nApply audit fix\nAzurite being a global package on my system, the npm audit fix command cannot be used (adding a lock file as in a local Azurite package is not a good practice). So npm install -g azurite@latest is used instead.\nC:\\&gt;npm install -g azurite@latest\n\n[npm warn deprecated messages...]\n\nremoved 5 packages, and changed 370 packages in 11s\n\nC:\\&gt;azurite --version\n3.35.0\nChecking non-breaking fix success\nC:\\Users\\xxx\\AppData\\Roaming\\npm\\node_modules\\azurite&gt;npm ls lodash\nazurite@3.35.0 C:\\Users\\xxx\\AppData\\Roaming\\npm\\node_modules\\azurite\n`-- sequelize@6.37.8\n  `-- lodash@4.18.1\n\n[...]\n\n\n\nPackage\nVersion Before Update\nVersion After Update\n\n\n\n\nlodash\n4.17.23\n4.18.1\n\n\npath-to-regexp\n0.1.12\n0.1.13\n\n\nbrace-expansion\n1.1.12\n1.1.14\n\n\nfollow-redirects\n1.15.11\n1.16.0\n\n\n\nAll 4 packages bumped to patched versions, and the associated vulnerabilities disappeared from the audit report. The breaking-fix issues remain, as expected.\nC:\\Users\\xxx\\AppData\\Roaming\\npm\\node_modules\\azurite&gt;npm audit --no-package-lock --omit=dev\n# npm audit report\n\n@azure/identity  &lt;4.2.1\nSeverity: moderate\n[...]\n\naxios  &lt;=0.31.0\nSeverity: high\n[...]\n\ntough-cookie  &lt;4.1.3\nSeverity: moderate\n[...]\n\nxml2js  &lt;0.5.0\nSeverity: moderate\n[...]\n\n6 vulnerabilities (4 moderate, 2 high)\n\nTo address all issues (including breaking changes), run:\n  npm audit fix --force\nAzurite run test — successful\nC:\\Users\\xxx&gt;azurite --blobHost 127.0.0.1 --blobPort 10000\nAzurite Blob service is starting at http://127.0.0.1:10000\nAzurite Blob service is successfully listening at http://127.0.0.1:10000\nAzurite Queue service is starting at http://127.0.0.1:10001\nAzurite Queue service is successfully listening at http://127.0.0.1:10001\nAzurite Table service is starting at http://127.0.0.1:10002\nAzurite Table service is successfully listening at http://127.0.0.1:10002\nAzurite Blob service is closing...\nAzurite Queue service is closing...\nAzurite Table service is closing...\nAzurite Table service successfully closed\nAzurite Blob service successfully closed\nAzurite Queue service successfully closed"
+    "text": "Short reusable code snippets and technical notes — commands, configuration fragments, and small how-tos.\n\n\n\n\n\n\n   \n    \n    \n      Order By\n      Default\n      \n        Date - Oldest\n      \n      \n        Date - Newest\n      \n      \n        Title\n      \n    \n  \n\n\n\n\n\n\nDate\n\n\n\nTitle\n\n\n\nDescription\n\n\n\n\n\n\n\n\nMay 22, 2026\n\n\nFind all Node.js projects under a directory\n\n\nPowerShell script to inventory Node.js projects under a directory on Windows.\n\n\n\n\n\n\nMay 22, 2026\n\n\nCreate a Python venv on Windows\n\n\nRobust PowerShell script to create a Python virtual environment with pyenv.\n\n\n\n\n\n\nNo matching items"
   },
   {
     "objectID": "index.html",
@@ -308,10 +182,143 @@
     "text": "Opinions expressed on this site are the author’s own in his personal capacity. They do not reflect the views of any organisation or company he is associated with, including any current or former employer.\nThe content on this site is provided for informational purposes only and does not constitute professional advice. While I make reasonable efforts to ensure accuracy, I make no warranties or representations regarding the completeness, accuracy, or reliability of any information presented here.\nUse of any information on this site is at your own risk. I accept no liability for any loss or damage arising from reliance on the content of this site."
   },
   {
-    "objectID": "snippets.html",
-    "href": "snippets.html",
-    "title": "Snippets",
+    "objectID": "posts/2026-05-18-nodejs-npm-security-update-windows/index.html",
+    "href": "posts/2026-05-18-nodejs-npm-security-update-windows/index.html",
+    "title": "Security upgrades on my Node.js, npm and Azurite",
     "section": "",
-    "text": "Short reusable code snippets and technical notes — commands, configuration fragments, and small how-tos.\n\n\n\n\n\n\n   \n    \n    \n      Order By\n      Default\n      \n        Date - Oldest\n      \n      \n        Date - Newest\n      \n      \n        Title\n      \n    \n  \n\n\n\n\n\n\nDate\n\n\n\nTitle\n\n\n\nDescription\n\n\n\n\n\n\n\n\nMay 22, 2026\n\n\nCreate a Python .venv on Windows\n\n\nRobust PowerShell script to create a Python virtual environment with pyenv.\n\n\n\n\n\n\nNo matching items"
+    "text": "A few days back Fireship dropped “A single PR just hijacked the NPM registry…” - as always, educational and alarming in equal measures.\nI’d already been keeping an eye on supply chain risks after the xz/liblzma near-disaster that almost took down the internet.\nAnd the numbers back up the paranoia: Sonatype reports that “over 99% of open source malware occurred on npm”.\nSo naturally I started wondering: what about my machine?"
+  },
+  {
+    "objectID": "posts/2026-05-18-nodejs-npm-security-update-windows/index.html#what-i-was-running",
+    "href": "posts/2026-05-18-nodejs-npm-security-update-windows/index.html#what-i-was-running",
+    "title": "Security upgrades on my Node.js, npm and Azurite",
+    "section": "What I was running",
+    "text": "What I was running\nC:\\&gt;npm -v\n11.14.1\n\nC:\\&gt;node -v\nv24.14.0\nFindings:\n\nOK. npm was already on the latest version\n\nNot OK. Node.js was not latest → v24.14.1 and v24.15.0 were both available\n\nOK. npm was ahead of the Node.js‑bundled npm (e.g. v11.12.1 in Node v24.15.0) — a newer patch/minor than what ships with node.js v24.14 or v24.15"
+  },
+  {
+    "objectID": "posts/2026-05-18-nodejs-npm-security-update-windows/index.html#risk-of-node.js-v24.14.0-vs.-lts-v24.15.0",
+    "href": "posts/2026-05-18-nodejs-npm-security-update-windows/index.html#risk-of-node.js-v24.14.0-vs.-lts-v24.15.0",
+    "title": "Security upgrades on my Node.js, npm and Azurite",
+    "section": "Risk of node.js v24.14.0 vs. LTS v24.15.0 ?",
+    "text": "Risk of node.js v24.14.0 vs. LTS v24.15.0 ?\nv24.14.1 is a proper security release — 2 high CVEs, 4 medium, 2 low. That alone was enough to act.\nv24.15.0 looked even better: per Perplexity (May 18, 2026), it’s “mainly a hardening release — low-level fixes in crypto, http, tls, stream, zlib, plus refreshed bundled deps including npm and root certificates.” No breaking changes reported, so it became the target."
+  },
+  {
+    "objectID": "posts/2026-05-18-nodejs-npm-security-update-windows/index.html#why-was-node.js-outdated",
+    "href": "posts/2026-05-18-nodejs-npm-security-update-windows/index.html#why-was-node.js-outdated",
+    "title": "Security upgrades on my Node.js, npm and Azurite",
+    "section": "Why was node.js outdated?",
+    "text": "Why was node.js outdated?\nI installed Node.js from the .msi installer (Cf. default node.exe path below). Turns out the .msi installer from nodejs.org (rightfully) has no auto-update mechanism. No reminder, no update.\nC:\\&gt;where node\nC:\\Program Files\\nodejs\\node.exe"
+  },
+  {
+    "objectID": "posts/2026-05-18-nodejs-npm-security-update-windows/index.html#updating-node.js",
+    "href": "posts/2026-05-18-nodejs-npm-security-update-windows/index.html#updating-node.js",
+    "title": "Security upgrades on my Node.js, npm and Azurite",
+    "section": "Updating node.js",
+    "text": "Updating node.js\nInstalling additional tools (nvm-windows, Chocolatey…) to manage the node.js update is out of scope for this post so I’ll just run the node-v24.15.0-x64.msi from nodejs.org.\nAfter installation:\nC:\\&gt;node -v\nv24.15.0"
+  },
+  {
+    "objectID": "posts/2026-05-18-nodejs-npm-security-update-windows/index.html#global-packages",
+    "href": "posts/2026-05-18-nodejs-npm-security-update-windows/index.html#global-packages",
+    "title": "Security upgrades on my Node.js, npm and Azurite",
+    "section": "Global packages",
+    "text": "Global packages\nC:\\&gt;npm list -g\nC:\\Users\\xxx\\AppData\\Roaming\\npm\n+-- azurite@3.35.0\n`-- npm@11.14.1\n\nC:\\&gt;npm list --parseable -g --depth=0\nC:\\Users\\xxx\\AppData\\Roaming\\npm\nC:\\Users\\xxx\\AppData\\Roaming\\npm\\node_modules\\azurite\nC:\\Users\\xxx\\AppData\\Roaming\\npm\\node_modules\\npm\nI only had one global package: Azurite. Good enough for now."
+  },
+  {
+    "objectID": "posts/2026-05-18-nodejs-npm-security-update-windows/index.html#local-packages",
+    "href": "posts/2026-05-18-nodejs-npm-security-update-windows/index.html#local-packages",
+    "title": "Security upgrades on my Node.js, npm and Azurite",
+    "section": "Local packages",
+    "text": "Local packages\nThis PowerShell snippet is used to find all node.js projects on my machine.\nOutput:\nPS C:\\&gt; # paste find-node-projects snippet from snippets page\nPackages under .venv (excluded from scan): 5\n{\n  \"rootPath\": \"C:\\\\Users\\\\xxx\\\\Documents\\\\projects\",\n  \"includeVenv\": false,\n  \"count\": 0,\n  \"projects\": []\n}\nNo local packages of node.js projects found."
+  },
+  {
+    "objectID": "posts/2026-05-18-nodejs-npm-security-update-windows/index.html#is-azurite-up-to-date",
+    "href": "posts/2026-05-18-nodejs-npm-security-update-windows/index.html#is-azurite-up-to-date",
+    "title": "Security upgrades on my Node.js, npm and Azurite",
+    "section": "Is Azurite up to date?",
+    "text": "Is Azurite up to date?\nC:\\&gt;azurite --version\n3.35.0\nIt’s the latest released version of Azurite on GitHub releases, so it’s up to date."
+  },
+  {
+    "objectID": "posts/2026-05-18-nodejs-npm-security-update-windows/index.html#compatibility-check",
+    "href": "posts/2026-05-18-nodejs-npm-security-update-windows/index.html#compatibility-check",
+    "title": "Security upgrades on my Node.js, npm and Azurite",
+    "section": "Compatibility check",
+    "text": "Compatibility check\nC:\\&gt;npm view azurite engines\n{ node: '&gt;=10.0.0', vscode: '^1.39.0' }\nSystem’s node.js is &gt;=10.0.0 so it’s compatible with Azurite."
+  },
+  {
+    "objectID": "posts/2026-05-18-nodejs-npm-security-update-windows/index.html#any-outdated-packages",
+    "href": "posts/2026-05-18-nodejs-npm-security-update-windows/index.html#any-outdated-packages",
+    "title": "Security upgrades on my Node.js, npm and Azurite",
+    "section": "Any outdated packages?",
+    "text": "Any outdated packages?\nC:\\&gt;npm outdated package check\n \nNo outdated packages found. There’s only one global package and it’s latest’ (latestlatest), so obviously up to date in this case."
+  },
+  {
+    "objectID": "posts/2026-05-18-nodejs-npm-security-update-windows/index.html#signature-verification",
+    "href": "posts/2026-05-18-nodejs-npm-security-update-windows/index.html#signature-verification",
+    "title": "Security upgrades on my Node.js, npm and Azurite",
+    "section": "Signature verification",
+    "text": "Signature verification\nC:\\Users\\xxx\\AppData\\Roaming\\npm\\node_modules\\azurite&gt;npm audit signatures\naudited 374 packages in 4s\n\n374 packages have verified registry signatures\n\n25 packages have verified attestations\n(use --json --include-attestations to view attestation details)\nNo missing signatures found - which would be a sign of a malicious package."
+  },
+  {
+    "objectID": "posts/2026-05-18-nodejs-npm-security-update-windows/index.html#running-npm-audit",
+    "href": "posts/2026-05-18-nodejs-npm-security-update-windows/index.html#running-npm-audit",
+    "title": "Security upgrades on my Node.js, npm and Azurite",
+    "section": "Running npm audit",
+    "text": "Running npm audit\n\nFirst pass: everything\nC:\\Users\\xxx\\AppData\\Roaming\\npm\\node_modules\\azurite&gt;npm audit --no-package-lock\n# npm audit report\n\n[...]\n\n56 vulnerabilities (10 moderate, 8 high, 38 critical)\n\nTo address issues that do not require attention, run:\n  npm audit fix\n\nTo address all issues possible (including breaking changes), run:\n  npm audit fix --force\n\nSome issues need review, and may require choosing\na different dependency.\n38 critical. That can’t be so bad, after all it’s a Microsoft-maintained emulator that thousands of people use daily, which means either the world is on fire, or — more likely — npm audit is over-counting in some ways.\nThere’s a catch: need to filter out dev dependencies to get to what actually matters at runtime.\n\n\nSecond pass: runtime only\nC:\\Users\\xxx\\AppData\\Roaming\\npm\\node_modules\\azurite&gt;npm audit --no-package-lock --omit=dev\n# npm audit report\n\n[...]\n\n10 vulnerabilities (6 moderate, 4 high)\n\nTo address issues that do not require attention, run:\n  npm audit fix\n\nTo address all issues (including breaking changes), run:\n  npm audit fix --force\n\nHigh severity vulnerabilities\n\n\n\n\n\n\n\n\nPackage\nVulnerability Summary\nFix Available\n\n\n\n\nlodash\nCode Injection via _.template; Prototype Pollution via _.unset/_.omit\nnpm audit fix\n\n\npath-to-regexp\nReDoS via multiple route parameters\nnpm audit fix\n\n\naxios\n15+ issues: SSRF, CSRF, Credential Leakage, No_Proxy Bypass, Prototype Pollution, DoS, Metadata Exfiltration\nnpm audit fix –force\n\n\n\n\n\nModerate severity vulnerabilities\n\n\n\n\n\n\n\n\nPackage\nVulnerability Summary\nFix Available\n\n\n\n\nbrace-expansion\nZero-step sequence → process hang & memory exhaustion (ReDoS)\nnpm audit fix\n\n\nfollow-redirects\nLeaks Custom Auth Headers to Cross-Domain Redirect Targets\nnpm audit fix\n\n\n@azure/identity\nElevation of Privilege (Azure Identity & MSAL)\nnpm audit fix –force\n\n\ntough-cookie\nPrototype Pollution\nnpm audit fix –force\n\n\nxml2js\nPrototype Pollution\nnpm audit fix –force\n\n\n\n\n\n\nUnderstanding the blast radius\nLet’s take 2 examples to illustrate the use of the package dependency tree before fixing any package.\nExample 1: Simple case The package brace-expansion is only in 1 copy in the azurite dependency tree. The blast radius in case of vulnerabilities and fix is relatively limited. Running a npm audit fix will likely be without issues.\nC:\\Users\\xxx\\AppData\\Roaming\\npm\\node_modules\\azurite&gt;npm ls brace-expansion\nazurite@3.35.0 C:\\Users\\xxx\\AppData\\Roaming\\npm\\node_modules\\azurite\n`-- rimraf@3.0.2\n  `-- glob@7.2.3\n    `-- minimatch@3.1.5\n      `-- brace-expansion@1.1.12\nExample 2: Multiple copies case\nC:\\Users\\xxx\\AppData\\Roaming\\npm\\node_modules\\azurite&gt;npm ls follow-redirects\nazurite@3.35.0 C:\\Users\\xxx\\AppData\\Roaming\\npm\\node_modules\\azurite\n+-- @azure/ms-rest-js@1.11.2\n| `-- axios@0.21.4\n|   `-- follow-redirects@1.15.11 deduped\n`-- axios@0.27.2\n  `-- follow-redirects@1.15.11\nThe axios package is in 2 verisons and based on the same follow-redirects package. An issue with the follow-redirects package will have a higher blast radius in case of vulnerability and fix issues. Implementation of a fix could also be more complex due to more applications being impacted. In this case, follow-redirects is a transitive dependency can easily be updated with a npm audit fix.\n\n\nTo fix or not to fix\nGitHub issue #2500 has been tracking these vulnerabilities for a while with no ETA. The maintainers are presumably making a risk call: fix cost vs. actual exposure. Fair enough — I have to make the same call for my system.\n\n\nThe fix plan\nNon-breaking fix: covers 2/3 of the high-severity issues and 2/5 of the moderates. Low risk, clear win.\nBreaking fix (--force): would tackle the rest, but risks silently breaking Azurite. My usage is purely local — with appropriate host 127.0.0.1 and port 10000, no production data, no risky network exposure. The risk of a broken emulator outweighs the marginal security gain. I’ll revisit when the maintainers ship a proper fix (Cf. set a reminder in my calendar).\n\n\nApplying the safe fixes\nIn my context, let’s use a minimal sanity check test before and after applying the audit fix, no sandboxing — KISS.\nAzurite run test — successful\nC:\\Users\\xxx&gt;azurite --blobHost 127.0.0.1 --blobPort 10000\nAzurite Blob service is starting at http://127.0.0.1:10000\nAzurite Blob service is successfully listening at http://127.0.0.1:10000\nAzurite Queue service is starting at http://127.0.0.1:10001\nAzurite Queue service is successfully listening at http://127.0.0.1:10001\nAzurite Table service is starting at http://127.0.0.1:10002\nAzurite Table service is successfully listening at http://127.0.0.1:10002\n[CTRL-C to stop Azurite]\nAzurite Blob service is closing...\nAzurite Queue service is closing...\nAzurite Table service is closing...\nAzurite Table service successfully closed\nAzurite Blob service successfully closed\nAzurite Queue service successfully closed\nVersions of packages before audit fix\nC:\\Users\\xxx\\AppData\\Roaming\\npm\\node_modules\\azurite&gt;npm ls lodash\nazurite@3.35.0 C:\\Users\\xxx\\AppData\\Roaming\\npm\\node_modules\\azurite\n`-- sequelize@6.37.8\n  `-- lodash@4.17.23\n\n[...]\n\n\n\nPackage\nVersion\n\n\n\n\nlodash\n4.17.23\n\n\npath-to-regexp\n0.1.12\n\n\nbrace-expansion\n1.1.12\n\n\nfollow-redirects\n1.15.11\n\n\n\nApply audit fix\nAzurite being a global package on my system, the npm audit fix command cannot be used (adding a lock file as in a local Azurite package is not a good practice). So npm install -g azurite@latest is used instead.\nC:\\&gt;npm install -g azurite@latest\n\n[npm warn deprecated messages...]\n\nremoved 5 packages, and changed 370 packages in 11s\n\nC:\\&gt;azurite --version\n3.35.0\nChecking non-breaking fix success\nC:\\Users\\xxx\\AppData\\Roaming\\npm\\node_modules\\azurite&gt;npm ls lodash\nazurite@3.35.0 C:\\Users\\xxx\\AppData\\Roaming\\npm\\node_modules\\azurite\n`-- sequelize@6.37.8\n  `-- lodash@4.18.1\n\n[...]\n\n\n\nPackage\nVersion Before Update\nVersion After Update\n\n\n\n\nlodash\n4.17.23\n4.18.1\n\n\npath-to-regexp\n0.1.12\n0.1.13\n\n\nbrace-expansion\n1.1.12\n1.1.14\n\n\nfollow-redirects\n1.15.11\n1.16.0\n\n\n\nAll 4 packages bumped to patched versions, and the associated vulnerabilities disappeared from the audit report. The breaking-fix issues remain, as expected.\nC:\\Users\\xxx\\AppData\\Roaming\\npm\\node_modules\\azurite&gt;npm audit --no-package-lock --omit=dev\n# npm audit report\n\n@azure/identity  &lt;4.2.1\nSeverity: moderate\n[...]\n\naxios  &lt;=0.31.0\nSeverity: high\n[...]\n\ntough-cookie  &lt;4.1.3\nSeverity: moderate\n[...]\n\nxml2js  &lt;0.5.0\nSeverity: moderate\n[...]\n\n6 vulnerabilities (4 moderate, 2 high)\n\nTo address all issues (including breaking changes), run:\n  npm audit fix --force\nAzurite run test — successful\nC:\\Users\\xxx&gt;azurite --blobHost 127.0.0.1 --blobPort 10000\nAzurite Blob service is starting at http://127.0.0.1:10000\nAzurite Blob service is successfully listening at http://127.0.0.1:10000\nAzurite Queue service is starting at http://127.0.0.1:10001\nAzurite Queue service is successfully listening at http://127.0.0.1:10001\nAzurite Table service is starting at http://127.0.0.1:10002\nAzurite Table service is successfully listening at http://127.0.0.1:10002\nAzurite Blob service is closing...\nAzurite Queue service is closing...\nAzurite Table service is closing...\nAzurite Table service successfully closed\nAzurite Blob service successfully closed\nAzurite Queue service successfully closed"
+  },
+  {
+    "objectID": "privacy.html",
+    "href": "privacy.html",
+    "title": "Privacy Policy",
+    "section": "",
+    "text": "Last updated: 19 May 2026\nThis privacy policy explains what data is collected when you visit alexandre.cagnon.com and how it is used."
+  },
+  {
+    "objectID": "privacy.html#hosting",
+    "href": "privacy.html#hosting",
+    "title": "Privacy Policy",
+    "section": "Hosting",
+    "text": "Hosting\nThis site is hosted on GitHub Pages. GitHub may collect technical information such as your IP address, browser type, and referring page as part of its standard server operations.\nSee GitHub’s privacy statement for details."
+  },
+  {
+    "objectID": "privacy.html#analytics-cookies",
+    "href": "privacy.html#analytics-cookies",
+    "title": "Privacy Policy",
+    "section": "Analytics & Cookies",
+    "text": "Analytics & Cookies\nThis site does not set up any first-party analytics tracking or cookies.\nGitHub may do so - see GitHub’s privacy statement for details."
+  },
+  {
+    "objectID": "privacy.html#third-party-links",
+    "href": "privacy.html#third-party-links",
+    "title": "Privacy Policy",
+    "section": "Third-party links",
+    "text": "Third-party links\nThis site contains links to external websites. I am not responsible for the privacy practices or content of those sites. I encourage you to review the privacy policies of any external site you visit."
+  },
+  {
+    "objectID": "privacy.html#international-visitors",
+    "href": "privacy.html#international-visitors",
+    "title": "Privacy Policy",
+    "section": "International visitors",
+    "text": "International visitors\nThis GitHub Pages site is operated on GitHub’s infrastructure. The exact physical server location is not publicly guaranteed as one specific place. If you are visiting from the European Economic Area or other regions with data protection laws, please be aware that your information may be transferred to and processed in the United States. By using this site, you acknowledge this transfer. I do not knowingly collect or process personal data that would be subject to GDPR, as no PII is collected."
+  },
+  {
+    "objectID": "privacy.html#contact",
+    "href": "privacy.html#contact",
+    "title": "Privacy Policy",
+    "section": "Contact",
+    "text": "Contact\nIf you have questions about this privacy policy, you can reach me at alexandre.cagnon.work@tuta.com."
+  },
+  {
+    "objectID": "privacy.html#changes-to-this-policy",
+    "href": "privacy.html#changes-to-this-policy",
+    "title": "Privacy Policy",
+    "section": "Changes to this policy",
+    "text": "Changes to this policy\nI may update this privacy policy from time to time. Changes will be reflected by the “last updated” date at the top of this page."
+  },
+  {
+    "objectID": "snippets/2026-05-18-find-nodejs-projects-powershell/index.html",
+    "href": "snippets/2026-05-18-find-nodejs-projects-powershell/index.html",
+    "title": "Find all Node.js projects under a directory",
+    "section": "",
+    "text": "I realised I had no idea how many Node.js projects were sitting on my machine. This snippet walks a projects folder, finds every package.json that belongs to a real project, and prints the result as JSON. I have many Python projects so I added a parameter to include or exclude scanning under .venv packages.\n\nSettings\n\n\n\n\n\n\n\n\nVariable\nDefault\nPurpose\n\n\n\n\n$RootPath\nC:\\projects\nRoot folder of your projects\n\n\n$IncludeVenv\n$false\nSet to $true to include package.json under .venv in the JSON projects list\n\n\n\n\n\nThe script\nCopy the block, edit the two settings at the top, paste into a PowerShell 7+ prompt, and run.\n# --- settings (edit these) ---\n$RootPath = \"C:\\projects\"\n$IncludeVenv = $false   # $true to include .venv package.json in results\n\n# --- scan (no edits below) ---\nfunction Get-DependencyCount {\n    param($Section)\n    if (-not $Section) { return 0 }\n    return @($Section.PSObject.Properties).Count\n}\n\n$packageFiles = Get-ChildItem -Path $RootPath -Recurse -Filter \"package.json\" -ErrorAction SilentlyContinue\n\n$projects = [System.Collections.Generic.List[object]]::new()\n$venvPackageCount = 0\n\nforeach ($file in $packageFiles) {\n    $projectPath = $file.Directory.FullName\n    $inVenv = $file.FullName -match '[\\\\/]\\.venv[\\\\/]'\n\n    if ($file.FullName -match '[\\\\/]node_modules[\\\\/]') { continue }\n\n    if ($inVenv -and -not $IncludeVenv) {\n        try {\n            $venvData = Get-Content $file.FullName -Raw | ConvertFrom-Json\n            if (-not [string]::IsNullOrWhiteSpace($venvData.name)) {\n                $venvPackageCount++\n            }\n        }\n        catch {\n            Write-Warning \"warning: unreadable venv package.json: $($_.Exception.Message)\"\n        }\n        continue\n    }\n\n    try {\n        $packageData = Get-Content $file.FullName -Raw | ConvertFrom-Json\n        if ([string]::IsNullOrWhiteSpace($packageData.name)) { continue }\n\n        $hasLockfile = Test-Path (Join-Path $projectPath \"package-lock.json\")\n        $depsCount = Get-DependencyCount $packageData.dependencies\n        $depsCount += Get-DependencyCount $packageData.devDependencies\n\n        $projects.Add([ordered]@{\n            project      = $packageData.name\n            version      = if ($packageData.version) { $packageData.version } else { \"N/A\" }\n            path         = $projectPath\n            dependencies = $depsCount\n            hasLockfile  = $hasLockfile\n        })\n    }\n    catch {\n        Write-Warning \"Skipped ($($_.Exception.Message)): $($file.FullName)\"\n    }\n}\n\nif (-not $IncludeVenv) {\n    Write-Host \"Packages under .venv (excluded from scan): $venvPackageCount\"\n}\n\n$result = [ordered]@{\n    rootPath    = $RootPath\n    includeVenv = [bool]$IncludeVenv\n    count       = $projects.Count\n    projects    = $projects\n}\n\n$result | ConvertTo-Json -Depth 5\n\n\nOutput examples\nWhen $IncludeVenv is $false - a log line appears before the JSON: Packages under .venv (excluded from scan): N.\nPackages under .venv (excluded from scan): 5\n{\n  \"rootPath\": \"C:\\\\projects\",\n  \"includeVenv\": false,\n  \"count\": 1,\n  \"projects\": [\n    {\n      \"project\": \"sample-nodejs-project\",\n      \"version\": \"1.0.0\",\n      \"path\": \"C:\\\\projects\\\\sample-nodejs-project\",\n      \"dependencies\": 2,\n      \"hasLockfile\": true\n    }\n  ]\n}\nWhen $IncludeVenv is $true - the JSON includes the .venv packages:\n{\n  \"rootPath\": \"C:\\\\projects\",\n  \"includeVenv\": true,\n  \"count\": 6,\n  \"projects\": [\n    {\n      \"project\": \"@jupyter-widgets/jupyterlab-manager\",\n      \"version\": \"5.0.15\",\n      \"path\": \"C:\\\\projects\\\\projectX\\\\.venv\\\\share\\\\jupyter\\\\labextensions\\\\@jupyter-widgets\\\\jupyterlab-manager\",\n      \"dependencies\": 40,\n      \"hasLockfile\": false\n    },\n    ... (more venv packages not shown) ...\n    {\n      \"project\": \"jupyterlab-plotly\",\n      \"version\": \"6.0.1\",\n      \"path\": \"C:\\\\projects\\\\projectY\\\\.venv\\\\share\\\\jupyter\\\\labextensions\\\\jupyterlab-plotly\",\n      \"dependencies\": 7,\n      \"hasLockfile\": false\n    },\n    {\n      \"project\": \"sample-nodejs-project\",\n      \"version\": \"1.0.0\",\n      \"path\": \"C:\\\\projects\\\\sample-nodejs-project\",\n      \"dependencies\": 2,\n      \"hasLockfile\": true\n    }\n  ]\n}"
   }
 ]

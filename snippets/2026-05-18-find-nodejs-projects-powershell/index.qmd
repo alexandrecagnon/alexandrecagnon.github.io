@@ -1,0 +1,146 @@
+---
+title: "Find all Node.js projects under a directory"
+date: 2026-05-22
+description: "PowerShell script to inventory Node.js projects under a directory on Windows."
+categories: [Node.js, PowerShell, Windows]
+draft: false
+---
+
+I realised I had no idea how many Node.js projects were sitting on my machine. This snippet walks a projects folder, finds every `package.json` that belongs to a real project, and prints the result as JSON. I have many Python projects so I added a parameter to include or exclude scanning under `.venv` packages.
+
+# Settings
+
+| Variable | Default | Purpose |
+|---|---|---|
+| `$RootPath` | `C:\projects` | Root folder of your projects |
+| `$IncludeVenv` | `$false` | Set to `$true` to include `package.json` under `.venv` in the JSON `projects` list |
+
+# The script
+
+Copy the block, edit the two settings at the top, paste into a PowerShell 7+ prompt, and run.
+
+```powershell
+# --- settings (edit these) ---
+$RootPath = "C:\projects"
+$IncludeVenv = $false   # $true to include .venv package.json in results
+
+# --- scan (no edits below) ---
+function Get-DependencyCount {
+    param($Section)
+    if (-not $Section) { return 0 }
+    return @($Section.PSObject.Properties).Count
+}
+
+$packageFiles = Get-ChildItem -Path $RootPath -Recurse -Filter "package.json" -ErrorAction SilentlyContinue
+
+$projects = [System.Collections.Generic.List[object]]::new()
+$venvPackageCount = 0
+
+foreach ($file in $packageFiles) {
+    $projectPath = $file.Directory.FullName
+    $inVenv = $file.FullName -match '[\\/]\.venv[\\/]'
+
+    if ($file.FullName -match '[\\/]node_modules[\\/]') { continue }
+
+    if ($inVenv -and -not $IncludeVenv) {
+        try {
+            $venvData = Get-Content $file.FullName -Raw | ConvertFrom-Json
+            if (-not [string]::IsNullOrWhiteSpace($venvData.name)) {
+                $venvPackageCount++
+            }
+        }
+        catch {
+            Write-Warning "warning: unreadable venv package.json: $($_.Exception.Message)"
+        }
+        continue
+    }
+
+    try {
+        $packageData = Get-Content $file.FullName -Raw | ConvertFrom-Json
+        if ([string]::IsNullOrWhiteSpace($packageData.name)) { continue }
+
+        $hasLockfile = Test-Path (Join-Path $projectPath "package-lock.json")
+        $depsCount = Get-DependencyCount $packageData.dependencies
+        $depsCount += Get-DependencyCount $packageData.devDependencies
+
+        $projects.Add([ordered]@{
+            project      = $packageData.name
+            version      = if ($packageData.version) { $packageData.version } else { "N/A" }
+            path         = $projectPath
+            dependencies = $depsCount
+            hasLockfile  = $hasLockfile
+        })
+    }
+    catch {
+        Write-Warning "Skipped ($($_.Exception.Message)): $($file.FullName)"
+    }
+}
+
+if (-not $IncludeVenv) {
+    Write-Host "Packages under .venv (excluded from scan): $venvPackageCount"
+}
+
+$result = [ordered]@{
+    rootPath    = $RootPath
+    includeVenv = [bool]$IncludeVenv
+    count       = $projects.Count
+    projects    = $projects
+}
+
+$result | ConvertTo-Json -Depth 5
+```
+
+# Output examples
+
+**When `$IncludeVenv` is `$false`** - a log line appears before the JSON: `Packages under .venv (excluded from scan): N`.
+
+```json
+Packages under .venv (excluded from scan): 5
+{
+  "rootPath": "C:\\projects",
+  "includeVenv": false,
+  "count": 1,
+  "projects": [
+    {
+      "project": "sample-nodejs-project",
+      "version": "1.0.0",
+      "path": "C:\\projects\\sample-nodejs-project",
+      "dependencies": 2,
+      "hasLockfile": true
+    }
+  ]
+}
+```
+
+**When `$IncludeVenv` is `$true`** - the JSON includes the `.venv` packages:
+```json
+{
+  "rootPath": "C:\\projects",
+  "includeVenv": true,
+  "count": 6,
+  "projects": [
+    {
+      "project": "@jupyter-widgets/jupyterlab-manager",
+      "version": "5.0.15",
+      "path": "C:\\projects\\projectX\\.venv\\share\\jupyter\\labextensions\\@jupyter-widgets\\jupyterlab-manager",
+      "dependencies": 40,
+      "hasLockfile": false
+    },
+    ... (more venv packages not shown) ...
+    {
+      "project": "jupyterlab-plotly",
+      "version": "6.0.1",
+      "path": "C:\\projects\\projectY\\.venv\\share\\jupyter\\labextensions\\jupyterlab-plotly",
+      "dependencies": 7,
+      "hasLockfile": false
+    },
+    {
+      "project": "sample-nodejs-project",
+      "version": "1.0.0",
+      "path": "C:\\projects\\sample-nodejs-project",
+      "dependencies": 2,
+      "hasLockfile": true
+    }
+  ]
+}
+```

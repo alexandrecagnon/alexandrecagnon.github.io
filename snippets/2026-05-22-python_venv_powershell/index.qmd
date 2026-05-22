@@ -1,8 +1,8 @@
 ---
-title: "Create a Python .venv on Windows"
+title: "Create a Python venv on Windows"
 date: 2026-05-22
 description: "Robust PowerShell script to create a Python virtual environment with pyenv."
-categories: [Python, Powershell, pyenv]
+categories: [Python, PowerShell, pyenv, Windows]
 draft: false
 ---
 
