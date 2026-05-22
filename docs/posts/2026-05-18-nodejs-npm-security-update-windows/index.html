@@ -313,13 +313,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="local-packages" class="level2">
 <h2 class="anchored" data-anchor-id="local-packages">Local packages</h2>
-<p>This <a href="../../posts/2026-05-18-nodejs-npm-security-update-windows/find-node-projects.html">PowerShell script</a> is used to find all node.js projects on my machine.</p>
+<p>This <a href="../../snippets/2026-05-18-find-nodejs-projects-powershell/index.html">PowerShell snippet</a> is used to find all node.js projects on my machine.</p>
 <p>Output:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode powershell code-with-copy"><code class="sourceCode powershell"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">PS</span> C<span class="op">:</span>\<span class="op">&gt;</span> C<span class="op">:</span>\<span class="op">...</span>\find-node-projects<span class="op">.</span><span class="fu">ps1</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="op">===</span> Scanning <span class="cf">for</span> Node<span class="op">.</span><span class="fu">js</span> projects <span class="op">===</span></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>Root path<span class="op">:</span> C<span class="op">:</span>\<span class="op">...</span>\projects</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>Total Node<span class="op">.</span><span class="fu">js</span> projects found<span class="op">:</span> <span class="dv">0</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode powershell code-with-copy"><code class="sourceCode powershell"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">PS</span> C<span class="op">:</span>\<span class="op">&gt;</span> <span class="co"># paste find-node-projects snippet from snippets page</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>Packages under <span class="op">.</span><span class="fu">venv</span> <span class="op">(</span>excluded <span class="kw">from</span> scan<span class="op">):</span> <span class="dv">5</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">"rootPath"</span><span class="op">:</span> <span class="st">"C:\\Users\\xxx\\Documents\\projects"</span><span class="op">,</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">"includeVenv"</span><span class="op">:</span> false<span class="op">,</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">"count"</span><span class="op">:</span> <span class="dv">0</span><span class="op">,</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  <span class="st">"projects"</span><span class="op">:</span> <span class="op">[]</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>No local packages of node.js projects found.</p>
 </section>
 </section>
@@ -642,7 +645,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="conclusion" class="level1">
 <h1>Conclusion</h1>
 <p>Node.js was behind and carrying 2 high CVEs. Azurite had a longer list of issues, some of which the non-breaking fix took care of — the remainder require changes the maintainers haven’t shipped yet, and my risk profile doesn’t require immediate action.</p>
-<p>The number that surprised me most wasn’t the CVE count for Azurite but the fact that its release label was the same <em>latest</em> <code>3.35.0</code> both before and after the update. The same <code>3.35.0</code> Azurite release label can in fact have different nested packages underneath. That’s the kind of “false sense of security” that quietly bites you: being on the <em>latest release</em> doesn’t mean you have the <em>latest dependencies</em>. Worth keeping in mind whenever you’re evaluating your own npm packages supply chain exposure.</p>
+<p>The number that surprised me most wasn’t the CVE count for Azurite but the fact that its release label was the same <em>latest</em> <code>3.35.0</code> both before and after the update. The same <code>3.35.0</code> Azurite release can have different versions of dependencies underneath. That’s the kind of “false sense of security” that quietly bites you. Worth keeping in mind whenever you’re evaluating your own npm packages supply chain exposure.</p>
 
 
 </section>

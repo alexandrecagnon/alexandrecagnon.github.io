@@ -96,15 +96,18 @@ I only had one global package: Azurite. Good enough for now.
 
 ## Local packages
 
-This [PowerShell script](find-node-projects.qmd) is used to find all node.js projects on my machine.
+This [PowerShell snippet](../../snippets/2026-05-18-find-nodejs-projects-powershell/index.qmd) is used to find all node.js projects on my machine.
 
 Output:
 ```powershell
-PS C:\> C:\...\find-node-projects.ps1
-=== Scanning for Node.js projects ===
-Root path: C:\...\projects
-
-Total Node.js projects found: 0
+PS C:\> # paste find-node-projects snippet from snippets page
+Packages under .venv (excluded from scan): 5
+{
+  "rootPath": "C:\\Users\\xxx\\Documents\\projects",
+  "includeVenv": false,
+  "count": 0,
+  "projects": []
+}
 ```
 
 No local packages of node.js projects found.
@@ -374,4 +377,4 @@ Azurite Queue service successfully closed
 
 Node.js was behind and carrying 2 high CVEs. Azurite had a longer list of issues, some of which the non-breaking fix took care of — the remainder require changes the maintainers haven't shipped yet, and my risk profile doesn't require immediate action.
 
-The number that surprised me most wasn't the CVE count for Azurite but the fact that its release label was the same *latest* `3.35.0` both before and after the update. The same `3.35.0` Azurite release label can in fact have different nested packages underneath. That's the kind of "false sense of security" that quietly bites you: being on the *latest release* doesn't mean you have the *latest dependencies*. Worth keeping in mind whenever you're evaluating your own npm packages supply chain exposure.
+The number that surprised me most wasn't the CVE count for Azurite but the fact that its release label was the same *latest* `3.35.0` both before and after the update. The same `3.35.0` Azurite release can have different versions of dependencies underneath. That's the kind of "false sense of security" that quietly bites you. Worth keeping in mind whenever you're evaluating your own npm packages supply chain exposure.
