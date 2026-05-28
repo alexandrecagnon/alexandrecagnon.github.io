@@ -101,6 +101,152 @@ ul.task-list li input[type="checkbox"] {
     }
   })
   </script>
+<script>
+
+window.document.addEventListener("DOMContentLoaded", function () {
+
+  function toLabel(rawLanguage) {
+
+    if (!rawLanguage) return "";
+
+    var normalized = rawLanguage.toLowerCase();
+
+    var aliases = {
+
+      js: "JavaScript",
+
+      ts: "TypeScript",
+
+      py: "Python",
+
+      ps1: "PowerShell",
+
+      pwsh: "PowerShell",
+
+      sh: "Shell",
+
+      bash: "Bash",
+
+      yml: "YAML",
+
+      md: "Markdown"
+
+    };
+
+    if (aliases[normalized]) return aliases[normalized];
+
+    if (normalized === "text" || normalized === "plaintext") return "Text";
+
+    return rawLanguage;
+
+  }
+
+
+
+  function detectLanguage(codeElement) {
+
+    if (!codeElement || !codeElement.classList) return "";
+
+    var classes = Array.from(codeElement.classList);
+
+    for (var i = 0; i < classes.length; i += 1) {
+
+      var cls = classes[i];
+
+      if (cls !== "sourceCode" && cls !== "code-with-copy" && cls !== "numberSource") {
+
+        return cls;
+
+      }
+
+    }
+
+    return "";
+
+  }
+
+
+
+  function setBadgeTarget(container, label) {
+
+    if (!label || !container || container.hasAttribute("data-code-language")) return;
+
+    container.setAttribute("data-code-language", label);
+
+  }
+
+
+
+  function applyLanguageBadges() {
+
+    document.querySelectorAll("pre > code.sourceCode").forEach(function (codeEl) {
+
+      var language = detectLanguage(codeEl);
+
+      if (!language) return;
+
+      var label = toLabel(language);
+
+      if (!label) return;
+
+
+
+      var scaffold = codeEl.closest(".code-copy-outer-scaffold");
+
+      if (scaffold) {
+
+        setBadgeTarget(scaffold, label);
+
+        return;
+
+      }
+
+
+
+      var sourceWrapper = codeEl.closest("div.sourceCode");
+
+      if (sourceWrapper) {
+
+        setBadgeTarget(sourceWrapper, label);
+
+      }
+
+    });
+
+
+
+    document.querySelectorAll("pre.text > code").forEach(function (codeEl) {
+
+      var scaffold = codeEl.closest(".code-copy-outer-scaffold");
+
+      if (scaffold) {
+
+        setBadgeTarget(scaffold, "Text");
+
+        return;
+
+      }
+
+      var pre = codeEl.closest("pre.text");
+
+      if (pre && pre.parentElement && pre.parentElement.classList.contains("sourceCode")) {
+
+        setBadgeTarget(pre.parentElement, "Text");
+
+      }
+
+    });
+
+  }
+
+
+
+  applyLanguageBadges();
+
+});
+
+</script>
+
 
   <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
   <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
@@ -132,6 +278,9 @@ window.Quarto = {
 };
 </script>
 
+<link rel="stylesheet" href="styles/mermaid.css">
+<link rel="stylesheet" href="styles/code-language-badges.css">
+<link rel="stylesheet" href="styles/code-with-output.css">
 </head>
 
 <body class="nav-fixed quarto-light">
@@ -179,7 +328,7 @@ window.Quarto = {
 <!-- sidebar -->
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-    <h5 class="quarto-listing-category-title">Categories</h5><div class="quarto-listing-category category-default"><div class="category" data-category="">All <span class="quarto-category-count">(2)</span></div><div class="category" data-category="Tm9kZS5qcw==">Node.js <span class="quarto-category-count">(1)</span></div><div class="category" data-category="UG93ZXJTaGVsbA==">PowerShell <span class="quarto-category-count">(2)</span></div><div class="category" data-category="cHllbnY=">pyenv <span class="quarto-category-count">(1)</span></div><div class="category" data-category="UHl0aG9u">Python <span class="quarto-category-count">(1)</span></div><div class="category" data-category="V2luZG93cw==">Windows <span class="quarto-category-count">(2)</span></div></div></div>
+    <h5 class="quarto-listing-category-title">Categories</h5><div class="quarto-listing-category category-default"><div class="category" data-category="">All <span class="quarto-category-count">(3)</span></div><div class="category" data-category="R2l0SHVi">GitHub <span class="quarto-category-count">(1)</span></div><div class="category" data-category="Tm9kZS5qcw==">Node.js <span class="quarto-category-count">(1)</span></div><div class="category" data-category="UG93ZXJTaGVsbA==">PowerShell <span class="quarto-category-count">(2)</span></div><div class="category" data-category="cHllbnY=">pyenv <span class="quarto-category-count">(1)</span></div><div class="category" data-category="UHl0aG9u">Python <span class="quarto-category-count">(1)</span></div><div class="category" data-category="V2luZG93cw==">Windows <span class="quarto-category-count">(3)</span></div></div></div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
@@ -246,7 +395,20 @@ Description
 </thead>
 <tbody class="list">
 
-<tr data-index="0" data-categories="Tm9kZS5qcyUyQ1Bvd2VyU2hlbGwlMkNXaW5kb3dz" data-listing-date-sort="1779382800000" data-listing-file-modified-sort="1779441993189" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="5" data-listing-word-count-sort="832" data-listing-title-sort="Find all Node.js projects under a directory" data-listing-filename-sort="index.qmd">
+<tr data-index="0" data-categories="R2l0SHViJTJDV2luZG93cw==" data-listing-date-sort="1779901200000" data-listing-file-modified-sort="1779977005813" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="234" data-listing-title-sort="Push local project to new GitHub repository" data-listing-filename-sort="index.qmd">
+<td>
+<span class="listing-date">May 28, 2026</span>
+</td>
+<td>
+<a href="./snippets/2026-05-28-push-local-project-to-github-repo/index.html" class="title listing-title">Push local project to new GitHub repository</a>
+</td>
+<td>
+<span class="listing-description">Steps to push a local project to a new GitHub repository for the first time.</span>
+</td>
+
+</tr>
+
+<tr data-index="1" data-categories="Tm9kZS5qcyUyQ1Bvd2VyU2hlbGwlMkNXaW5kb3dz" data-listing-date-sort="1779382800000" data-listing-file-modified-sort="1779959461029" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="5" data-listing-word-count-sort="817" data-listing-title-sort="Find all Node.js projects under a directory" data-listing-filename-sort="index.qmd">
 <td>
 <span class="listing-date">May 22, 2026</span>
 </td>
@@ -259,7 +421,7 @@ Description
 
 </tr>
 
-<tr data-index="1" data-categories="UHl0aG9uJTJDUG93ZXJTaGVsbCUyQ3B5ZW52JTJDV2luZG93cw==" data-listing-date-sort="1779382800000" data-listing-file-modified-sort="1779441716279" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="302" data-listing-title-sort="Create a Python venv on Windows" data-listing-filename-sort="index.qmd">
+<tr data-index="2" data-categories="UHl0aG9uJTJDUG93ZXJTaGVsbCUyQ3B5ZW52JTJDV2luZG93cw==" data-listing-date-sort="1779382800000" data-listing-file-modified-sort="1779959457510" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="305" data-listing-title-sort="Create a Python venv on Windows" data-listing-filename-sort="index.qmd">
 <td>
 <span class="listing-date">May 22, 2026</span>
 </td>

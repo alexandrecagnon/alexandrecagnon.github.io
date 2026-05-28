@@ -107,8 +107,157 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-label": "Search"
   }
 }</script>
+<script>
+
+window.document.addEventListener("DOMContentLoaded", function () {
+
+  function toLabel(rawLanguage) {
+
+    if (!rawLanguage) return "";
+
+    var normalized = rawLanguage.toLowerCase();
+
+    var aliases = {
+
+      js: "JavaScript",
+
+      ts: "TypeScript",
+
+      py: "Python",
+
+      ps1: "PowerShell",
+
+      pwsh: "PowerShell",
+
+      sh: "Shell",
+
+      bash: "Bash",
+
+      yml: "YAML",
+
+      md: "Markdown"
+
+    };
+
+    if (aliases[normalized]) return aliases[normalized];
+
+    if (normalized === "text" || normalized === "plaintext") return "Text";
+
+    return rawLanguage;
+
+  }
 
 
+
+  function detectLanguage(codeElement) {
+
+    if (!codeElement || !codeElement.classList) return "";
+
+    var classes = Array.from(codeElement.classList);
+
+    for (var i = 0; i < classes.length; i += 1) {
+
+      var cls = classes[i];
+
+      if (cls !== "sourceCode" && cls !== "code-with-copy" && cls !== "numberSource") {
+
+        return cls;
+
+      }
+
+    }
+
+    return "";
+
+  }
+
+
+
+  function setBadgeTarget(container, label) {
+
+    if (!label || !container || container.hasAttribute("data-code-language")) return;
+
+    container.setAttribute("data-code-language", label);
+
+  }
+
+
+
+  function applyLanguageBadges() {
+
+    document.querySelectorAll("pre > code.sourceCode").forEach(function (codeEl) {
+
+      var language = detectLanguage(codeEl);
+
+      if (!language) return;
+
+      var label = toLabel(language);
+
+      if (!label) return;
+
+
+
+      var scaffold = codeEl.closest(".code-copy-outer-scaffold");
+
+      if (scaffold) {
+
+        setBadgeTarget(scaffold, label);
+
+        return;
+
+      }
+
+
+
+      var sourceWrapper = codeEl.closest("div.sourceCode");
+
+      if (sourceWrapper) {
+
+        setBadgeTarget(sourceWrapper, label);
+
+      }
+
+    });
+
+
+
+    document.querySelectorAll("pre.text > code").forEach(function (codeEl) {
+
+      var scaffold = codeEl.closest(".code-copy-outer-scaffold");
+
+      if (scaffold) {
+
+        setBadgeTarget(scaffold, "Text");
+
+        return;
+
+      }
+
+      var pre = codeEl.closest("pre.text");
+
+      if (pre && pre.parentElement && pre.parentElement.classList.contains("sourceCode")) {
+
+        setBadgeTarget(pre.parentElement, "Text");
+
+      }
+
+    });
+
+  }
+
+
+
+  applyLanguageBadges();
+
+});
+
+</script>
+
+
+
+<link rel="stylesheet" href="../../styles/mermaid.css">
+<link rel="stylesheet" href="../../styles/code-language-badges.css">
+<link rel="stylesheet" href="../../styles/code-with-output.css">
 </head>
 
 <body class="nav-fixed quarto-light">
@@ -177,7 +326,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </ul></li>
   <li><a href="#auditing-azurite" id="toc-auditing-azurite" class="nav-link" data-scroll-target="#auditing-azurite">Auditing Azurite</a>
   <ul class="collapse">
-  <li><a href="#is-azurite-up-to-date" id="toc-is-azurite-up-to-date" class="nav-link" data-scroll-target="#is-azurite-up-to-date">Is Azurite up to date?</a></li>
+  <li><a href="#was-azurite-up-to-date" id="toc-was-azurite-up-to-date" class="nav-link" data-scroll-target="#was-azurite-up-to-date">Was Azurite up to date?</a></li>
   <li><a href="#compatibility-check" id="toc-compatibility-check" class="nav-link" data-scroll-target="#compatibility-check">Compatibility check</a></li>
   <li><a href="#any-outdated-packages" id="toc-any-outdated-packages" class="nav-link" data-scroll-target="#any-outdated-packages">Any outdated packages?</a></li>
   <li><a href="#signature-verification" id="toc-signature-verification" class="nav-link" data-scroll-target="#signature-verification">Signature verification</a></li>
@@ -263,12 +412,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h1>Updating Node.js and npm</h1>
 <section id="what-i-was-running" class="level2">
 <h2 class="anchored" data-anchor-id="what-i-was-running">What I was running</h2>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode dosbat code-with-copy"><code class="sourceCode dosbat"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>C:\<span class="kw">&gt;</span>npm <span class="at">-v</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>11.14.1</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>C:\<span class="kw">&gt;</span>node <span class="at">-v</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>v24.14.0</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Findings:</p>
+<div class="code-output">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode bat code-with-copy"><code class="sourceCode dosbat"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>npm <span class="at">-v</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<pre class="output-pane">11.14.1</pre>
+</div>
+<div class="code-output">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode bat code-with-copy"><code class="sourceCode dosbat"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>node <span class="at">-v</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<pre class="output-pane">v24.14.0</pre>
+</div>
+<p><strong>Findings:</strong></p>
 <ul>
 <li><strong>OK.</strong> npm was already on the latest version<br>
 </li>
@@ -284,116 +436,135 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="why-was-node.js-outdated" class="level2">
 <h2 class="anchored" data-anchor-id="why-was-node.js-outdated">Why was node.js outdated?</h2>
-<p>I installed Node.js from the .msi installer (Cf. default node.exe path below). Turns out the <code>.msi</code> installer from nodejs.org (rightfully) has no auto-update mechanism. No reminder, no update.</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode dosbat code-with-copy"><code class="sourceCode dosbat"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>C:\<span class="kw">&gt;</span>where node</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>C:\Program Files\nodejs\node.exe</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>I installed Node.js from the .msi installer (see default node.exe path below). Turns out the <code>.msi</code> installer from nodejs.org (rightfully) has no auto-update mechanism. No reminder, no update.</p>
+<div class="code-output">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode bat code-with-copy"><code class="sourceCode dosbat"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>where node</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<pre class="output-pane">C:\Program Files\nodejs\node.exe</pre>
+</div>
 </section>
 <section id="updating-node.js" class="level2">
 <h2 class="anchored" data-anchor-id="updating-node.js">Updating node.js</h2>
-<p>Installing additional tools (nvm-windows, Chocolatey…) to manage the node.js update is out of scope for this post so I’ll just run the node-v24.15.0-x64.msi from nodejs.org.</p>
-<p><strong>After installation:</strong></p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode dosbat code-with-copy"><code class="sourceCode dosbat"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>C:\<span class="kw">&gt;</span>node <span class="at">-v</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>v24.15.0</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Installing additional tools (nvm-windows, Chocolatey…) to manage the node.js update is out of scope for this post — I ran <code>node-v24.15.0-x64.msi</code> from nodejs.org directly.</p>
+<p>After installation:</p>
+<div class="code-output">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode bat code-with-copy"><code class="sourceCode dosbat"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>node <span class="at">-v</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<pre class="output-pane">v24.15.0</pre>
+</div>
 </section>
 </section>
 <section id="whats-actually-installed" class="level1">
 <h1>What’s actually installed?</h1>
 <section id="global-packages" class="level2">
 <h2 class="anchored" data-anchor-id="global-packages">Global packages</h2>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode dosbat code-with-copy"><code class="sourceCode dosbat"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>C:\<span class="kw">&gt;</span>npm list <span class="at">-g</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>C:\Users\xxx\AppData\Roaming\npm</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>+-- azurite@3.35.0</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>`-- npm@11.14.1</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>C:\<span class="kw">&gt;</span>npm list -<span class="at">-parseable</span> <span class="at">-g</span> -<span class="at">-depth</span>=0</span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>C:\Users\xxx\AppData\Roaming\npm</span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>C:\Users\xxx\AppData\Roaming\npm\node_modules\azurite</span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>C:\Users\xxx\AppData\Roaming\npm\node_modules\npm</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-output">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode bat code-with-copy"><code class="sourceCode dosbat"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>npm list <span class="at">-g</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<pre class="output-pane">C:\Users\xxx\AppData\Roaming\npm
++-- azurite@3.35.0
+`-- npm@11.14.1</pre>
+</div>
+<div class="code-output">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode bat code-with-copy"><code class="sourceCode dosbat"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>npm list -<span class="at">-parseable</span> <span class="at">-g</span> -<span class="at">-depth</span>=0</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<pre class="output-pane">C:\Users\xxx\AppData\Roaming\npm
+C:\Users\xxx\AppData\Roaming\npm\node_modules\azurite
+C:\Users\xxx\AppData\Roaming\npm\node_modules\npm</pre>
+</div>
 <p>I only had one global package: Azurite. Good enough for now.</p>
 </section>
 <section id="local-packages" class="level2">
 <h2 class="anchored" data-anchor-id="local-packages">Local packages</h2>
-<p>This <a href="../../snippets/2026-05-18-find-nodejs-projects-powershell/index.html">PowerShell snippet</a> is used to find all node.js projects on my machine.</p>
-<p>Output:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode powershell code-with-copy"><code class="sourceCode powershell"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">PS</span> C<span class="op">:</span>\<span class="op">&gt;</span> <span class="co"># paste find-node-projects snippet from snippets page</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>Packages under <span class="op">.</span><span class="fu">venv</span> <span class="op">(</span>excluded <span class="kw">from</span> scan<span class="op">):</span> <span class="dv">5</span></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">"rootPath"</span><span class="op">:</span> <span class="st">"C:\\Users\\xxx\\Documents\\projects"</span><span class="op">,</span></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">"includeVenv"</span><span class="op">:</span> false<span class="op">,</span></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">"count"</span><span class="op">:</span> <span class="dv">0</span><span class="op">,</span></span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  <span class="st">"projects"</span><span class="op">:</span> <span class="op">[]</span></span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>No local packages of node.js projects found.</p>
+<p>This <a href="../../snippets/2026-05-18-find-nodejs-projects-powershell/index.html">PowerShell snippet</a> finds all Node.js projects on the machine.</p>
+<div class="code-output">
+<pre class="output-pane">Packages under .venv (excluded from scan): 5
+{
+  "rootPath": "C:\\projects",
+  "includeVenv": false,
+  "count": 0,
+  "projects": []
+}</pre>
+</div>
+<p>No local Node.js projects found.</p>
 </section>
 </section>
 <section id="auditing-azurite" class="level1">
 <h1>Auditing Azurite</h1>
 <p>Checking Azurite for known vulnerabilities is unlikely to uncover serious threats — it’s a maintained Microsoft package and I’m not a security researcher. But version freshness and known CVEs in its dependency tree are worth a look.</p>
-<section id="is-azurite-up-to-date" class="level2">
-<h2 class="anchored" data-anchor-id="is-azurite-up-to-date">Is Azurite up to date?</h2>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode dosbat code-with-copy"><code class="sourceCode dosbat"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>C:\<span class="kw">&gt;</span>azurite -<span class="at">-version</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>3.35.0</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<section id="was-azurite-up-to-date" class="level2">
+<h2 class="anchored" data-anchor-id="was-azurite-up-to-date">Was Azurite up to date?</h2>
+<div class="code-output">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode bat code-with-copy"><code class="sourceCode dosbat"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>azurite -<span class="at">-version</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<pre class="output-pane">3.35.0</pre>
+</div>
 <p>It’s the latest released version of Azurite on <a href="https://github.com/Azure/Azurite/releases">GitHub releases</a>, so it’s up to date.</p>
 </section>
 <section id="compatibility-check" class="level2">
 <h2 class="anchored" data-anchor-id="compatibility-check">Compatibility check</h2>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode dosbat code-with-copy"><code class="sourceCode dosbat"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>C:\<span class="kw">&gt;</span>npm view azurite engines</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>{ node: '<span class="kw">&gt;</span>=10.0.0', vscode: '<span class="sc">^1</span>.39.0' }</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>System’s node.js is &gt;=10.0.0 so it’s compatible with Azurite.</p>
+<div class="code-output">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode bat code-with-copy"><code class="sourceCode dosbat"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>npm view azurite engines</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<pre class="output-pane">{ node: '&gt;=10.0.0', vscode: '^1.39.0' }</pre>
+</div>
+<p>System’s node.js is &gt;=10.0.0, compatible with Azurite.</p>
 </section>
 <section id="any-outdated-packages" class="level2">
 <h2 class="anchored" data-anchor-id="any-outdated-packages">Any outdated packages?</h2>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode dosbat code-with-copy"><code class="sourceCode dosbat"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>C:\<span class="kw">&gt;</span>npm outdated package check</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a> </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>No outdated packages found. There’s only one global package and it’s latest’ (latestlatest), so obviously up to date in this case.</p>
+<div class="code-output">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode bat code-with-copy"><code class="sourceCode dosbat"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>npm outdated package check</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>No outdated packages found. There’s only one global package and it’s latest, so obviously up to date in this case.</p>
 </section>
 <section id="signature-verification" class="level2">
 <h2 class="anchored" data-anchor-id="signature-verification">Signature verification</h2>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode dosbat code-with-copy"><code class="sourceCode dosbat"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>C:\Users\xxx\AppData\Roaming\npm\node_modules\azurite<span class="kw">&gt;</span>npm audit signatures</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>audited 374 packages in 4s</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>374 packages have verified registry signatures</span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>25 packages have verified attestations</span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="kw">(</span>use -<span class="at">-json</span> -<span class="at">-include-attestations</span> to view attestation details<span class="kw">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>No missing signatures found - which would be a sign of a malicious package.</p>
+<p>Working directory: <code>C:\Users\xxx\AppData\Roaming\npm\node_modules\azurite</code></p>
+<div class="code-output">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode bat code-with-copy"><code class="sourceCode dosbat"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>npm audit signatures</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<pre class="output-pane">audited 374 packages in 4s
+
+374 packages have verified registry signatures
+
+25 packages have verified attestations
+(use --json --include-attestations to view attestation details)</pre>
+</div>
+<p>No missing signatures found — missing signatures can be a signal worth investigating, but none were found here.</p>
 </section>
 <section id="running-npm-audit" class="level2">
 <h2 class="anchored" data-anchor-id="running-npm-audit">Running npm audit</h2>
 <section id="first-pass-everything" class="level3">
 <h3 class="anchored" data-anchor-id="first-pass-everything">First pass: everything</h3>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode dosbat code-with-copy"><code class="sourceCode dosbat"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>C:\Users\xxx\AppData\Roaming\npm\node_modules\azurite<span class="kw">&gt;</span>npm audit -<span class="at">-no-package-lock</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a># npm audit report</span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>[...]</span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>56 vulnerabilities (10 moderate, 8 high, 38 critical<span class="kw">)</span></span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>To address issues that do not require attention, run:</span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>  npm audit fix</span>
-<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>To address all issues possible (including breaking changes<span class="kw">)</span>, run:</span>
-<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>  npm audit fix -<span class="at">-force</span></span>
-<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>Some issues need review, and may require choosing</span>
-<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>a different dependency.</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-output">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode bat code-with-copy"><code class="sourceCode dosbat"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>npm audit -<span class="at">-no-package-lock</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<pre class="output-pane"># npm audit report
+
+...
+
+56 vulnerabilities (10 moderate, 8 high, 38 critical)
+
+To address issues that do not require attention, run:
+  npm audit fix
+
+To address all issues possible (including breaking changes), run:
+  npm audit fix --force
+
+Some issues need review, and may require choosing
+a different dependency.</pre>
+</div>
 <p>38 critical. That can’t be so bad, after all it’s a Microsoft-maintained emulator that thousands of people use daily, which means either the world is on fire, or — more likely — <code>npm audit</code> is over-counting in some ways.</p>
-<p>There’s a catch: need to filter out dev dependencies to get to what actually matters at runtime.</p>
+<p>There’s a catch: filtering out dev dependencies gets to what actually matters at runtime.</p>
 </section>
 <section id="second-pass-runtime-only" class="level3">
 <h3 class="anchored" data-anchor-id="second-pass-runtime-only">Second pass: runtime only</h3>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode dosbat code-with-copy"><code class="sourceCode dosbat"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>C:\Users\xxx\AppData\Roaming\npm\node_modules\azurite<span class="kw">&gt;</span>npm audit -<span class="at">-no-package-lock</span> -<span class="at">-omit</span>=dev</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a># npm audit report</span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>[...]</span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>10 vulnerabilities (6 moderate, 4 high<span class="kw">)</span></span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>To address issues that do not require attention, run:</span>
-<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>  npm audit fix</span>
-<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>To address all issues (including breaking changes<span class="kw">)</span>, run:</span>
-<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>  npm audit fix -<span class="at">-force</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-output">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode bat code-with-copy"><code class="sourceCode dosbat"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>npm audit -<span class="at">-no-package-lock</span> -<span class="at">-omit</span>=dev</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<pre class="output-pane"># npm audit report
+
+...
+
+10 vulnerabilities (6 moderate, 4 high)
+
+To address issues that do not require attention, run:
+  npm audit fix
+
+To address all issues (including breaking changes), run:
+  npm audit fix --force</pre>
+</div>
 <section id="high-severity-vulnerabilities" class="level4">
 <h4 class="anchored" data-anchor-id="high-severity-vulnerabilities">High severity vulnerabilities</h4>
 <table class="caption-top table">
@@ -475,23 +646,27 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="understanding-the-blast-radius" class="level3">
 <h3 class="anchored" data-anchor-id="understanding-the-blast-radius">Understanding the blast radius</h3>
-<p>Let’s take 2 examples to illustrate the use of the package dependency tree before fixing any package.</p>
-<p><strong>Example 1: Simple case</strong> The package brace-expansion is only in 1 copy in the azurite dependency tree. The blast radius in case of vulnerabilities and fix is relatively limited. Running a npm audit fix will likely be without issues.</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode dosbat code-with-copy"><code class="sourceCode dosbat"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>C:\Users\xxx\AppData\Roaming\npm\node_modules\azurite<span class="kw">&gt;</span>npm ls brace<span class="at">-expansion</span></span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>azurite@3.35.0 C:\Users\xxx\AppData\Roaming\npm\node_modules\azurite</span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>`-- rimraf@3.0.2</span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  `-- glob@7.2.3</span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    `-- minimatch@3.1.5</span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>      `-- brace<span class="at">-expansion</span>@1.1.12</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Two examples illustrate the dependency tree impact before fixing anything.</p>
+<p><strong>Example 1: Simple case</strong> brace-expansion appears only once in the Azurite dependency tree. The blast radius in case of vulnerabilities and fix is relatively limited. Running <code>npm audit fix</code> is unlikely to cause issues.</p>
+<div class="code-output">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode bat code-with-copy"><code class="sourceCode dosbat"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>npm ls brace<span class="at">-expansion</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<pre class="output-pane">azurite@3.35.0 C:\Users\xxx\AppData\Roaming\npm\node_modules\azurite
+`-- rimraf@3.0.2
+  `-- glob@7.2.3
+    `-- minimatch@3.1.5
+      `-- brace-expansion@1.1.12</pre>
+</div>
 <p><strong>Example 2: Multiple copies case</strong></p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode dosbat code-with-copy"><code class="sourceCode dosbat"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>C:\Users\xxx\AppData\Roaming\npm\node_modules\azurite<span class="kw">&gt;</span>npm ls follow<span class="at">-redirects</span></span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>azurite@3.35.0 C:\Users\xxx\AppData\Roaming\npm\node_modules\azurite</span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>+-- @azure<span class="at">/ms-rest-js</span>@1.11.2</span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="kw">|</span> `-- axios@0.21.4</span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="kw">|</span>   `-- follow<span class="at">-redirects</span>@1.15.11 deduped</span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>`-- axios@0.27.2</span>
-<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>  `-- follow<span class="at">-redirects</span>@1.15.11</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>The axios package is in 2 verisons and based on the same follow-redirects package. An issue with the follow-redirects package will have a higher blast radius in case of vulnerability and fix issues. Implementation of a fix could also be more complex due to more applications being impacted. In this case, follow-redirects is a transitive dependency can easily be updated with a npm audit fix.</p>
+<div class="code-output">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode bat code-with-copy"><code class="sourceCode dosbat"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>npm ls follow<span class="at">-redirects</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<pre class="output-pane">azurite@3.35.0 C:\Users\xxx\AppData\Roaming\npm\node_modules\azurite
++-- @azure/ms-rest-js@1.11.2
+|   `-- axios@0.21.4
+|     `-- follow-redirects@1.15.11 deduped
+`-- axios@0.27.2
+  `-- follow-redirects@1.15.11</pre>
+</div>
+<p>The axios package appears in 2 versions, both depending on the same follow-redirects package. A vulnerability in follow-redirects has a wider blast radius, and a fix would touch more consumers of that dependency. In this case, follow-redirects is a transitive dependency that can easily be updated with <code>npm audit fix</code>.</p>
 </section>
 <section id="to-fix-or-not-to-fix" class="level3">
 <h3 class="anchored" data-anchor-id="to-fix-or-not-to-fix">To fix or not to fix</h3>
@@ -500,33 +675,38 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="the-fix-plan" class="level3">
 <h3 class="anchored" data-anchor-id="the-fix-plan">The fix plan</h3>
 <p><strong>Non-breaking fix:</strong> covers 2/3 of the high-severity issues and 2/5 of the moderates. Low risk, clear win.</p>
-<p><strong>Breaking fix (<code>--force</code>):</strong> would tackle the rest, but risks silently breaking Azurite. My usage is purely local — with appropriate host <code>127.0.0.1</code> and port <code>10000</code>, no production data, no risky network exposure. The risk of a broken emulator outweighs the marginal security gain. I’ll revisit when the maintainers ship a proper fix (Cf. set a reminder in my calendar).</p>
+<p><strong>Breaking fix (<code>--force</code>):</strong> would tackle the rest, but risks silently breaking Azurite. My usage is purely local — with appropriate host <code>127.0.0.1</code> and port <code>10000</code>, no production data, no risky network exposure. The risk of a broken emulator outweighs the marginal security gain. I’ll revisit when the maintainers ship a proper fix.</p>
 </section>
 <section id="applying-the-safe-fixes" class="level3">
 <h3 class="anchored" data-anchor-id="applying-the-safe-fixes">Applying the safe fixes</h3>
-<p>In my context, let’s use a minimal sanity check test before and after applying the audit fix, no sandboxing — <a href="https://en.wikipedia.org/wiki/KISS_principle">KISS</a>.</p>
+<p>In this case, a quick smoke test before and after is enough — no sandboxing either.</p>
 <p><strong>Azurite run test — successful</strong></p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode dosbat code-with-copy"><code class="sourceCode dosbat"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>C:\Users\xxx<span class="kw">&gt;</span>azurite -<span class="at">-blobHost</span> 127.0.0.1 -<span class="at">-blobPort</span> 10000</span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>Azurite Blob service is starting at http:/<span class="at">/127</span>.0.0.1:10000</span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>Azurite Blob service is successfully listening at http:/<span class="at">/127</span>.0.0.1:10000</span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>Azurite Queue service is starting at http:/<span class="at">/127</span>.0.0.1:10001</span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>Azurite Queue service is successfully listening at http:/<span class="at">/127</span>.0.0.1:10001</span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>Azurite Table service is starting at http:/<span class="at">/127</span>.0.0.1:10002</span>
-<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>Azurite Table service is successfully listening at http:/<span class="at">/127</span>.0.0.1:10002</span>
-<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>[CTRL-C to stop Azurite]</span>
-<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>Azurite Blob service is closing...</span>
-<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>Azurite Queue service is closing...</span>
-<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>Azurite Table service is closing...</span>
-<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>Azurite Table service successfully closed</span>
-<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>Azurite Blob service successfully closed</span>
-<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>Azurite Queue service successfully closed</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-output">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="sourceCode bat code-with-copy"><code class="sourceCode dosbat"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>azurite -<span class="at">-blobHost</span> 127.0.0.1 -<span class="at">-blobPort</span> 10000</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<pre class="output-pane">Azurite Blob service is starting at http://127.0.0.1:10000
+Azurite Blob service is successfully listening at http://127.0.0.1:10000
+Azurite Queue service is starting at http://127.0.0.1:10001
+Azurite Queue service is successfully listening at http://127.0.0.1:10001
+Azurite Table service is starting at http://127.0.0.1:10002
+Azurite Table service is successfully listening at http://127.0.0.1:10002
+...
+Azurite Blob service is closing...
+Azurite Queue service is closing...
+Azurite Table service is closing...
+Azurite Table service successfully closed
+Azurite Blob service successfully closed
+Azurite Queue service successfully closed</pre>
+</div>
 <p><strong>Versions of packages before audit fix</strong></p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="sourceCode dosbat code-with-copy"><code class="sourceCode dosbat"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>C:\Users\xxx\AppData\Roaming\npm\node_modules\azurite<span class="kw">&gt;</span>npm ls lodash</span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>azurite@3.35.0 C:\Users\xxx\AppData\Roaming\npm\node_modules\azurite</span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>`-- sequelize@6.37.8</span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>  `-- lodash@4.17.23</span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>[...]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Working directory: <code>C:\Users\xxx\AppData\Roaming\npm\node_modules\azurite</code></p>
+<div class="code-output">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="sourceCode bat code-with-copy"><code class="sourceCode dosbat"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>npm ls lodash</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<pre class="output-pane">azurite@3.35.0 C:\Users\xxx\AppData\Roaming\npm\node_modules\azurite
+`-- sequelize@6.37.8
+  `-- lodash@4.17.23
+
+...</pre>
+</div>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -554,22 +734,25 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </tbody>
 </table>
 <p><strong>Apply audit fix</strong></p>
-<p>Azurite being a global package on my system, the <em>npm audit fix</em> command cannot be used (adding a lock file as in a local Azurite package is not a good practice). So <em>npm install -g azurite@latest</em> is used instead.</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="sourceCode dosbat code-with-copy"><code class="sourceCode dosbat"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>C:\<span class="kw">&gt;</span>npm install <span class="at">-g</span> azurite@latest</span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>[npm warn deprecated messages...]</span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>removed 5 packages, and changed 370 packages in 11s</span>
-<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>C:\<span class="kw">&gt;</span>azurite -<span class="at">-version</span></span>
-<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>3.35.0</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Azurite being a global package, <code>npm audit fix</code> cannot be used directly — adding a lock file to a global package is not good practice. <code>npm install -g azurite@latest</code> is used instead.</p>
+<div class="code-output">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="sourceCode bat code-with-copy"><code class="sourceCode dosbat"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>npm install <span class="at">-g</span> azurite@latest</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<pre class="output-pane">...
+removed 5 packages, and changed 370 packages in 11s</pre>
+</div>
+<div class="code-output">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="sourceCode bat code-with-copy"><code class="sourceCode dosbat"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>azurite -<span class="at">-version</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<pre class="output-pane">3.35.0</pre>
+</div>
 <p><strong>Checking non-breaking fix success</strong></p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="sourceCode dosbat code-with-copy"><code class="sourceCode dosbat"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>C:\Users\xxx\AppData\Roaming\npm\node_modules\azurite<span class="kw">&gt;</span>npm ls lodash</span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>azurite@3.35.0 C:\Users\xxx\AppData\Roaming\npm\node_modules\azurite</span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>`-- sequelize@6.37.8</span>
-<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>  `-- lodash@4.18.1</span>
-<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>[...]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Working directory: <code>C:\Users\xxx\AppData\Roaming\npm\node_modules\azurite</code></p>
+<div class="code-output">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="sourceCode bat code-with-copy"><code class="sourceCode dosbat"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>npm ls lodash</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<pre class="output-pane">azurite@3.35.0 C:\Users\xxx\AppData\Roaming\npm\node_modules\azurite
+`-- sequelize@6.37.8
+  `-- lodash@4.18.1
+...</pre>
+</div>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -602,50 +785,52 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </tbody>
 </table>
 <p>All 4 packages bumped to patched versions, and the associated vulnerabilities disappeared from the audit report. The breaking-fix issues remain, as expected.</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="sourceCode dosbat code-with-copy"><code class="sourceCode dosbat"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>C:\Users\xxx\AppData\Roaming\npm\node_modules\azurite<span class="kw">&gt;</span>npm audit -<span class="at">-no-package-lock</span> -<span class="at">-omit</span>=dev</span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a># npm audit report</span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="kw">@</span>azure/identity  <span class="kw">&lt;</span>4.2.1</span>
-<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>Severity: moderate</span>
-<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>[...]</span>
-<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>axios  <span class="kw">&lt;</span>=0.31.0</span>
-<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>Severity: high</span>
-<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>[...]</span>
-<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>tough-cookie  <span class="kw">&lt;</span>4.1.3</span>
-<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>Severity: moderate</span>
-<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a>[...]</span>
-<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a>xml2js  <span class="kw">&lt;</span>0.5.0</span>
-<span id="cb18-17"><a href="#cb18-17" aria-hidden="true" tabindex="-1"></a>Severity: moderate</span>
-<span id="cb18-18"><a href="#cb18-18" aria-hidden="true" tabindex="-1"></a>[...]</span>
-<span id="cb18-19"><a href="#cb18-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-20"><a href="#cb18-20" aria-hidden="true" tabindex="-1"></a>6 vulnerabilities (4 moderate, 2 high<span class="kw">)</span></span>
-<span id="cb18-21"><a href="#cb18-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-22"><a href="#cb18-22" aria-hidden="true" tabindex="-1"></a>To address all issues (including breaking changes<span class="kw">)</span>, run:</span>
-<span id="cb18-23"><a href="#cb18-23" aria-hidden="true" tabindex="-1"></a>  npm audit fix -<span class="at">-force</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-output">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="sourceCode bat code-with-copy"><code class="sourceCode dosbat"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>npm audit -<span class="at">-no-package-lock</span> -<span class="at">-omit</span>=dev</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<pre class="output-pane"># npm audit report
+
+@azure/identity  &lt;4.2.1
+Severity: moderate
+...
+axios  &lt;=0.31.0
+Severity: high
+...
+tough-cookie  &lt;4.1.3
+Severity: moderate
+...
+xml2js  &lt;0.5.0
+Severity: moderate
+...
+
+6 vulnerabilities (4 moderate, 2 high)
+
+To address all issues (including breaking changes), run:
+  npm audit fix --force</pre>
+</div>
 <p><strong>Azurite run test — successful</strong></p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="sourceCode dosbat code-with-copy"><code class="sourceCode dosbat"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>C:\Users\xxx<span class="kw">&gt;</span>azurite -<span class="at">-blobHost</span> 127.0.0.1 -<span class="at">-blobPort</span> 10000</span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>Azurite Blob service is starting at http:/<span class="at">/127</span>.0.0.1:10000</span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>Azurite Blob service is successfully listening at http:/<span class="at">/127</span>.0.0.1:10000</span>
-<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>Azurite Queue service is starting at http:/<span class="at">/127</span>.0.0.1:10001</span>
-<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>Azurite Queue service is successfully listening at http:/<span class="at">/127</span>.0.0.1:10001</span>
-<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>Azurite Table service is starting at http:/<span class="at">/127</span>.0.0.1:10002</span>
-<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>Azurite Table service is successfully listening at http:/<span class="at">/127</span>.0.0.1:10002</span>
-<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>Azurite Blob service is closing...</span>
-<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>Azurite Queue service is closing...</span>
-<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>Azurite Table service is closing...</span>
-<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a>Azurite Table service successfully closed</span>
-<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a>Azurite Blob service successfully closed</span>
-<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a>Azurite Queue service successfully closed</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-output">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="sourceCode bat code-with-copy"><code class="sourceCode dosbat"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>azurite -<span class="at">-blobHost</span> 127.0.0.1 -<span class="at">-blobPort</span> 10000</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<pre class="output-pane">Azurite Blob service is starting at http://127.0.0.1:10000
+Azurite Blob service is successfully listening at http://127.0.0.1:10000
+Azurite Queue service is starting at http://127.0.0.1:10001
+Azurite Queue service is successfully listening at http://127.0.0.1:10001
+Azurite Table service is starting at http://127.0.0.1:10002
+Azurite Table service is successfully listening at http://127.0.0.1:10002
+...
+Azurite Blob service is closing...
+Azurite Queue service is closing...
+Azurite Table service is closing...
+Azurite Table service successfully closed
+Azurite Blob service successfully closed
+Azurite Queue service successfully closed</pre>
+</div>
 </section>
 </section>
 </section>
 <section id="conclusion" class="level1">
 <h1>Conclusion</h1>
 <p>Node.js was behind and carrying 2 high CVEs. Azurite had a longer list of issues, some of which the non-breaking fix took care of — the remainder require changes the maintainers haven’t shipped yet, and my risk profile doesn’t require immediate action.</p>
-<p>The number that surprised me most wasn’t the CVE count for Azurite but the fact that its release label was the same <em>latest</em> <code>3.35.0</code> both before and after the update. The same <code>3.35.0</code> Azurite release can have different versions of dependencies underneath. That’s the kind of “false sense of security” that quietly bites you. Worth keeping in mind whenever you’re evaluating your own npm packages supply chain exposure.</p>
+<p>The number that surprised me most wasn’t the CVE count for Azurite but the fact that its release label is the same <em>latest</em> <code>3.35.0</code> both before and after the update. The same <code>3.35.0</code> Azurite release can have different versions of dependencies underneath. That’s the kind of “false sense of security” that quietly bites you. Worth keeping in mind whenever you’re evaluating your own npm packages supply chain exposure.</p>
 
 
 </section>

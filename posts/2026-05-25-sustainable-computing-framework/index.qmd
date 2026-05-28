@@ -1,0 +1,16 @@
+---
+title: "Fast Azure Function creation, test and deployment"
+date: 2026-05-19
+description: "Documenting my fast Azure Function creation, testing and deployment workflow from zero to up in Azure"
+image: ../../images/blog/xxx.webp
+image-alt: "xxx"
+categories: [Sustainable Computing, Serverless, IT Strategy]
+draft: true
+---
+
+Idea of using the definition of sustainable computing in the article C:\Users\alexa\Documents\PRO_PROJECTS\it_papers\serverless_computing_a_taxonomy_of_challenges_and_solutions.pdf
+
+The goal would be to provide a framework to evaluate the sustainability of a technical solution to implement.
+
+Eg. Take as an example a serverless computing solution vs. a container solution for a data engineering project.
+(take into account the different aspects of the decision to make - sustainability, cost, performance, scalability, security, ...)

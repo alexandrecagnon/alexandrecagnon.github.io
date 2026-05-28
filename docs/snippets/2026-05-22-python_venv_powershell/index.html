@@ -107,8 +107,157 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-label": "Search"
   }
 }</script>
+<script>
+
+window.document.addEventListener("DOMContentLoaded", function () {
+
+  function toLabel(rawLanguage) {
+
+    if (!rawLanguage) return "";
+
+    var normalized = rawLanguage.toLowerCase();
+
+    var aliases = {
+
+      js: "JavaScript",
+
+      ts: "TypeScript",
+
+      py: "Python",
+
+      ps1: "PowerShell",
+
+      pwsh: "PowerShell",
+
+      sh: "Shell",
+
+      bash: "Bash",
+
+      yml: "YAML",
+
+      md: "Markdown"
+
+    };
+
+    if (aliases[normalized]) return aliases[normalized];
+
+    if (normalized === "text" || normalized === "plaintext") return "Text";
+
+    return rawLanguage;
+
+  }
 
 
+
+  function detectLanguage(codeElement) {
+
+    if (!codeElement || !codeElement.classList) return "";
+
+    var classes = Array.from(codeElement.classList);
+
+    for (var i = 0; i < classes.length; i += 1) {
+
+      var cls = classes[i];
+
+      if (cls !== "sourceCode" && cls !== "code-with-copy" && cls !== "numberSource") {
+
+        return cls;
+
+      }
+
+    }
+
+    return "";
+
+  }
+
+
+
+  function setBadgeTarget(container, label) {
+
+    if (!label || !container || container.hasAttribute("data-code-language")) return;
+
+    container.setAttribute("data-code-language", label);
+
+  }
+
+
+
+  function applyLanguageBadges() {
+
+    document.querySelectorAll("pre > code.sourceCode").forEach(function (codeEl) {
+
+      var language = detectLanguage(codeEl);
+
+      if (!language) return;
+
+      var label = toLabel(language);
+
+      if (!label) return;
+
+
+
+      var scaffold = codeEl.closest(".code-copy-outer-scaffold");
+
+      if (scaffold) {
+
+        setBadgeTarget(scaffold, label);
+
+        return;
+
+      }
+
+
+
+      var sourceWrapper = codeEl.closest("div.sourceCode");
+
+      if (sourceWrapper) {
+
+        setBadgeTarget(sourceWrapper, label);
+
+      }
+
+    });
+
+
+
+    document.querySelectorAll("pre.text > code").forEach(function (codeEl) {
+
+      var scaffold = codeEl.closest(".code-copy-outer-scaffold");
+
+      if (scaffold) {
+
+        setBadgeTarget(scaffold, "Text");
+
+        return;
+
+      }
+
+      var pre = codeEl.closest("pre.text");
+
+      if (pre && pre.parentElement && pre.parentElement.classList.contains("sourceCode")) {
+
+        setBadgeTarget(pre.parentElement, "Text");
+
+      }
+
+    });
+
+  }
+
+
+
+  applyLanguageBadges();
+
+});
+
+</script>
+
+
+
+<link rel="stylesheet" href="../../styles/mermaid.css">
+<link rel="stylesheet" href="../../styles/code-language-badges.css">
+<link rel="stylesheet" href="../../styles/code-with-output.css">
 </head>
 
 <body class="nav-fixed quarto-light">
@@ -162,7 +311,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <ul>
   <li><a href="#list-available-python-versions" id="toc-list-available-python-versions" class="nav-link active" data-scroll-target="#list-available-python-versions">List available Python versions</a></li>
   <li><a href="#the-script" id="toc-the-script" class="nav-link" data-scroll-target="#the-script">The script</a></li>
-  <li><a href="#verifying-failure-output" id="toc-verifying-failure-output" class="nav-link" data-scroll-target="#verifying-failure-output">Verifying failure output</a></li>
+  <li><a href="#verifying-failure-output" id="toc-verifying-failure-output" class="nav-link" data-scroll-target="#verifying-failure-output">Verifying failure output</a>
+  <ul class="collapse">
+  <li><a href="#missing-requirements.txt" id="toc-missing-requirements.txt" class="nav-link" data-scroll-target="#missing-requirements.txt">Missing <code>requirements.txt</code></a></li>
+  <li><a href="#bad-python-version" id="toc-bad-python-version" class="nav-link" data-scroll-target="#bad-python-version">Bad Python version</a></li>
+  </ul></li>
   </ul>
 </nav>
     </div>
@@ -205,14 +358,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<p>I use this script whenever I set up a new project on Windows. It pins the Python version with pyenv, creates the <code>.venv</code>, and installs <code>requirements.txt</code> in one go — and it fails loudly with the exact step and exit code if anything goes wrong.</p>
+<p>Script to set up a Python virtual environment on Windows with pyenv — pins the Python version, creates <code>.venv</code>, and installs <code>requirements.txt</code> in one go. Fails loudly with the exact step and exit code if anything goes wrong.</p>
 <section id="list-available-python-versions" class="level1">
 <h1>List available Python versions</h1>
+<p>List all Python versions available to install via pyenv:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode powershell code-with-copy"><code class="sourceCode powershell"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>pyenv install <span class="op">--</span>list</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="the-script" class="level1">
 <h1>The script</h1>
-<p>Copy the script and run it from the project directory that contains <code>requirements.txt</code>. Adjust <code>$pyVer</code> to the Python version you want.</p>
+<p>Adjust <code>$pyVer</code> to the Python version you want. Run the script from the project folder that contains <code>requirements.txt</code>.</p>
 <p>Possible outcomes:</p>
 <ul>
 <li><strong>Success:</strong> prints <em>success creating .venv</em> and leaves the virtualenv activated.</li>
@@ -246,19 +400,29 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="verifying-failure-output" class="level1">
 <h1>Verifying failure output</h1>
-<p>Two quick ways to trigger and inspect failure output:</p>
-<p><strong>Missing <code>requirements.txt</code></strong> — run the script in a directory without one:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode powershell code-with-copy"><code class="sourceCode powershell"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>failure creating <span class="op">.</span><span class="fu">venv</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>failed command<span class="op">:</span> pip install <span class="op">-</span>r requirements<span class="op">.</span><span class="fu">txt</span> <span class="op">(</span><span class="cf">exit</span> code <span class="dv">1</span><span class="op">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p><strong>Bad Python version</strong> — set <code>$pyVer = "42.0.0"</code>:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode powershell code-with-copy"><code class="sourceCode powershell"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="op">::</span> <span class="op">[</span>Info<span class="op">]</span> <span class="op">::</span>  Mirror<span class="op">:</span> https<span class="op">://</span>www<span class="op">.</span><span class="fu">python</span><span class="op">.</span><span class="fu">org</span><span class="op">/</span>ftp<span class="op">/</span>python</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>pyenv-install<span class="op">:</span> definition not found<span class="op">:</span> <span class="dv">42.0</span><span class="op">.</span><span class="dv">0</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="dt">See</span> all available versions with <span class="ch">`p</span>yenv install <span class="op">--</span>list<span class="st">'.</span></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="st">failure creating .venv</span></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="st">failed command:  pyenv install $pyVer  (exit code 1)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Two quick ways to trigger and inspect failure outputs.</p>
+<section id="missing-requirements.txt" class="level2">
+<h2 class="anchored" data-anchor-id="missing-requirements.txt">Missing <code>requirements.txt</code></h2>
+<p>Run the script in a directory without a <code>requirements.txt</code> file.</p>
+<div class="code-output">
+<pre class="output-pane">failure creating .venv
+failed command: pip install -r requirements.txt (exit code 1)</pre>
+</div>
+</section>
+<section id="bad-python-version" class="level2">
+<h2 class="anchored" data-anchor-id="bad-python-version">Bad Python version</h2>
+<p>Set <code>$pyVer = "42.0.0"</code>.</p>
+<div class="code-output">
+<pre class="output-pane">:: [Info] ::  Mirror: https://www.python.org/ftp/python
+pyenv-install: definition not found: 42.0.0
+
+See all available versions with `pyenv install --list'.
+failure creating .venv
+failed command:  pyenv install $pyVer  (exit code 1)</pre>
+</div>
 
 
+</section>
 </section>
 
 </main> <!-- /main -->

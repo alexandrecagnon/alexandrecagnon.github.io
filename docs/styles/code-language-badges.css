@@ -1,0 +1,40 @@
+.code-copy-outer-scaffold,
+div.sourceCode {
+  position: relative;
+}
+
+.code-copy-outer-scaffold[data-code-language]::before,
+div.sourceCode[data-code-language]::before {
+  content: attr(data-code-language);
+  position: absolute;
+  top: 0.35rem;
+  left: 0.5rem;
+  right: auto;
+  z-index: 3;
+  font-family: var(--bs-font-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace);
+  font-size: 0.7rem;
+  line-height: 1;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 0.15rem 0.4rem;
+  border-radius: 0.25rem;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  background-color: rgba(255, 255, 255, 0.85);
+  color: #495057;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+body.quarto-dark .code-copy-outer-scaffold[data-code-language]::before,
+body.quarto-dark div.sourceCode[data-code-language]::before {
+  border-color: rgba(255, 255, 255, 0.2);
+  background-color: rgba(33, 37, 41, 0.85);
+  color: #dee2e6;
+}
+
+/* Keep first code line clear of the top-left badge */
+.code-copy-outer-scaffold[data-code-language] pre.sourceCode,
+.code-copy-outer-scaffold[data-code-language] pre.text,
+div.sourceCode[data-code-language] pre.sourceCode {
+  padding-top: 1.75rem;
+}

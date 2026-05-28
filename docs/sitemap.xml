@@ -1,36 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>https://alexandrecagnon.github.io/snippets/2026-05-28-push-local-project-to-github-repo/index.html</loc>
+    <lastmod>2026-05-28T14:03:25.813Z</lastmod>
+  </url>
+  <url>
     <loc>https://alexandrecagnon.github.io/snippets/2026-05-22-python_venv_powershell/index.html</loc>
-    <lastmod>2026-05-22T09:21:56.279Z</lastmod>
+    <lastmod>2026-05-28T09:10:57.510Z</lastmod>
   </url>
   <url>
     <loc>https://alexandrecagnon.github.io/snippets.html</loc>
     <lastmod>2026-05-22T03:55:15.327Z</lastmod>
   </url>
   <url>
-    <loc>https://alexandrecagnon.github.io/index.html</loc>
-    <lastmod>2026-05-22T03:54:58.798Z</lastmod>
-  </url>
-  <url>
-    <loc>https://alexandrecagnon.github.io/corrections.html</loc>
-    <lastmod>2026-05-19T14:01:50.150Z</lastmod>
-  </url>
-  <url>
-    <loc>https://alexandrecagnon.github.io/about.html</loc>
-    <lastmod>2026-04-14T19:44:49.368Z</lastmod>
-  </url>
-  <url>
-    <loc>https://alexandrecagnon.github.io/blog.html</loc>
-    <lastmod>2026-05-19T11:25:43.460Z</lastmod>
+    <loc>https://alexandrecagnon.github.io/posts/2026-05-18-nodejs-npm-security-update-windows/index.html</loc>
+    <lastmod>2026-05-28T14:13:46.501Z</lastmod>
   </url>
   <url>
     <loc>https://alexandrecagnon.github.io/disclaimer.html</loc>
     <lastmod>2026-05-19T10:40:36.815Z</lastmod>
   </url>
   <url>
-    <loc>https://alexandrecagnon.github.io/posts/2026-05-18-nodejs-npm-security-update-windows/index.html</loc>
-    <lastmod>2026-05-22T09:30:33.726Z</lastmod>
+    <loc>https://alexandrecagnon.github.io/blog.html</loc>
+    <lastmod>2026-05-19T11:25:43.460Z</lastmod>
+  </url>
+  <url>
+    <loc>https://alexandrecagnon.github.io/about.html</loc>
+    <lastmod>2026-04-14T19:44:49.368Z</lastmod>
+  </url>
+  <url>
+    <loc>https://alexandrecagnon.github.io/corrections.html</loc>
+    <lastmod>2026-05-19T14:01:50.150Z</lastmod>
+  </url>
+  <url>
+    <loc>https://alexandrecagnon.github.io/index.html</loc>
+    <lastmod>2026-05-22T03:54:58.798Z</lastmod>
   </url>
   <url>
     <loc>https://alexandrecagnon.github.io/privacy.html</loc>
@@ -38,6 +42,6 @@
   </url>
   <url>
     <loc>https://alexandrecagnon.github.io/snippets/2026-05-18-find-nodejs-projects-powershell/index.html</loc>
-    <lastmod>2026-05-22T09:26:33.189Z</lastmod>
+    <lastmod>2026-05-28T09:11:01.029Z</lastmod>
   </url>
 </urlset>

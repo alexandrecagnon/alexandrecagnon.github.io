@@ -1,0 +1,65 @@
+---
+title: "Push local project to new GitHub repository"
+date: 2026-05-28
+description: "Steps to push a local project to a new GitHub repository for the first time."
+categories: [GitHub, Windows]
+draft: false
+---
+
+# Overview
+
+Starting point: a local project with no remote repository.   
+Goal: push it to a new GitHub repository from scratch.
+
+# Prerequisites
+
+- A GitHub account — [GitHub signup](https://github.com/signup), it's free.
+- Git installed locally — [Git for Windows](https://git-scm.com/download/win).
+- A local folder with the project to push.
+
+# Create the repository on GitHub
+
+Create a new repository with these settings:
+
+- Name: `my-repo-name`
+- Visibility: `Private` or `Public` (worth deciding upfront)
+- Leave `Add README`, `Add .gitignore`, and `Add license` **unchecked** — adding any of these creates a commit on the remote, which complicates the initial push from a non-empty local repo.
+
+# Check the .gitignore before pushing
+
+Make sure the `.gitignore` at the root of the project excludes build artifacts, caches, and environment files. Crucially, any file containing secrets or credentials should be listed there — pushing sensitive information to GitHub, even a private repo, is a real security risk.
+
+A good starting point for Python projects is the [official Python.gitignore template](https://github.com/github/gitignore/blob/main/Python.gitignore).
+
+# Push the local project
+
+Replace `my-repo-name` with the actual repository name and `USERNAME` with the GitHub username.    
+Run the git commands from the project folder.   
+The `git push` step may prompt for a GitHub authentication.
+
+```powershell
+git init
+git add .
+git commit -m "first commit"
+git branch -M main
+git remote add origin https://github.com/USERNAME/my-repo-name.git
+git push -u origin main
+```
+
+# Verify what landed on the remote
+
+Once the push completes, confirm the remote has the right files:
+
+:::: {.code-output}
+```powershell
+git pull
+git ls-tree -r --name-only HEAD
+```
+
+**Output example:**
+<pre class="output-pane">.gitignore
+.python-version
+function_app.py
+host.json
+requirements.txt</pre>
+::::

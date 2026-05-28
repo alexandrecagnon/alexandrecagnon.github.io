@@ -6,9 +6,11 @@ categories: [Python, PowerShell, pyenv, Windows]
 draft: false
 ---
 
-I use this script whenever I set up a new project on Windows. It pins the Python version with pyenv, creates the `.venv`, and installs `requirements.txt` in one go — and it fails loudly with the exact step and exit code if anything goes wrong.
+Script to set up a Python virtual environment on Windows with pyenv — pins the Python version, creates `.venv`, and installs `requirements.txt` in one go. Fails loudly with the exact step and exit code if anything goes wrong.
 
 # List available Python versions
+
+List all Python versions available to install via pyenv:
 
 ```powershell
 pyenv install --list
@@ -16,7 +18,7 @@ pyenv install --list
 
 # The script
 
-Copy the script and run it from the project directory that contains `requirements.txt`. Adjust `$pyVer` to the Python version you want.
+Adjust `$pyVer` to the Python version you want. Run the script from the project folder that contains `requirements.txt`. 
 
 Possible outcomes:
 
@@ -53,20 +55,26 @@ finally {
 
 # Verifying failure output
 
-Two quick ways to trigger and inspect failure output:
+Two quick ways to trigger and inspect failure outputs.
 
-**Missing `requirements.txt`** — run the script in a directory without one:
-```powershell
-failure creating .venv
-failed command: pip install -r requirements.txt (exit code 1)
-```
+## Missing `requirements.txt`
 
-**Bad Python version** — set `$pyVer = "42.0.0"`:
-```powershell
-:: [Info] ::  Mirror: https://www.python.org/ftp/python
+Run the script in a directory without a `requirements.txt` file.
+
+<div class="code-output">
+<pre class="output-pane">failure creating .venv
+failed command: pip install -r requirements.txt (exit code 1)</pre>
+</div>
+
+## Bad Python version
+
+Set `$pyVer = "42.0.0"`.
+
+<div class="code-output">
+<pre class="output-pane">:: [Info] ::  Mirror: https://www.python.org/ftp/python
 pyenv-install: definition not found: 42.0.0
 
 See all available versions with `pyenv install --list'.
 failure creating .venv
-failed command:  pyenv install $pyVer  (exit code 1)
-```
+failed command:  pyenv install $pyVer  (exit code 1)</pre>
+</div>
