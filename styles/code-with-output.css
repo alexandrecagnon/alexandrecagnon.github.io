@@ -1,0 +1,59 @@
+/* ── .code-output: fused code block + output block ──────────────────────────
+   Wraps a Quarto code block and a raw <pre class="output-pane"> so they read
+   as one visual unit. Quarto's copy button targets only the <code> element
+   inside the code block, so the output pane is never copied.
+
+   Usage in QMD:
+     :::: {.code-output}
+     ```powershell
+     Get-Date
+     ```
+
+     <pre class="output-pane">Wednesday, May 28, 2026 09:41:03</pre>
+     ::::
+────────────────────────────────────────────────────────────────────────────*/
+
+/* Remove the bottom gap between code block wrapper and output pane */
+.code-output > div.sourceCode,
+.code-output > .code-copy-outer-scaffold {
+  margin-bottom: 0 !important;
+}
+
+/* Flatten the bottom corners of the code block pre */
+.code-output > div.sourceCode pre.sourceCode,
+.code-output > .code-copy-outer-scaffold pre.sourceCode {
+  border-bottom-left-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.09);
+  margin-bottom: 0 !important;
+}
+
+/* Output pane */
+.code-output pre.output-pane {
+  font-family: var(--bs-font-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    "Liberation Mono", "Courier New", monospace);
+  font-size: 0.8em;
+  line-height: 1.6;
+  color: var(--bs-body-color, #212529);
+  background-color: #fdfdfd;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-top: none;
+  margin: 0 0 1rem 0;
+  padding: 0.55rem 1rem;
+  border-bottom-left-radius: var(--bs-border-radius, 0.375rem);
+  border-bottom-right-radius: var(--bs-border-radius, 0.375rem);
+  overflow-x: auto;
+  white-space: pre;
+}
+
+/* Dark mode */
+body.quarto-dark .code-output > div.sourceCode pre.sourceCode,
+body.quarto-dark .code-output > .code-copy-outer-scaffold pre.sourceCode {
+  border-bottom-color: rgba(255, 255, 255, 0.08);
+}
+
+body.quarto-dark .code-output pre.output-pane {
+  border-color: rgba(255, 255, 255, 0.1);
+  background-color: #2c3035;
+  color: #dee2e6;
+}

@@ -1,0 +1,24 @@
+/* Mermaid cluster (subgraph) backgrounds — Quarto themeCSS uses these variables.
+   Without them, cluster fills fall back to dark grey. See quarto-cli#9178. */
+:root {
+  --mermaid-bg-color: #ffffff;
+  --mermaid-fg-color: #2c3e50;
+  --mermaid-fg-color--lighter: #95a5a6;
+  --mermaid-fg-color--lightest: #ecf0f1;
+  --mermaid-edge-color: #7f8c8d;
+  --mermaid-node-bg-color: rgba(44, 62, 80, 0.08);
+  --mermaid-node-fg-color: #2c3e50;
+  --mermaid-label-bg-color: #ffffff;
+  --mermaid-label-fg-color: #2c3e50;
+}
+
+/* Subgraph titles in LR+TB flowcharts often overlap the first node; lift labels up. */
+svg.mermaid-js .cluster-label {
+  transform: translateY(-1.6rem);
+}
+
+/* Ensure light subgraph panels even when theme variables are missing. */
+svg.mermaid-js .cluster rect {
+  fill: #ecf0f1 !important;
+  stroke: #bdc3c7 !important;
+}

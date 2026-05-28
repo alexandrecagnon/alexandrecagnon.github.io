@@ -34,5 +34,12 @@ website:
 format:
   html:
     theme: flatly
+    css:
+      - styles/mermaid.css
+      - styles/code-language-badges.css
+      - styles/code-with-output.css
+    include-in-header: includes/code-language-badges.html
+    mermaid:
+      theme: neutral
     toc: true
     toc-location: right

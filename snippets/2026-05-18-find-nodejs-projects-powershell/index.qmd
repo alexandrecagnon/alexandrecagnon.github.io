@@ -6,7 +6,7 @@ categories: [Node.js, PowerShell, Windows]
 draft: false
 ---
 
-I realised I had no idea how many Node.js projects were sitting on my machine. This snippet walks a projects folder, finds every `package.json` that belongs to a real project, and prints the result as JSON. I have many Python projects so I added a parameter to include or exclude scanning under `.venv` packages.
+Walks a projects folder, finds every `package.json` that belongs to a real project, and prints the result as JSON. A parameter controls whether to include or exclude scanning under `.venv` packages — useful for machines with Python projects that contain `.venv` directories.
 
 # Settings
 
@@ -90,12 +90,14 @@ $result = [ordered]@{
 $result | ConvertTo-Json -Depth 5
 ```
 
-# Output examples
+# Example output
 
-**When `$IncludeVenv` is `$false`** - a log line appears before the JSON: `Packages under .venv (excluded from scan): N`.
+## When `$IncludeVenv` is `false`
 
-```json
-Packages under .venv (excluded from scan): 5
+A log line appears before the JSON as `Packages under .venv (excluded from scan): N`.
+
+<div class="code-output">
+<pre class="output-pane">Packages under .venv (excluded from scan): 5
 {
   "rootPath": "C:\\projects",
   "includeVenv": false,
@@ -109,12 +111,15 @@ Packages under .venv (excluded from scan): 5
       "hasLockfile": true
     }
   ]
-}
-```
+}</pre>
+</div>
 
-**When `$IncludeVenv` is `$true`** - the JSON includes the `.venv` packages:
-```json
-{
+## When `$IncludeVenv` is `true`
+
+The JSON includes the `.venv` packages.
+
+<div class="code-output">
+<pre class="output-pane">{
   "rootPath": "C:\\projects",
   "includeVenv": true,
   "count": 6,
@@ -126,7 +131,7 @@ Packages under .venv (excluded from scan): 5
       "dependencies": 40,
       "hasLockfile": false
     },
-    ... (more venv packages not shown) ...
+    ...
     {
       "project": "jupyterlab-plotly",
       "version": "6.0.1",
@@ -142,5 +147,5 @@ Packages under .venv (excluded from scan): 5
       "hasLockfile": true
     }
   ]
-}
-```
+}</pre>
+</div>

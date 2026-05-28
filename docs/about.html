@@ -70,8 +70,157 @@ ul.task-list li input[type="checkbox"] {
     "search-label": "Search"
   }
 }</script>
+<script>
+
+window.document.addEventListener("DOMContentLoaded", function () {
+
+  function toLabel(rawLanguage) {
+
+    if (!rawLanguage) return "";
+
+    var normalized = rawLanguage.toLowerCase();
+
+    var aliases = {
+
+      js: "JavaScript",
+
+      ts: "TypeScript",
+
+      py: "Python",
+
+      ps1: "PowerShell",
+
+      pwsh: "PowerShell",
+
+      sh: "Shell",
+
+      bash: "Bash",
+
+      yml: "YAML",
+
+      md: "Markdown"
+
+    };
+
+    if (aliases[normalized]) return aliases[normalized];
+
+    if (normalized === "text" || normalized === "plaintext") return "Text";
+
+    return rawLanguage;
+
+  }
 
 
+
+  function detectLanguage(codeElement) {
+
+    if (!codeElement || !codeElement.classList) return "";
+
+    var classes = Array.from(codeElement.classList);
+
+    for (var i = 0; i < classes.length; i += 1) {
+
+      var cls = classes[i];
+
+      if (cls !== "sourceCode" && cls !== "code-with-copy" && cls !== "numberSource") {
+
+        return cls;
+
+      }
+
+    }
+
+    return "";
+
+  }
+
+
+
+  function setBadgeTarget(container, label) {
+
+    if (!label || !container || container.hasAttribute("data-code-language")) return;
+
+    container.setAttribute("data-code-language", label);
+
+  }
+
+
+
+  function applyLanguageBadges() {
+
+    document.querySelectorAll("pre > code.sourceCode").forEach(function (codeEl) {
+
+      var language = detectLanguage(codeEl);
+
+      if (!language) return;
+
+      var label = toLabel(language);
+
+      if (!label) return;
+
+
+
+      var scaffold = codeEl.closest(".code-copy-outer-scaffold");
+
+      if (scaffold) {
+
+        setBadgeTarget(scaffold, label);
+
+        return;
+
+      }
+
+
+
+      var sourceWrapper = codeEl.closest("div.sourceCode");
+
+      if (sourceWrapper) {
+
+        setBadgeTarget(sourceWrapper, label);
+
+      }
+
+    });
+
+
+
+    document.querySelectorAll("pre.text > code").forEach(function (codeEl) {
+
+      var scaffold = codeEl.closest(".code-copy-outer-scaffold");
+
+      if (scaffold) {
+
+        setBadgeTarget(scaffold, "Text");
+
+        return;
+
+      }
+
+      var pre = codeEl.closest("pre.text");
+
+      if (pre && pre.parentElement && pre.parentElement.classList.contains("sourceCode")) {
+
+        setBadgeTarget(pre.parentElement, "Text");
+
+      }
+
+    });
+
+  }
+
+
+
+  applyLanguageBadges();
+
+});
+
+</script>
+
+
+
+<link rel="stylesheet" href="styles/mermaid.css">
+<link rel="stylesheet" href="styles/code-language-badges.css">
+<link rel="stylesheet" href="styles/code-with-output.css">
 <link rel="stylesheet" href="styles/about.css">
 </head>
 
