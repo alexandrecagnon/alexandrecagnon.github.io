@@ -22,3 +22,35 @@ svg.mermaid-js .cluster rect {
   fill: #ecf0f1 !important;
   stroke: #bdc3c7 !important;
 }
+
+/* Center diagram cells; Quarto sets data-layout-align from fig-align: center */
+.cell[data-layout-align="center"] .cell-output-display,
+.cell-output-display:has(svg.mermaid-js) {
+  display: flex;
+  justify-content: center;
+}
+
+.cell-output-display svg.mermaid-js {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin-inline: auto;
+}
+
+/* Fallback when themeVariables fontSize is not applied */
+svg.mermaid-js .nodeLabel,
+svg.mermaid-js .edgeLabel,
+svg.mermaid-js .label text,
+svg.mermaid-js .cluster-label {
+  font-size: 13px !important;
+}
+
+/* HTML labels only: allow overflow if a diagram opts in via htmlLabels: true */
+svg.mermaid-js foreignObject {
+  overflow: visible !important;
+}
+
+svg.mermaid-js foreignObject div {
+  text-align: center;
+  line-height: 1.35;
+}

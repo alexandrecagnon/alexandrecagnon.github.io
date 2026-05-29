@@ -42,5 +42,8 @@ format:
     include-in-header: includes/code-language-badges.html
     mermaid:
       theme: neutral
+      config:
+        themeVariables:
+          fontSize: "13px"
     toc: true
     toc-location: right
