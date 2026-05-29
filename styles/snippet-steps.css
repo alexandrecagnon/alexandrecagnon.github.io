@@ -1,0 +1,26 @@
+/* Numbered procedure steps in snippets — keeps nested code/output aligned with list items */
+
+.snippet-steps {
+  padding-left: 0;
+  margin-left: 0;
+}
+
+.snippet-steps > ol {
+  padding-left: 1.75rem;
+  margin-bottom: 1rem;
+}
+
+.snippet-steps > ol > li {
+  margin-bottom: 0.75rem;
+}
+
+.snippet-steps > ol > li > p:first-child {
+  margin-top: 0;
+}
+
+/* Code blocks nested under a list item (Pandoc continuation indent) */
+.snippet-steps > ol > li .code-output,
+.snippet-steps > ol > li > div.sourceCode {
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+}

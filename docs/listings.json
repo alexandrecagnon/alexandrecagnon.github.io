@@ -2,6 +2,7 @@
   {
     "listing": "/snippets.html",
     "items": [
+      "/snippets/2026-05-29-pyenv-update-windows/index.html",
       "/snippets/2026-05-28-push-local-project-to-github-repo/index.html",
       "/snippets/2026-05-18-find-nodejs-projects-powershell/index.html",
       "/snippets/2026-05-22-python_venv_powershell/index.html"

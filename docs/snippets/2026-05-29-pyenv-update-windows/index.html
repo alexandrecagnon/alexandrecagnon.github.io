@@ -6,10 +6,10 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="dcterms.date" content="2026-05-22">
-<meta name="description" content="PowerShell script to inventory Node.js projects under a directory on Windows.">
+<meta name="dcterms.date" content="2026-05-29">
+<meta name="description" content="Update pyenv version cache on Windows when the pyenv update command fails.">
 
-<title>Find all Node.js projects under a directory – Alexandre Cagnon</title>
+<title>Update blocked pyenv update on Windows – Alexandre Cagnon</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -310,13 +310,11 @@ window.document.addEventListener("DOMContentLoaded", function () {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#settings" id="toc-settings" class="nav-link active" data-scroll-target="#settings">Settings</a></li>
-  <li><a href="#the-script" id="toc-the-script" class="nav-link" data-scroll-target="#the-script">The script</a></li>
-  <li><a href="#example-output" id="toc-example-output" class="nav-link" data-scroll-target="#example-output">Example output</a>
-  <ul class="collapse">
-  <li><a href="#when-includevenv-is-false" id="toc-when-includevenv-is-false" class="nav-link" data-scroll-target="#when-includevenv-is-false">When <code>$IncludeVenv</code> is <code>false</code></a></li>
-  <li><a href="#when-includevenv-is-true" id="toc-when-includevenv-is-true" class="nav-link" data-scroll-target="#when-includevenv-is-true">When <code>$IncludeVenv</code> is <code>true</code></a></li>
-  </ul></li>
+  <li><a href="#problem" id="toc-problem" class="nav-link active" data-scroll-target="#problem">Problem</a></li>
+  <li><a href="#update-pyenv-package" id="toc-update-pyenv-package" class="nav-link" data-scroll-target="#update-pyenv-package">Update pyenv package</a></li>
+  <li><a href="#update-the-version-cache-manually" id="toc-update-the-version-cache-manually" class="nav-link" data-scroll-target="#update-the-version-cache-manually">Update the version cache manually</a></li>
+  <li><a href="#testing-downloading-the-latest-python-version" id="toc-testing-downloading-the-latest-python-version" class="nav-link" data-scroll-target="#testing-downloading-the-latest-python-version">Testing downloading the latest Python version</a></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
   </ul>
 </nav>
     </div>
@@ -325,17 +323,17 @@ window.document.addEventListener("DOMContentLoaded", function () {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Find all Node.js projects under a directory</h1>
+<h1 class="title">Update blocked pyenv update on Windows</h1>
   <div class="quarto-categories">
-    <div class="quarto-category">Node.js</div>
-    <div class="quarto-category">PowerShell</div>
     <div class="quarto-category">Windows</div>
+    <div class="quarto-category">Python</div>
+    <div class="quarto-category">pyenv</div>
   </div>
   </div>
 
 <div>
   <div class="description">
-    PowerShell script to inventory Node.js projects under a directory on Windows.
+    Update pyenv version cache on Windows when the pyenv update command fails.
   </div>
 </div>
 
@@ -346,7 +344,7 @@ window.document.addEventListener("DOMContentLoaded", function () {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">May 22, 2026</p>
+      <p class="date">May 29, 2026</p>
     </div>
   </div>
   
@@ -358,168 +356,113 @@ window.document.addEventListener("DOMContentLoaded", function () {
 </header>
 
 
-<p>Walks a projects folder, finds every <code>package.json</code> that belongs to a real project, and prints the result as JSON. A parameter controls whether to include or exclude scanning under <code>.venv</code> packages — useful for machines with Python projects that contain <code>.venv</code> directories.</p>
-<section id="settings" class="level1">
-<h1>Settings</h1>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 33%">
-<col style="width: 33%">
-<col style="width: 33%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Variable</th>
-<th>Default</th>
-<th>Purpose</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><code>$RootPath</code></td>
-<td><code>C:\projects</code></td>
-<td>Root folder of your projects</td>
-</tr>
-<tr class="even">
-<td><code>$IncludeVenv</code></td>
-<td><code>$false</code></td>
-<td>Set to <code>$true</code> to include <code>package.json</code> under <code>.venv</code> in the JSON <code>projects</code> list</td>
-</tr>
-</tbody>
-</table>
-</section>
-<section id="the-script" class="level1">
-<h1>The script</h1>
-<p>Copy the block, edit the two settings at the top, paste into a PowerShell 7+ prompt, and run.</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode powershell code-with-copy"><code class="sourceCode powershell"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># --- settings (edit these) ---</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="va">$RootPath</span> <span class="op">=</span> <span class="st">"C:\projects"</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="va">$IncludeVenv</span> <span class="op">=</span> <span class="va">$false</span>   <span class="co"># $true to include .venv package.json in results</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co"># --- scan (no edits below) ---</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> Get-DependencyCount <span class="op">{</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">param</span><span class="op">(</span><span class="va">$Section</span><span class="op">)</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="op">(-not</span> <span class="va">$Section</span><span class="op">)</span> <span class="op">{</span> <span class="cf">return</span> <span class="dv">0</span> <span class="op">}</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="op">@(</span><span class="va">$Section</span><span class="op">.</span><span class="fu">PSObject</span><span class="op">.</span><span class="fu">Properties</span><span class="op">).</span><span class="fu">Count</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="va">$packageFiles</span> <span class="op">=</span> <span class="fu">Get-ChildItem</span> <span class="op">-</span>Path <span class="va">$RootPath</span> <span class="op">-</span>Recurse <span class="op">-</span>Filter <span class="st">"package.json"</span> <span class="op">-</span>ErrorAction SilentlyContinue</span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="va">$projects</span> <span class="op">=</span> <span class="op">[</span>System<span class="op">.</span><span class="fu">Collections</span><span class="op">.</span><span class="fu">Generic</span><span class="op">.</span><span class="fu">List</span><span class="op">[</span><span class="dt">object</span><span class="op">]]::</span>new<span class="op">()</span></span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="va">$venvPackageCount</span> <span class="op">=</span> <span class="dv">0</span></span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="dt">foreach</span> <span class="op">(</span><span class="va">$file</span> <span class="kw">in</span> <span class="va">$packageFiles</span><span class="op">)</span> <span class="op">{</span></span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>    <span class="va">$projectPath</span> <span class="op">=</span> <span class="va">$file</span><span class="op">.</span><span class="fu">Directory</span><span class="op">.</span><span class="fu">FullName</span></span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>    <span class="va">$inVenv</span> <span class="op">=</span> <span class="va">$file</span><span class="op">.</span><span class="fu">FullName</span> <span class="op">-match</span> <span class="st">'[\\/]\.venv[\\/]'</span></span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="op">(</span><span class="va">$file</span><span class="op">.</span><span class="fu">FullName</span> <span class="op">-match</span> <span class="st">'[\\/]node_modules[\\/]'</span><span class="op">)</span> <span class="op">{</span> <span class="cf">continue</span> <span class="op">}</span></span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="op">(</span><span class="va">$inVenv</span> <span class="op">-and</span> <span class="op">-not</span> <span class="va">$IncludeVenv</span><span class="op">)</span> <span class="op">{</span></span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>        <span class="cf">try</span> <span class="op">{</span></span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>            <span class="va">$venvData</span> <span class="op">=</span> <span class="fu">Get-Content</span> <span class="va">$file</span><span class="op">.</span><span class="fu">FullName</span> <span class="op">-</span>Raw <span class="op">|</span> <span class="fu">ConvertFrom-Json</span></span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> <span class="op">(-not</span> <span class="op">[</span><span class="dt">string</span><span class="op">]::</span>IsNullOrWhiteSpace<span class="op">(</span><span class="va">$venvData</span><span class="op">.</span><span class="fu">name</span><span class="op">))</span> <span class="op">{</span></span>
-<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>                <span class="va">$venvPackageCount</span><span class="op">++</span></span>
-<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>            <span class="op">}</span></span>
-<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
-<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>        <span class="cf">catch</span> <span class="op">{</span></span>
-<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>            <span class="fu">Write-Warning</span> <span class="st">"warning: unreadable venv package.json: </span><span class="op">$(</span><span class="va">$_</span><span class="op">.</span><span class="fu">Exception</span><span class="op">.</span><span class="fu">Message</span><span class="op">)</span><span class="st">"</span></span>
-<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
-<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>        <span class="cf">continue</span></span>
-<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span> <span class="op">{</span></span>
-<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>        <span class="va">$packageData</span> <span class="op">=</span> <span class="fu">Get-Content</span> <span class="va">$file</span><span class="op">.</span><span class="fu">FullName</span> <span class="op">-</span>Raw <span class="op">|</span> <span class="fu">ConvertFrom-Json</span></span>
-<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="op">([</span><span class="dt">string</span><span class="op">]::</span>IsNullOrWhiteSpace<span class="op">(</span><span class="va">$packageData</span><span class="op">.</span><span class="fu">name</span><span class="op">))</span> <span class="op">{</span> <span class="cf">continue</span> <span class="op">}</span></span>
-<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>        <span class="va">$hasLockfile</span> <span class="op">=</span> <span class="fu">Test-Path</span> <span class="op">(</span><span class="fu">Join-Path</span> <span class="va">$projectPath</span> <span class="st">"package-lock.json"</span><span class="op">)</span></span>
-<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>        <span class="va">$depsCount</span> <span class="op">=</span> Get-DependencyCount <span class="va">$packageData</span><span class="op">.</span><span class="fu">dependencies</span></span>
-<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>        <span class="va">$depsCount</span> <span class="op">+=</span> Get-DependencyCount <span class="va">$packageData</span><span class="op">.</span><span class="fu">devDependencies</span></span>
-<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a>        <span class="va">$projects</span><span class="op">.</span><span class="fu">Add</span><span class="op">([</span>ordered<span class="op">]</span>@<span class="op">{</span></span>
-<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a>            project      <span class="op">=</span> <span class="va">$packageData</span><span class="op">.</span><span class="fu">name</span></span>
-<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a>            version      <span class="op">=</span> <span class="cf">if</span> <span class="op">(</span><span class="va">$packageData</span><span class="op">.</span><span class="fu">version</span><span class="op">)</span> <span class="op">{</span> <span class="va">$packageData</span><span class="op">.</span><span class="fu">version</span> <span class="op">}</span> <span class="cf">else</span> <span class="op">{</span> <span class="st">"N/A"</span> <span class="op">}</span></span>
-<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a>            path         <span class="op">=</span> <span class="va">$projectPath</span></span>
-<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a>            dependencies <span class="op">=</span> <span class="va">$depsCount</span></span>
-<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a>            hasLockfile  <span class="op">=</span> <span class="va">$hasLockfile</span></span>
-<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a>        <span class="op">})</span></span>
-<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a>    <span class="cf">catch</span> <span class="op">{</span></span>
-<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a>        <span class="fu">Write-Warning</span> <span class="st">"Skipped (</span><span class="op">$(</span><span class="va">$_</span><span class="op">.</span><span class="fu">Exception</span><span class="op">.</span><span class="fu">Message</span><span class="op">)</span><span class="st">): </span><span class="op">$(</span><span class="va">$file</span><span class="op">.</span><span class="fu">FullName</span><span class="op">)</span><span class="st">"</span></span>
-<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
-<span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-57"><a href="#cb1-57" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="op">(-not</span> <span class="va">$IncludeVenv</span><span class="op">)</span> <span class="op">{</span></span>
-<span id="cb1-58"><a href="#cb1-58" aria-hidden="true" tabindex="-1"></a>    <span class="fu">Write-Host</span> <span class="st">"Packages under .venv (excluded from scan): </span><span class="va">$venvPackageCount</span><span class="st">"</span></span>
-<span id="cb1-59"><a href="#cb1-59" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
-<span id="cb1-60"><a href="#cb1-60" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-61"><a href="#cb1-61" aria-hidden="true" tabindex="-1"></a><span class="va">$result</span> <span class="op">=</span> <span class="op">[</span>ordered<span class="op">]</span>@<span class="op">{</span></span>
-<span id="cb1-62"><a href="#cb1-62" aria-hidden="true" tabindex="-1"></a>    rootPath    <span class="op">=</span> <span class="va">$RootPath</span></span>
-<span id="cb1-63"><a href="#cb1-63" aria-hidden="true" tabindex="-1"></a>    includeVenv <span class="op">=</span> <span class="op">[</span><span class="dt">bool</span><span class="op">]</span><span class="va">$IncludeVenv</span></span>
-<span id="cb1-64"><a href="#cb1-64" aria-hidden="true" tabindex="-1"></a>    count       <span class="op">=</span> <span class="va">$projects</span><span class="op">.</span><span class="fu">Count</span></span>
-<span id="cb1-65"><a href="#cb1-65" aria-hidden="true" tabindex="-1"></a>    projects    <span class="op">=</span> <span class="va">$projects</span></span>
-<span id="cb1-66"><a href="#cb1-66" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
-<span id="cb1-67"><a href="#cb1-67" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-68"><a href="#cb1-68" aria-hidden="true" tabindex="-1"></a><span class="va">$result</span> <span class="op">|</span> <span class="fu">ConvertTo-Json</span> <span class="op">-</span>Depth <span class="dv">5</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</section>
-<section id="example-output" class="level1">
-<h1>Example output</h1>
-<section id="when-includevenv-is-false" class="level2">
-<h2 class="anchored" data-anchor-id="when-includevenv-is-false">When <code>$IncludeVenv</code> is <code>false</code></h2>
-<p>A log line appears before the JSON as <code>Packages under .venv (excluded from scan): N</code>.</p>
+<section id="problem" class="level1">
+<h1>Problem</h1>
+<p>As of today May 29th 2026, on Windows 11, the <code>pyenv update</code> command fails with a “command is not supported” error:</p>
 <div class="code-output">
-<pre class="output-pane">Packages under .venv (excluded from scan): 5
-{
-  "rootPath": "C:\\projects",
-  "includeVenv": false,
-  "count": 1,
-  "projects": [
-    {
-      "project": "sample-nodejs-project",
-      "version": "1.0.0",
-      "path": "C:\\projects\\sample-nodejs-project",
-      "dependencies": 2,
-      "hasLockfile": true
-    }
-  ]
-}</pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode powershell code-with-copy"><code class="sourceCode powershell"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>pyenv update</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<pre class="output-pane">:: [Info] ::  Mirror: https://www.python.org/ftp/python
+C:\Users\xxx\.pyenv\pyenv-win\libexec\pyenv-update.vbs(279, 9) htmlfile: Cette commande n'est pas prise en charge.</pre>
+</div>
+<p>This prevents updating the pyenv version cache, making new Python versions unavailable for conveniently <a href="../../snippets/2026-05-22-python_venv_powershell/index.html">creating a new Python virtual environment</a>.</p>
+<p>The root cause is that Windows 11 no longer supports the VBScript used in <code>pyenv-update.vbs</code> (see issue <a href="https://github.com/pyenv-win/pyenv-win/issues/715">#715</a>).</p>
+</section>
+<section id="update-pyenv-package" class="level1">
+<h1>Update pyenv package</h1>
+<p>Check the current pyenv version:</p>
+<div class="code-output">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode powershell code-with-copy"><code class="sourceCode powershell"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>pyenv <span class="op">--</span>version</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<pre class="output-pane">pyenv 3.1.1</pre>
+</div>
+<p>Latest Python versions available in the pyenv cache:</p>
+<div class="code-output">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode powershell code-with-copy"><code class="sourceCode powershell"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>pyenv install <span class="op">--</span>list</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<pre class="output-pane">...
+3.14.1
+3.14.2
+...
+3.14.3
+3.15.0a7
+...</pre>
+</div>
+<p>Attempt to update the pyenv package to get the latest fixes:</p>
+<div class="code-output">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode powershell code-with-copy"><code class="sourceCode powershell"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>pip install <span class="op">--</span>upgrade pyenv-win <span class="op">--</span>target <span class="st">"</span><span class="va">$HOME</span><span class="st">\.pyenv"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<pre class="output-pane">Collecting pyenv-win
+  Using cached pyenv_win-3.1.1-py3-none-any.whl.metadata (24 kB)
+Using cached pyenv_win-3.1.1-py3-none-any.whl (3.6 MB)
+Installing collected packages: pyenv-win
+Successfully installed pyenv-win-3.1.1</pre>
+</div>
+<p>Check the pyenv version:</p>
+<div class="code-output">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode powershell code-with-copy"><code class="sourceCode powershell"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>pyenv <span class="op">--</span>version</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<pre class="output-pane">pyenv 3.1.1</pre>
+</div>
+<p>Check the pyenv cache:</p>
+<div class="code-output">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode powershell code-with-copy"><code class="sourceCode powershell"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>pyenv install <span class="op">--</span>list</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<pre class="output-pane">...
+3.10.1
+3.10.5
+...
+3.11.0b3
+3.11.0b4</pre>
+</div>
+<p>The pyenv Python version cache is now out of date compared to my previous local cache. The pip-installed package ships a very outdated Python version list from 2022 (<a href="https://pypi.org/project/pyenv-win/#history">latest pyenv-win from pypi</a>) !</p>
+<p>The fix for the <code>pyenv update</code> command is not yet released at the time of writing (see pull request <a href="https://github.com/pyenv-win/pyenv-win/pull/724">#724</a>) so the pyenv version cache needs to be refreshed with a workaround.</p>
+</section>
+<section id="update-the-version-cache-manually" class="level1">
+<h1>Update the version cache manually</h1>
+<p>Instead of applying an unreleased fix or a custom workaround from the issue thread, temporarily update the cache with a simple file replacement to get a fresh list of available Python versions.</p>
+<div class="snippet-steps">
+<ol type="1">
+<li><p>Get the path of the cache file on the local pyenv installation:</p>
+<div class="code-output">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode powershell code-with-copy"><code class="sourceCode powershell"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">Get-Command</span> pyenv <span class="op">|</span> <span class="fu">Select-Object</span> <span class="op">-</span>ExpandProperty Source</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<pre class="output-pane">C:\Users\xxx\.pyenv\pyenv-win\bin\pyenv.ps1</pre>
+</div>
+<p>The cache file is located at <code>C:\Users\xxx\.pyenv\pyenv-win\.versions_cache.xml</code></p></li>
+<li><p>Download the <a href="https://github.com/pyenv-win/pyenv-win/blob/master/pyenv-win/.versions_cache.xml">cache file from the pyenv-win repository</a></p></li>
+<li><p>Replace the contents of the local cache file with the downloaded version.</p></li>
+<li><p>Check that the list of available Python versions is up to date:</p>
+<div class="code-output">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode powershell code-with-copy"><code class="sourceCode powershell"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>pyenv install <span class="op">--</span>list</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<pre class="output-pane">...
+3.14.4
+3.14.5
+...
+3.15.0b1
+...</pre>
+</div></li>
+</ol>
 </div>
 </section>
-<section id="when-includevenv-is-true" class="level2">
-<h2 class="anchored" data-anchor-id="when-includevenv-is-true">When <code>$IncludeVenv</code> is <code>true</code></h2>
-<p>The JSON includes the <code>.venv</code> packages.</p>
+<section id="testing-downloading-the-latest-python-version" class="level1">
+<h1>Testing downloading the latest Python version</h1>
 <div class="code-output">
-<pre class="output-pane">{
-  "rootPath": "C:\\projects",
-  "includeVenv": true,
-  "count": 6,
-  "projects": [
-    {
-      "project": "@jupyter-widgets/jupyterlab-manager",
-      "version": "5.0.15",
-      "path": "C:\\projects\\projectX\\.venv\\share\\jupyter\\labextensions\\@jupyter-widgets\\jupyterlab-manager",
-      "dependencies": 40,
-      "hasLockfile": false
-    },
-    ...
-    {
-      "project": "jupyterlab-plotly",
-      "version": "6.0.1",
-      "path": "C:\\projects\\projectY\\.venv\\share\\jupyter\\labextensions\\jupyterlab-plotly",
-      "dependencies": 7,
-      "hasLockfile": false
-    },
-    {
-      "project": "sample-nodejs-project",
-      "version": "1.0.0",
-      "path": "C:\\projects\\sample-nodejs-project",
-      "dependencies": 2,
-      "hasLockfile": true
-    }
-  ]
-}</pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode powershell code-with-copy"><code class="sourceCode powershell"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>pyenv install <span class="dv">3.14</span><span class="op">.</span><span class="dv">5</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<pre class="output-pane">:: [Info] ::  Mirror: https://www.python.org/ftp/python
+:: [Downloading] ::  3.14.5 ...
+:: [Downloading] ::  From https://www.python.org/ftp/python/3.14.5/python-3.14.5-amd64.exe
+:: [Downloading] ::  To   C:\Users\xxx\.pyenv\pyenv-win\install_cache\python-3.14.5-amd64.exe
+:: [Installing] ::  3.14.5 ...
+:: [Info] :: completed! 3.14.5
+...</pre>
 </div>
-
-
+<p>Check available Python versions on the system:</p>
+<div class="code-output">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode powershell code-with-copy"><code class="sourceCode powershell"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>pyenv versions</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<pre class="output-pane">...
+  3.14.5
+...</pre>
+</div>
 </section>
+<section id="conclusion" class="level1">
+<h1>Conclusion</h1>
+<p>Until an official pyenv fix is released, manually replacing <code>.versions_cache.xml</code> with the latest version from the repository is a simple and reliable workaround.</p>
+
+
 </section>
 
 </main> <!-- /main -->
