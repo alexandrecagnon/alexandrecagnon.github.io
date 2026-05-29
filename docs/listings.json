@@ -4,14 +4,15 @@
     "items": [
       "/snippets/2026-05-29-pyenv-update-windows/index.html",
       "/snippets/2026-05-28-push-local-project-to-github-repo/index.html",
-      "/snippets/2026-05-18-find-nodejs-projects-powershell/index.html",
+      "/snippets/2026-05-22-find-nodejs-projects-powershell/index.html",
       "/snippets/2026-05-22-python_venv_powershell/index.html"
     ]
   },
   {
     "listing": "/blog.html",
     "items": [
-      "/posts/2026-05-18-nodejs-npm-security-update-windows/index.html"
+      "/posts/2026-05-29-http-azure-function-setup/index.html",
+      "/posts/2026-05-19-nodejs-npm-security-update-windows/index.html"
     ]
   }
 ]

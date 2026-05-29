@@ -4,7 +4,7 @@ date: 2026-05-19
 description: "A Fireship video sent me down a rabbit hole — turns out my Node.js had CVEs and my Azurite was quietly sitting on vulnerable dependencies."
 image: ../../images/blog/teddy_bear_it_rotten_roots.webp
 image-alt: "Teddy bear typing code with rotten roots"
-categories: [npm, Node.js, Azurite, Security update, Windows]
+categories: [npm, Node.js, Security update, Windows]
 draft: false
 ---
 
@@ -120,7 +120,7 @@ I only had one global package: Azurite. Good enough for now.
 
 ## Local packages
 
-This [PowerShell snippet](../../snippets/2026-05-18-find-nodejs-projects-powershell/index.qmd) finds all Node.js projects on the machine.
+This [PowerShell snippet](../../snippets/2026-05-22-find-nodejs-projects-powershell/index.qmd) finds all Node.js projects on the machine.
 
 <div class="code-output">
 <pre class="output-pane">Packages under .venv (excluded from scan): 5

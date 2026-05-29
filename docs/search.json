@@ -35,85 +35,190 @@
     "text": "Short reusable code snippets and technical notes — commands, configuration fragments, and small how-tos.\n\n\n\n\n\n\n   \n    \n    \n      Order By\n      Default\n      \n        Date - Oldest\n      \n      \n        Date - Newest\n      \n      \n        Title\n      \n    \n  \n\n\n\n\n\n\nDate\n\n\n\nTitle\n\n\n\nDescription\n\n\n\n\n\n\n\n\nMay 29, 2026\n\n\nUpdate blocked pyenv update on Windows\n\n\nUpdate pyenv version cache on Windows when the pyenv update command fails.\n\n\n\n\n\n\nMay 28, 2026\n\n\nPush local project to new GitHub repository\n\n\nSteps to push a local project to a new GitHub repository for the first time.\n\n\n\n\n\n\nMay 22, 2026\n\n\nFind all Node.js projects under a directory\n\n\nPowerShell script to inventory Node.js projects under a directory on Windows.\n\n\n\n\n\n\nMay 22, 2026\n\n\nCreate a Python venv on Windows\n\n\nRobust PowerShell script to create a Python virtual environment with pyenv.\n\n\n\n\n\n\nNo matching items"
   },
   {
-    "objectID": "posts/2026-05-18-nodejs-npm-security-update-windows/index.html",
-    "href": "posts/2026-05-18-nodejs-npm-security-update-windows/index.html",
+    "objectID": "posts/2026-05-29-http-azure-function-setup/index.html",
+    "href": "posts/2026-05-29-http-azure-function-setup/index.html",
+    "title": "Minimalistic Azure Function App creation",
+    "section": "",
+    "text": "I recently passed the Azure Fabric Data Engineer certification to get my hands dirty with top-shelf products from a major cloud provider. Fabric is a powerful, feature-rich platform, but I feel it carries too steep a cost overhead for small and medium-sized projects. I took the opportunity to explore a less costly alternative for data engineering tasks: serverless computing — specifically Function-as-a-Service (FaaS).\nThere are countless articles about Azure Functions and an extensive official Microsoft documentation. To avoid documentation overload, I relied only on Microsoft’s documentation and ad-hoc free AI search from Perplexity. The goal is not to reinvent the wheel but to shrink the learning curve and show how to navigate the issues that arise during setup — there are a few. This post walks through a minimal local-to-cloud Function App creation and deployment workflow to base additional features on. It should be used as a starting point for more realistic and complex use cases."
+  },
+  {
+    "objectID": "posts/2026-05-29-http-azure-function-setup/index.html#install-azure-functions-core-tools",
+    "href": "posts/2026-05-29-http-azure-function-setup/index.html#install-azure-functions-core-tools",
+    "title": "Minimalistic Azure Function App creation",
+    "section": "Install Azure Functions Core Tools",
+    "text": "Install Azure Functions Core Tools\nFollow the instructions Install the Azure Functions Core Tools.\nVerify the installation:\n\nfunc --version\n4.8.0"
+  },
+  {
+    "objectID": "posts/2026-05-29-http-azure-function-setup/index.html#install-azurite-storage-emulator",
+    "href": "posts/2026-05-29-http-azure-function-setup/index.html#install-azurite-storage-emulator",
+    "title": "Minimalistic Azure Function App creation",
+    "section": "Install Azurite storage emulator",
+    "text": "Install Azurite storage emulator\nA Function App needs a default system storage to work. Running Azurite locally allows simulating a storage account for the Function App. Detailed Azurite installation instructions can be found in the Azure Blob storage documentation.\nInstallation steps for Windows:\n\nInstall Node.js from nodejs.org\nInstall Azurite with npm\n\nnpm install -g azurite\nVerify the installation:\n\nazurite --version\n3.35.0"
+  },
+  {
+    "objectID": "posts/2026-05-29-http-azure-function-setup/index.html#a-new-function-app-from-a-template",
+    "href": "posts/2026-05-29-http-azure-function-setup/index.html#a-new-function-app-from-a-template",
+    "title": "Minimalistic Azure Function App creation",
+    "section": "A new Function App from a template",
+    "text": "A new Function App from a template\nUsing Azure Functions Core Tools CLI, create a new Function App from a template in a directory of your choice.\nmkdir http_az_function_app\ncd http_az_function_app\nfunc init demo-function --worker-runtime python --model V2\n\nThe new Python programming model is generally available. Learn more at https://aka.ms/pythonprogrammingmodel\nWriting requirements.txt\nWriting function_app.py\nWriting .gitignore\nWriting host.json\nWriting local.settings.json\nWriting C:\\...\\http_az_function_app\\demo-function\\.vscode\\extensions.json\n\nThe project directory is now structured as follows:\n\ntree . /f\nC:\\...\\HTTP_AZ_FUNCTION_APP\n└───demo-function\n    │   .gitignore\n    │   function_app.py\n    │   host.json\n    │   local.settings.json\n    │   requirements.txt\n    │\n    └───.vscode\n            extensions.json"
+  },
+  {
+    "objectID": "posts/2026-05-29-http-azure-function-setup/index.html#create-a-python-virtual-environment",
+    "href": "posts/2026-05-29-http-azure-function-setup/index.html#create-a-python-virtual-environment",
+    "title": "Minimalistic Azure Function App creation",
+    "section": "Create a Python virtual environment",
+    "text": "Create a Python virtual environment\nTo test the Function locally in a reproducible environment, create a Python virtual environment inside the Azure Function App project. With pyenv, the latest listed stable Python version is 3.14.3. I used 3.13.12 (the latest v3.13 release) because it is the latest Python version supported by Azure Functions at the time of writing.\nFor a robust Python environment setup, I use this PowerShell script.\nWorking directory: demo-function\n\nC:\\...\\tools\\create-python-venv.ps1\n:: [Info] ::  Mirror: https://www.python.org/ftp/python\nRequirement already satisfied: pip in c:\\...\\http_az_function_app\\demo-function\\.venv\\lib\\site-packages (25.3)\nCollecting pip\n...\nSuccessfully installed packaging-26.2 pip-26.1.1 setuptools-82.0.1 wheel-0.47.0\nCollecting azure-functions (from -r requirements.txt (line 5))\n...\nInstalling collected packages: markupsafe, werkzeug, azure-functions\nSuccessfully installed azure-functions-2.1.0 markupsafe-3.0.3 werkzeug-3.1.8\nsuccess creating .venv"
+  },
+  {
+    "objectID": "posts/2026-05-29-http-azure-function-setup/index.html#test-the-function-app",
+    "href": "posts/2026-05-29-http-azure-function-setup/index.html#test-the-function-app",
+    "title": "Minimalistic Azure Function App creation",
+    "section": "Test the Function App",
+    "text": "Test the Function App\nTesting the Function after activating the Python virtual environment.\nWorking directory: demo-function\nVirtual environment: .venv (activated)\n\n\nStart a local Azurite storage emulator:\n\nazurite --silent --location azurite --debug azurite/debug.log\nAzurite Blob service is starting at http://127.0.0.1:10000\nAzurite Blob service is successfully listening at http://127.0.0.1:10000\nAzurite Queue service is starting at http://127.0.0.1:10001\nAzurite Queue service is successfully listening at http://127.0.0.1:10001\nAzurite Table service is starting at http://127.0.0.1:10002\nAzurite Table service is successfully listening at http://127.0.0.1:10002\n\nStart the Function App with func start:\n\nfunc start\nAzure Functions Core Tools\nCore Tools Version:       4.8.0+ec58eb7110992ea02aa19e9c060e45ac8882cc02 (64-bit)\nFunction Runtime Version: 4.1046.100.25610\n\n[2026-05-25T08:47:53.299Z] No job functions found. Try making your job classes and methods public. If you're using binding extensions (e.g. Azure Storage, ServiceBus, Timers, etc.) make sure you've called the registration method for the extension(s) in your startup code (e.g. builder.AddAzureStorage(), builder.AddServiceBus(), builder.AddTimers(), etc.).\nFor detailed output, run func with --verbose flag.\n[2026-05-25T08:47:58.439Z] Host lock lease acquired by instance ID '00000000000000000000000030C52BF0'.\n\n\n\nThe Function App starts successfully. No functions are registered yet, so no job functions found is expected."
+  },
+  {
+    "objectID": "posts/2026-05-29-http-azure-function-setup/index.html#a-new-function-from-a-template",
+    "href": "posts/2026-05-29-http-azure-function-setup/index.html#a-new-function-from-a-template",
+    "title": "Minimalistic Azure Function App creation",
+    "section": "A new Function from a template",
+    "text": "A new Function from a template\nLet’s create a dummy HTTP triggered Function that takes an input name and returns a success message with it or a failure message otherwise.\nWorking directory: demo-function\nVirtual environment: .venv (activated)\n\nfunc new --template \"Http Trigger\" --name helloName --authlevel \"function\" --language python\nThe function \"helloName\" was created successfully from the \"Http Trigger\" template.\n\nA Function is added to the function_app.py file as follows:\n...\n\n@app.route(route=\"helloName\", auth_level=func.AuthLevel.FUNCTION)\ndef helloName(req: func.HttpRequest) -&gt; func.HttpResponse:\n    logging.info('Python HTTP trigger function processed a request.')\n\n    name = req.params.get('name')\n    if not name:\n        try:\n            req_body = req.get_json()\n        except ValueError:\n            pass\n        else:\n            name = req_body.get('name')\n\n    if name:\n        return func.HttpResponse(f\"Hello, {name}. This HTTP triggered function executed successfully.\")\n    else:\n        return func.HttpResponse(\n             \"This HTTP triggered function executed successfully. Pass a name in the query string or in the request body for a personalized response.\",\n             status_code=200\n        )"
+  },
+  {
+    "objectID": "posts/2026-05-29-http-azure-function-setup/index.html#test-the-function",
+    "href": "posts/2026-05-29-http-azure-function-setup/index.html#test-the-function",
+    "title": "Minimalistic Azure Function App creation",
+    "section": "Test the Function",
+    "text": "Test the Function\nAs in the previous local test:\nWorking directory: demo-function\nVirtual environment: .venv (activated)\n\nStart Azurite with azurite --silent --location azurite --debug azurite/debug.log\nStart the Function App. The newly added Function is now listed:\n\n\nfunc start\n...\n[2026-05-26T01:49:55.832Z] Worker process started and initialized.\n\nFunctions:\n\n        helloName:  http://localhost:7071/api/helloName\n...\n\n\nCall the HTTP triggered Function (in PowerShell, use Invoke-RestMethod instead of curl):\n\n\nInvoke-RestMethod -Uri \"http://localhost:7071/api/helloName\" -Method Post -ContentType \"application/json\" -Body '{\"name\":\"Johny Doe\"}'\nHello, Johny Doe. This HTTP triggered function executed successfully.\n\nThe Function works as expected locally. Let’s now create a Function App in Azure to deploy it."
+  },
+  {
+    "objectID": "posts/2026-05-29-http-azure-function-setup/index.html#install-azure-cli",
+    "href": "posts/2026-05-29-http-azure-function-setup/index.html#install-azure-cli",
+    "title": "Minimalistic Azure Function App creation",
+    "section": "Install Azure CLI",
+    "text": "Install Azure CLI\nTo interact with your Azure account from the command line, install Azure CLI from Azure CLI.\nRunning on PowerShell 7.6.1:\n\naz --version\nazure-cli                         2.86.0\n..."
+  },
+  {
+    "objectID": "posts/2026-05-29-http-azure-function-setup/index.html#create-required-azure-components",
+    "href": "posts/2026-05-29-http-azure-function-setup/index.html#create-required-azure-components",
+    "title": "Minimalistic Azure Function App creation",
+    "section": "Create required Azure components",
+    "text": "Create required Azure components\nThis documentation provides a list of required Azure resources to create before deploying a Function App.\n\n\nCreate an Azure account\nUse/Create a Subscription on the Azure portal manually — named subscription_demos here\nLog in to the Azure account and select the subscription with Azure CLI:\n\naz login\nSelect the account you want to log in with. For more information on login with Azure CLI, see https://go.microsoft.com/fwlink/?linkid=2271136\n\nRetrieving tenants and subscriptions for the selection...\n\n[Tenant and subscription selection]\n\nNo     Subscription name    Subscription ID                       Tenant\n-----  -------------------  ------------------------------------  -----------------\n[1] *  xxxxxxxxxxxx_xxxxx   xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx  Default Directory\n[2]    subscription_demos   xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx  Default Directory\n\nThe default is marked with an *; the default tenant is 'Default Directory' and subscription is 'xxxxxxxxxxxx_xxxxx' (xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx).\n\nSelect a subscription and tenant (Type a number or Enter for no changes): 2\n\nTenant: Default Directory\nSubscription: subscription_demos (xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx)\n\nCreate a Resource Group (logical container for related resources) — named func-app-demos-rg here\n\nSelect the best available region for the Function App (Flex Consumption) with the az functionapp command at functions-flex-supported-regions-cli — southeastasia in my case\nRun the resource group creation command:\n\n\naz group create --name \"func-app-demos-rg\" --location \"southeastasia\"\n{\n  \"id\": \"/subscriptions/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/resourceGroups/func-app-demos-rg\",\n  \"location\": \"southeastasia\",\n  \"managedBy\": null,\n  \"name\": \"func-app-demos-rg\",\n  \"properties\": {\n    \"provisioningState\": \"Succeeded\"\n  },\n  \"tags\": null,\n  \"type\": \"Microsoft.Resources/resourceGroups\"\n}\n\nCreate a Storage Account (used by the Functions host to maintain state and other information about your functions) — named httpazfuncappsa here.\nRegister the Subscription to use Microsoft.Storage\naz provider register --namespace Microsoft.Storage\nCreate the storage account\n\naz storage account create --name \"httpazfuncappsa\" --location \"southeastasia\" --resource-group \"func-app-demos-rg\" --sku \"Standard_LRS\" --allow-blob-public-access false --allow-shared-key-access false\n{\n  \"accessTier\": \"Hot\",\n  \"accountMigrationInProgress\": null,\n  \"allowBlobPublicAccess\": false,\n  \"allowCrossTenantReplication\": false,\n  \"allowSharedKeyAccess\": false,\n  ...\n  \"type\": \"Microsoft.Storage/storageAccounts\",\n  \"zones\": null\n}\n\nCreate a user-assigned managed identity (used by the Functions host to connect to the default storage account) — named httpazfuncappsa-user here.\nThe following commands create a “Storage Blob Data Owner” role assignment on the storage account (full access to Azure Storage blob containers and data) that the Function App will use to access storage.\n\n$output = az identity create --name \"httpazfuncappsa-user\" --resource-group \"func-app-demos-rg\" --location \"southeastasia\" --query \"{userId:id, principalId:principalId, clientId:clientId}\" -o json\n\n$userId = ($output | ConvertFrom-Json).userId\n$principalId = ($output | ConvertFrom-Json).principalId\n$clientId = ($output | ConvertFrom-Json).clientId\n$storageId = az storage account show --resource-group \"func-app-demos-rg\" --name httpazfuncappsa --query 'id' -o tsv\n\naz role assignment create --assignee-object-id $principalId --assignee-principal-type ServicePrincipal --role \"Storage Blob Data Owner\" --scope $storageId\nWARNING: Resource provider 'Microsoft.ManagedIdentity' used by this operation is not registered. We are registering for you.\nWARNING: Registration succeeded.\n{\n  \"condition\": null,\n  ...\n  \"scope\": \"/subscriptions/ef3c8ea4-a143-4356-8236-a2f08dc5a3a0/resourceGroups/func-app-demos-rg/providers/Microsoft.Storage/storageAccounts/httpazfuncappsa\",\n  \"type\": \"Microsoft.Authorization/roleAssignments\",\n  \"updatedBy\": \"xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx\",\n  \"updatedOn\": \"2026-05-26T07:39:31.845940+00:00\"\n}\n\nCreate a Function App (provides the environment for executing the Function code) — named httpazfuncapp here.\nRegister the Subscription to use Microsoft.Web\naz provider register --namespace Microsoft.Web\nCreate the Function App\n\naz functionapp create --resource-group \"func-app-demos-rg\" --name httpazfuncapp --flexconsumption-location \"southeastasia\" --runtime python --runtime-version \"3.13\" --storage-account httpazfuncappsa --deployment-storage-auth-type UserAssignedIdentity --deployment-storage-auth-value \"httpazfuncappsa-user\" --https-only true --instance-memory 512 --tags Environment=Demo\nCreating deployment storage account container 'app-package-httpazfuncapp-5265228' ...\nResource provider 'Microsoft.OperationalInsights' used by this operation is not registered. We are registering for you.\nRegistration succeeded.\nResource provider 'microsoft.insights' used by this operation is not registered. We are registering for you.\nRegistration succeeded.\nApplication Insights \"httpazfuncapp\" was created for this Function App. You can visit https://portal.azure.com/#resource/subscriptions/ef3c8ea4-a143-4356-8236-a2f08dc5a3a0/resourceGroups/func-app-demos-rg/providers/microsoft.insights/components/httpazfuncapp/overview to view your Application Insights component\n{\n  \"id\": \"/subscriptions/ef3c8ea4-a143-4356-8236-a2f08dc5a3a0/resourceGroups/func-app-demos-rg/providers/Microsoft.Web/sites/httpazfuncapp\",\n  ...\n  \"resourceGroup\": \"func-app-demos-rg\",\n  \"type\": \"Microsoft.Web/sites\"\n}\n\nNotes on Application Insights: Running az functionapp create automatically creates an associated Azure Application Insights instance in the same resource group. “The instance incurs no costs until you activate it.” (documentation). You cannot disable its usage by removing the APPLICATIONINSIGHTS_CONNECTION_STRING from the Function App Environment Variables. If you want to reactivate it later, you can retrieve the key from the Application Insights instance in Azure. For more information on Application Insights integration with Azure Function App, see Enable Application Insights integration. A better alternative is to use the user-assigned managed identity already created in step 6 for the Function App to access the Application Insights instance (Documentation):\nclientId=$(az identity show --name httpazfuncappsa-user --resource-group func-app-demos-rg --query 'clientId' -o tsv)\n\naz functionapp config appsettings set --name httpazfuncapp --resource-group \"func-app-demos-rg\" APPLICATIONINSIGHTS_AUTHENTICATION_STRING=\"ClientId=$clientId;Authorization=AAD\"\n\nThe additional parameters --https-only true --instance-memory 512 --tags Environment=Demo were added on top of the defaults in the documentation for improved security, minimized resource usage, and better tracking of the Function App in Azure.\n\nUpgrade the Function App default storage account to user-assigned managed identity. Replace the default AzureWebJobsStorage connection string setting with several settings prefixed with AzureWebJobsStorage__.\nCreate 3 new environment variables for the Function App:\n\n$clientId = az identity show --name httpazfuncappsa-user --resource-group func-app-demos-rg --query 'clientId' -o tsv\n\naz functionapp config appsettings set --name httpazfuncapp --resource-group \"func-app-demos-rg\" --settings AzureWebJobsStorage__accountName=httpazfuncappsa AzureWebJobsStorage__credential=managedidentity AzureWebJobsStorage__clientId=$clientId\n[\n  {\n    \"name\": \"AzureWebJobsStorage\",\n    \"slotSetting\": false,\n    \"value\": null\n  },\n  {\n    \"name\": \"AzureWebJobsStorage__accountName\",\n    ...\n  },\n  {\n    \"name\": \"AzureWebJobsStorage__credential\",\n    ...\n  },\n  {\n    \"name\": \"AzureWebJobsStorage__clientId\",\n    \"slotSetting\": false,\n    \"value\": null\n  }\n]\n\nDelete the old environment variable:\n\naz functionapp config appsettings delete --name httpazfuncapp --resource-group \"func-app-demos-rg\" --setting-names AzureWebJobsStorage\n[\n  {\n    \"name\": \"AzureWebJobsStorage__accountName\",\n    \"slotSetting\": false,\n    \"value\": null\n  },\n  {\n    \"name\": \"AzureWebJobsStorage__credential\",\n    ...\n  },\n  {\n    \"name\": \"AzureWebJobsStorage__clientId\",\n    \"slotSetting\": false,\n    \"value\": null\n  }\n]"
+  },
+  {
+    "objectID": "posts/2026-05-29-http-azure-function-setup/index.html#create-a-.funcignore-file",
+    "href": "posts/2026-05-29-http-azure-function-setup/index.html#create-a-.funcignore-file",
+    "title": "Minimalistic Azure Function App creation",
+    "section": "Create a .funcignore file",
+    "text": "Create a .funcignore file\nTo prevent unnecessary files from being pushed to the Azure Function App, create a .funcignore file with the following contents:\n__pycache__/\n.venv/\n.vscode/\nazurite/\n.git/\n.gitignore\n.python-version\nlocal.settings.json"
+  },
+  {
+    "objectID": "posts/2026-05-29-http-azure-function-setup/index.html#publish-function-app-to-azure",
+    "href": "posts/2026-05-29-http-azure-function-setup/index.html#publish-function-app-to-azure",
+    "title": "Minimalistic Azure Function App creation",
+    "section": "Publish Function App to Azure",
+    "text": "Publish Function App to Azure\n\nfunc azure functionapp publish httpazfuncapp\nGetting site publishing info...\n[2026-05-26T10:52:42.148Z] Starting the function app deployment...\n[2026-05-26T10:52:42.156Z] Creating archive for current directory...\nPerforming remote build for functions project.\nUploading 1,01 KB [###############################################################################]\nDeployment in progress, please wait...\nStarting deployment pipeline.\n[Kudu-SourcePackageUriDownloadStep] Skipping download. Zip package is present at /tmp/zipdeploy/7984310a-1ec7-445a-85ab-47dcdde7bcd8.zip\n[Kudu-ValidationStep] starting.\n...\n[Kudu-CleanUpStep] completed.\nFinished deployment pipeline.\n[Kudu-SyncTriggerStep] completed.\nChecking the app health...Host status endpoint: https://httpazfuncapp.azurewebsites.net/admin/host/status\n. done\nHost status: {\"id\":\"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\",\"state\":\"Running\",\"version\":\"4.1048.200.26180\",\"versionDetails\":\"4.1048.200+dfc109ad0152e6166b1a6d7a95f64a7459da96b3\",\"platformVersion\":\"\",\"instanceId\":\"0--a1d65bb7-24d7-404e-8cc1-8b2f3044690c\",\"computerName\":\"\",\"processUptime\":402011,\"functionAppContentEditingState\":\"NotAllowed\",\"extensionBundle\":{\"id\":\"Microsoft.Azure.Functions.ExtensionBundle\",\"version\":\"4.35.0\"}}\n[2026-05-26T10:55:08.765Z] The deployment was successful!\nFunctions in httpazfuncapp:\n    helloName - [httpTrigger]\n        Invoke url: https://httpazfuncapp.azurewebsites.net/api/helloname"
+  },
+  {
+    "objectID": "posts/2026-05-29-http-azure-function-setup/index.html#check-successfull-function-app-deployment",
+    "href": "posts/2026-05-29-http-azure-function-setup/index.html#check-successfull-function-app-deployment",
+    "title": "Minimalistic Azure Function App creation",
+    "section": "Check successfull Function App deployment",
+    "text": "Check successfull Function App deployment\n# Get functions from the Function App\n$functions = az functionapp function list `\n  --resource-group \"func-app-demos-rg\" `\n  --name httpazfuncapp | ConvertFrom-Json\n\n# Create summary table with correct property paths\n$functions | Select-Object `\n  @{Name=\"Name\";Expression={$_.config.name}},\n  @{Name=\"Type\";Expression={$_.config.bindings | Where-Object {$_.type -eq \"httpTrigger\"} | Select-Object -ExpandProperty type}},\n  @{Name=\"Route\";Expression={$_.config.bindings | Where-Object {$_.type -eq \"httpTrigger\"} | Select-Object -ExpandProperty route}},\n  @{Name=\"IsDisabled\";Expression={$_.isDisabled}},\n  @{Name=\"InvokeUrlTemplate\";Expression={$_.invokeUrlTemplate}} |\n  Format-Table -AutoSize\n\nName      Type        Route     IsDisabled InvokeUrlTemplate\n----      ----        -----     ---------- -----------------\nhelloName httpTrigger helloName      False https://httpazfuncapp.azurewebsites.net/api/helloname"
+  },
+  {
+    "objectID": "posts/2026-05-29-http-azure-function-setup/index.html#getting-the-function-key",
+    "href": "posts/2026-05-29-http-azure-function-setup/index.html#getting-the-function-key",
+    "title": "Minimalistic Azure Function App creation",
+    "section": "Getting the Function key",
+    "text": "Getting the Function key\naz login\nfunc azure functionapp list-functions httpazfuncapp --show-keys\n\nFunctions in httpazfuncapp:\n    helloName - [httpTrigger]\n        Invoke url: https://httpazfuncapp.azurewebsites.net/api/helloname?code=xxxxx"
+  },
+  {
+    "objectID": "posts/2026-05-29-http-azure-function-setup/index.html#run-the-function-with-a-key",
+    "href": "posts/2026-05-29-http-azure-function-setup/index.html#run-the-function-with-a-key",
+    "title": "Minimalistic Azure Function App creation",
+    "section": "Run the Function with a key",
+    "text": "Run the Function with a key\nCall the Function from the local machine using the Invoke URL:\n\nInvoke-RestMethod -Uri \"https://httpazfuncapp.azurewebsites.net/api/helloname?code=xxxx\" -Method Post -ContentType \"application/json\" -Body '{\"name\":\"Johny Doe\"}'\nHello, Johny Doe. This HTTP triggered function executed successfully.\n\nNote that the Function call will fail if there is no connection to Azure:\naz logout\nInvoke-RestMethod -Uri \"https://httpazfuncapp.azurewebsites.net/api/helloname?code=xxxx\" -Method Post -ContentType \"application/json\" -Body '{\"name\":\"Johny Doe\"}'\n\nInvoke-RestMethod: Response status code does not indicate success: 401 (Unauthorized)."
+  },
+  {
+    "objectID": "posts/2026-05-19-nodejs-npm-security-update-windows/index.html",
+    "href": "posts/2026-05-19-nodejs-npm-security-update-windows/index.html",
     "title": "Security upgrades on my Node.js, npm and Azurite",
     "section": "",
     "text": "A few days back Fireship dropped “A single PR just hijacked the NPM registry…” - as always, educational and alarming in equal measures.\nI’d already been keeping an eye on supply chain risks after the xz/liblzma near-disaster that almost took down the internet.\nAnd the numbers back up the paranoia: Sonatype reports that “over 99% of open source malware occurred on npm”.\nSo naturally I started wondering: what about my machine?"
   },
   {
-    "objectID": "posts/2026-05-18-nodejs-npm-security-update-windows/index.html#what-i-was-running",
-    "href": "posts/2026-05-18-nodejs-npm-security-update-windows/index.html#what-i-was-running",
+    "objectID": "posts/2026-05-19-nodejs-npm-security-update-windows/index.html#what-i-was-running",
+    "href": "posts/2026-05-19-nodejs-npm-security-update-windows/index.html#what-i-was-running",
     "title": "Security upgrades on my Node.js, npm and Azurite",
     "section": "What I was running",
     "text": "What I was running\n\nnpm -v\n11.14.1\n\n\nnode -v\nv24.14.0\n\nFindings:\n\nOK. npm was already on the latest version\n\nNot OK. Node.js was not latest → v24.14.1 and v24.15.0 were both available\n\nOK. npm was ahead of the Node.js‑bundled npm (e.g. v11.12.1 in Node v24.15.0) — a newer patch/minor than what ships with node.js v24.14 or v24.15"
   },
   {
-    "objectID": "posts/2026-05-18-nodejs-npm-security-update-windows/index.html#risk-of-node.js-v24.14.0-vs.-lts-v24.15.0",
-    "href": "posts/2026-05-18-nodejs-npm-security-update-windows/index.html#risk-of-node.js-v24.14.0-vs.-lts-v24.15.0",
+    "objectID": "posts/2026-05-19-nodejs-npm-security-update-windows/index.html#risk-of-node.js-v24.14.0-vs.-lts-v24.15.0",
+    "href": "posts/2026-05-19-nodejs-npm-security-update-windows/index.html#risk-of-node.js-v24.14.0-vs.-lts-v24.15.0",
     "title": "Security upgrades on my Node.js, npm and Azurite",
     "section": "Risk of node.js v24.14.0 vs. LTS v24.15.0 ?",
     "text": "Risk of node.js v24.14.0 vs. LTS v24.15.0 ?\nv24.14.1 is a proper security release — 2 high CVEs, 4 medium, 2 low. That alone was enough to act.\nv24.15.0 looked even better: per Perplexity (May 18, 2026), it’s “mainly a hardening release — low-level fixes in crypto, http, tls, stream, zlib, plus refreshed bundled deps including npm and root certificates.” No breaking changes reported, so it became the target."
   },
   {
-    "objectID": "posts/2026-05-18-nodejs-npm-security-update-windows/index.html#why-was-node.js-outdated",
-    "href": "posts/2026-05-18-nodejs-npm-security-update-windows/index.html#why-was-node.js-outdated",
+    "objectID": "posts/2026-05-19-nodejs-npm-security-update-windows/index.html#why-was-node.js-outdated",
+    "href": "posts/2026-05-19-nodejs-npm-security-update-windows/index.html#why-was-node.js-outdated",
     "title": "Security upgrades on my Node.js, npm and Azurite",
     "section": "Why was node.js outdated?",
     "text": "Why was node.js outdated?\nI installed Node.js from the .msi installer (see default node.exe path below). Turns out the .msi installer from nodejs.org (rightfully) has no auto-update mechanism. No reminder, no update.\n\nwhere node\nC:\\Program Files\\nodejs\\node.exe"
   },
   {
-    "objectID": "posts/2026-05-18-nodejs-npm-security-update-windows/index.html#updating-node.js",
-    "href": "posts/2026-05-18-nodejs-npm-security-update-windows/index.html#updating-node.js",
+    "objectID": "posts/2026-05-19-nodejs-npm-security-update-windows/index.html#updating-node.js",
+    "href": "posts/2026-05-19-nodejs-npm-security-update-windows/index.html#updating-node.js",
     "title": "Security upgrades on my Node.js, npm and Azurite",
     "section": "Updating node.js",
     "text": "Updating node.js\nInstalling additional tools (nvm-windows, Chocolatey…) to manage the node.js update is out of scope for this post — I ran node-v24.15.0-x64.msi from nodejs.org directly.\nAfter installation:\n\nnode -v\nv24.15.0"
   },
   {
-    "objectID": "posts/2026-05-18-nodejs-npm-security-update-windows/index.html#global-packages",
-    "href": "posts/2026-05-18-nodejs-npm-security-update-windows/index.html#global-packages",
+    "objectID": "posts/2026-05-19-nodejs-npm-security-update-windows/index.html#global-packages",
+    "href": "posts/2026-05-19-nodejs-npm-security-update-windows/index.html#global-packages",
     "title": "Security upgrades on my Node.js, npm and Azurite",
     "section": "Global packages",
     "text": "Global packages\n\nnpm list -g\nC:\\Users\\xxx\\AppData\\Roaming\\npm\n+-- azurite@3.35.0\n`-- npm@11.14.1\n\n\nnpm list --parseable -g --depth=0\nC:\\Users\\xxx\\AppData\\Roaming\\npm\nC:\\Users\\xxx\\AppData\\Roaming\\npm\\node_modules\\azurite\nC:\\Users\\xxx\\AppData\\Roaming\\npm\\node_modules\\npm\n\nI only had one global package: Azurite. Good enough for now."
   },
   {
-    "objectID": "posts/2026-05-18-nodejs-npm-security-update-windows/index.html#local-packages",
-    "href": "posts/2026-05-18-nodejs-npm-security-update-windows/index.html#local-packages",
+    "objectID": "posts/2026-05-19-nodejs-npm-security-update-windows/index.html#local-packages",
+    "href": "posts/2026-05-19-nodejs-npm-security-update-windows/index.html#local-packages",
     "title": "Security upgrades on my Node.js, npm and Azurite",
     "section": "Local packages",
     "text": "Local packages\nThis PowerShell snippet finds all Node.js projects on the machine.\n\nPackages under .venv (excluded from scan): 5\n{\n  \"rootPath\": \"C:\\\\projects\",\n  \"includeVenv\": false,\n  \"count\": 0,\n  \"projects\": []\n}\n\nNo local Node.js projects found."
   },
   {
-    "objectID": "posts/2026-05-18-nodejs-npm-security-update-windows/index.html#was-azurite-up-to-date",
-    "href": "posts/2026-05-18-nodejs-npm-security-update-windows/index.html#was-azurite-up-to-date",
+    "objectID": "posts/2026-05-19-nodejs-npm-security-update-windows/index.html#was-azurite-up-to-date",
+    "href": "posts/2026-05-19-nodejs-npm-security-update-windows/index.html#was-azurite-up-to-date",
     "title": "Security upgrades on my Node.js, npm and Azurite",
     "section": "Was Azurite up to date?",
     "text": "Was Azurite up to date?\n\nazurite --version\n3.35.0\n\nIt’s the latest released version of Azurite on GitHub releases, so it’s up to date."
   },
   {
-    "objectID": "posts/2026-05-18-nodejs-npm-security-update-windows/index.html#compatibility-check",
-    "href": "posts/2026-05-18-nodejs-npm-security-update-windows/index.html#compatibility-check",
+    "objectID": "posts/2026-05-19-nodejs-npm-security-update-windows/index.html#compatibility-check",
+    "href": "posts/2026-05-19-nodejs-npm-security-update-windows/index.html#compatibility-check",
     "title": "Security upgrades on my Node.js, npm and Azurite",
     "section": "Compatibility check",
     "text": "Compatibility check\n\nnpm view azurite engines\n{ node: '&gt;=10.0.0', vscode: '^1.39.0' }\n\nSystem’s node.js is &gt;=10.0.0, compatible with Azurite."
   },
   {
-    "objectID": "posts/2026-05-18-nodejs-npm-security-update-windows/index.html#any-outdated-packages",
-    "href": "posts/2026-05-18-nodejs-npm-security-update-windows/index.html#any-outdated-packages",
+    "objectID": "posts/2026-05-19-nodejs-npm-security-update-windows/index.html#any-outdated-packages",
+    "href": "posts/2026-05-19-nodejs-npm-security-update-windows/index.html#any-outdated-packages",
     "title": "Security upgrades on my Node.js, npm and Azurite",
     "section": "Any outdated packages?",
     "text": "Any outdated packages?\n\nnpm outdated package check\n\nNo outdated packages found. There’s only one global package and it’s latest, so obviously up to date in this case."
   },
   {
-    "objectID": "posts/2026-05-18-nodejs-npm-security-update-windows/index.html#signature-verification",
-    "href": "posts/2026-05-18-nodejs-npm-security-update-windows/index.html#signature-verification",
+    "objectID": "posts/2026-05-19-nodejs-npm-security-update-windows/index.html#signature-verification",
+    "href": "posts/2026-05-19-nodejs-npm-security-update-windows/index.html#signature-verification",
     "title": "Security upgrades on my Node.js, npm and Azurite",
     "section": "Signature verification",
     "text": "Signature verification\nWorking directory: C:\\Users\\xxx\\AppData\\Roaming\\npm\\node_modules\\azurite\n\nnpm audit signatures\naudited 374 packages in 4s\n\n374 packages have verified registry signatures\n\n25 packages have verified attestations\n(use --json --include-attestations to view attestation details)\n\nNo missing signatures found — missing signatures can be a signal worth investigating, but none were found here."
   },
   {
-    "objectID": "posts/2026-05-18-nodejs-npm-security-update-windows/index.html#running-npm-audit",
-    "href": "posts/2026-05-18-nodejs-npm-security-update-windows/index.html#running-npm-audit",
+    "objectID": "posts/2026-05-19-nodejs-npm-security-update-windows/index.html#running-npm-audit",
+    "href": "posts/2026-05-19-nodejs-npm-security-update-windows/index.html#running-npm-audit",
     "title": "Security upgrades on my Node.js, npm and Azurite",
     "section": "Running npm audit",
     "text": "Running npm audit\n\nFirst pass: everything\n\nnpm audit --no-package-lock\n# npm audit report\n\n...\n\n56 vulnerabilities (10 moderate, 8 high, 38 critical)\n\nTo address issues that do not require attention, run:\n  npm audit fix\n\nTo address all issues possible (including breaking changes), run:\n  npm audit fix --force\n\nSome issues need review, and may require choosing\na different dependency.\n\n38 critical. That can’t be so bad, after all it’s a Microsoft-maintained emulator that thousands of people use daily, which means either the world is on fire, or — more likely — npm audit is over-counting in some ways.\nThere’s a catch: filtering out dev dependencies gets to what actually matters at runtime.\n\n\nSecond pass: runtime only\n\nnpm audit --no-package-lock --omit=dev\n# npm audit report\n\n...\n\n10 vulnerabilities (6 moderate, 4 high)\n\nTo address issues that do not require attention, run:\n  npm audit fix\n\nTo address all issues (including breaking changes), run:\n  npm audit fix --force\n\n\nHigh severity vulnerabilities\n\n\n\n\n\n\n\n\nPackage\nVulnerability Summary\nFix Available\n\n\n\n\nlodash\nCode Injection via _.template; Prototype Pollution via _.unset/_.omit\nnpm audit fix\n\n\npath-to-regexp\nReDoS via multiple route parameters\nnpm audit fix\n\n\naxios\n15+ issues: SSRF, CSRF, Credential Leakage, No_Proxy Bypass, Prototype Pollution, DoS, Metadata Exfiltration\nnpm audit fix –force\n\n\n\n\n\nModerate severity vulnerabilities\n\n\n\n\n\n\n\n\nPackage\nVulnerability Summary\nFix Available\n\n\n\n\nbrace-expansion\nZero-step sequence → process hang & memory exhaustion (ReDoS)\nnpm audit fix\n\n\nfollow-redirects\nLeaks Custom Auth Headers to Cross-Domain Redirect Targets\nnpm audit fix\n\n\n@azure/identity\nElevation of Privilege (Azure Identity & MSAL)\nnpm audit fix –force\n\n\ntough-cookie\nPrototype Pollution\nnpm audit fix –force\n\n\nxml2js\nPrototype Pollution\nnpm audit fix –force\n\n\n\n\n\n\nUnderstanding the blast radius\nTwo examples illustrate the dependency tree impact before fixing anything.\nExample 1: Simple case brace-expansion appears only once in the Azurite dependency tree. The blast radius in case of vulnerabilities and fix is relatively limited. Running npm audit fix is unlikely to cause issues.\n\nnpm ls brace-expansion\nazurite@3.35.0 C:\\Users\\xxx\\AppData\\Roaming\\npm\\node_modules\\azurite\n`-- rimraf@3.0.2\n  `-- glob@7.2.3\n    `-- minimatch@3.1.5\n      `-- brace-expansion@1.1.12\n\nExample 2: Multiple copies case\n\nnpm ls follow-redirects\nazurite@3.35.0 C:\\Users\\xxx\\AppData\\Roaming\\npm\\node_modules\\azurite\n+-- @azure/ms-rest-js@1.11.2\n|   `-- axios@0.21.4\n|     `-- follow-redirects@1.15.11 deduped\n`-- axios@0.27.2\n  `-- follow-redirects@1.15.11\n\nThe axios package appears in 2 versions, both depending on the same follow-redirects package. A vulnerability in follow-redirects has a wider blast radius, and a fix would touch more consumers of that dependency. In this case, follow-redirects is a transitive dependency that can easily be updated with npm audit fix.\n\n\nTo fix or not to fix\nGitHub issue #2500 has been tracking these vulnerabilities for a while with no ETA. The maintainers are presumably making a risk call: fix cost vs. actual exposure. Fair enough — I have to make the same call for my system.\n\n\nThe fix plan\nNon-breaking fix: covers 2/3 of the high-severity issues and 2/5 of the moderates. Low risk, clear win.\nBreaking fix (--force): would tackle the rest, but risks silently breaking Azurite. My usage is purely local — with appropriate host 127.0.0.1 and port 10000, no production data, no risky network exposure. The risk of a broken emulator outweighs the marginal security gain. I’ll revisit when the maintainers ship a proper fix.\n\n\nApplying the safe fixes\nIn this case, a quick smoke test before and after is enough — no sandboxing either.\nAzurite run test — successful\n\nazurite --blobHost 127.0.0.1 --blobPort 10000\nAzurite Blob service is starting at http://127.0.0.1:10000\nAzurite Blob service is successfully listening at http://127.0.0.1:10000\nAzurite Queue service is starting at http://127.0.0.1:10001\nAzurite Queue service is successfully listening at http://127.0.0.1:10001\nAzurite Table service is starting at http://127.0.0.1:10002\nAzurite Table service is successfully listening at http://127.0.0.1:10002\n...\nAzurite Blob service is closing...\nAzurite Queue service is closing...\nAzurite Table service is closing...\nAzurite Table service successfully closed\nAzurite Blob service successfully closed\nAzurite Queue service successfully closed\n\nVersions of packages before audit fix\nWorking directory: C:\\Users\\xxx\\AppData\\Roaming\\npm\\node_modules\\azurite\n\nnpm ls lodash\nazurite@3.35.0 C:\\Users\\xxx\\AppData\\Roaming\\npm\\node_modules\\azurite\n`-- sequelize@6.37.8\n  `-- lodash@4.17.23\n\n...\n\n\n\n\nPackage\nVersion\n\n\n\n\nlodash\n4.17.23\n\n\npath-to-regexp\n0.1.12\n\n\nbrace-expansion\n1.1.12\n\n\nfollow-redirects\n1.15.11\n\n\n\nApply audit fix\nAzurite being a global package, npm audit fix cannot be used directly — adding a lock file to a global package is not good practice. npm install -g azurite@latest is used instead.\n\nnpm install -g azurite@latest\n...\nremoved 5 packages, and changed 370 packages in 11s\n\n\nazurite --version\n3.35.0\n\nChecking non-breaking fix success\nWorking directory: C:\\Users\\xxx\\AppData\\Roaming\\npm\\node_modules\\azurite\n\nnpm ls lodash\nazurite@3.35.0 C:\\Users\\xxx\\AppData\\Roaming\\npm\\node_modules\\azurite\n`-- sequelize@6.37.8\n  `-- lodash@4.18.1\n...\n\n\n\n\nPackage\nVersion Before Update\nVersion After Update\n\n\n\n\nlodash\n4.17.23\n4.18.1\n\n\npath-to-regexp\n0.1.12\n0.1.13\n\n\nbrace-expansion\n1.1.12\n1.1.14\n\n\nfollow-redirects\n1.15.11\n1.16.0\n\n\n\nAll 4 packages bumped to patched versions, and the associated vulnerabilities disappeared from the audit report. The breaking-fix issues remain, as expected.\n\nnpm audit --no-package-lock --omit=dev\n# npm audit report\n\n@azure/identity  &lt;4.2.1\nSeverity: moderate\n...\naxios  &lt;=0.31.0\nSeverity: high\n...\ntough-cookie  &lt;4.1.3\nSeverity: moderate\n...\nxml2js  &lt;0.5.0\nSeverity: moderate\n...\n\n6 vulnerabilities (4 moderate, 2 high)\n\nTo address all issues (including breaking changes), run:\n  npm audit fix --force\n\nAzurite run test — successful\n\nazurite --blobHost 127.0.0.1 --blobPort 10000\nAzurite Blob service is starting at http://127.0.0.1:10000\nAzurite Blob service is successfully listening at http://127.0.0.1:10000\nAzurite Queue service is starting at http://127.0.0.1:10001\nAzurite Queue service is successfully listening at http://127.0.0.1:10001\nAzurite Table service is starting at http://127.0.0.1:10002\nAzurite Table service is successfully listening at http://127.0.0.1:10002\n...\nAzurite Blob service is closing...\nAzurite Queue service is closing...\nAzurite Table service is closing...\nAzurite Table service successfully closed\nAzurite Blob service successfully closed\nAzurite Queue service successfully closed"
@@ -130,7 +235,7 @@
     "href": "blog.html",
     "title": "Blog",
     "section": "",
-    "text": "Security upgrades on my Node.js, npm and Azurite\n\n\n\nnpm\n\nNode.js\n\nAzurite\n\nSecurity update\n\nWindows\n\n\n\nA Fireship video sent me down a rabbit hole — turns out my Node.js had CVEs and my Azurite was quietly sitting on vulnerable dependencies.\n\n\n\n\n\nMay 19, 2026\n\n\n\n\n\nNo matching items"
+    "text": "Minimalistic Azure Function App creation\n\n\n\nAzure\n\nAzure Functions\n\nPython\n\nWindows\n\n\n\nA minimalistic local-to-cloud Function App creation and deployment to Azure.\n\n\n\n\n\nMay 29, 2026\n\n\n\n\n\n\n\n\n\n\n\n\nSecurity upgrades on my Node.js, npm and Azurite\n\n\n\nnpm\n\nNode.js\n\nSecurity update\n\nWindows\n\n\n\nA Fireship video sent me down a rabbit hole — turns out my Node.js had CVEs and my Azurite was quietly sitting on vulnerable dependencies.\n\n\n\n\n\nMay 19, 2026\n\n\n\n\n\nNo matching items"
   },
   {
     "objectID": "about.html",
@@ -336,22 +441,22 @@
     "text": "Changes to this policy\nI may update this privacy policy from time to time. Changes will be reflected by the “last updated” date at the top of this page."
   },
   {
-    "objectID": "snippets/2026-05-18-find-nodejs-projects-powershell/index.html",
-    "href": "snippets/2026-05-18-find-nodejs-projects-powershell/index.html",
+    "objectID": "snippets/2026-05-22-find-nodejs-projects-powershell/index.html",
+    "href": "snippets/2026-05-22-find-nodejs-projects-powershell/index.html",
     "title": "Find all Node.js projects under a directory",
     "section": "",
     "text": "Walks a projects folder, finds every package.json that belongs to a real project, and prints the result as JSON. A parameter controls whether to include or exclude scanning under .venv packages — useful for machines with Python projects that contain .venv directories."
   },
   {
-    "objectID": "snippets/2026-05-18-find-nodejs-projects-powershell/index.html#when-includevenv-is-false",
-    "href": "snippets/2026-05-18-find-nodejs-projects-powershell/index.html#when-includevenv-is-false",
+    "objectID": "snippets/2026-05-22-find-nodejs-projects-powershell/index.html#when-includevenv-is-false",
+    "href": "snippets/2026-05-22-find-nodejs-projects-powershell/index.html#when-includevenv-is-false",
     "title": "Find all Node.js projects under a directory",
     "section": "When $IncludeVenv is false",
     "text": "When $IncludeVenv is false\nA log line appears before the JSON as Packages under .venv (excluded from scan): N.\n\nPackages under .venv (excluded from scan): 5\n{\n  \"rootPath\": \"C:\\\\projects\",\n  \"includeVenv\": false,\n  \"count\": 1,\n  \"projects\": [\n    {\n      \"project\": \"sample-nodejs-project\",\n      \"version\": \"1.0.0\",\n      \"path\": \"C:\\\\projects\\\\sample-nodejs-project\",\n      \"dependencies\": 2,\n      \"hasLockfile\": true\n    }\n  ]\n}"
   },
   {
-    "objectID": "snippets/2026-05-18-find-nodejs-projects-powershell/index.html#when-includevenv-is-true",
-    "href": "snippets/2026-05-18-find-nodejs-projects-powershell/index.html#when-includevenv-is-true",
+    "objectID": "snippets/2026-05-22-find-nodejs-projects-powershell/index.html#when-includevenv-is-true",
+    "href": "snippets/2026-05-22-find-nodejs-projects-powershell/index.html#when-includevenv-is-true",
     "title": "Find all Node.js projects under a directory",
     "section": "When $IncludeVenv is true",
     "text": "When $IncludeVenv is true\nThe JSON includes the .venv packages.\n\n{\n  \"rootPath\": \"C:\\\\projects\",\n  \"includeVenv\": true,\n  \"count\": 6,\n  \"projects\": [\n    {\n      \"project\": \"@jupyter-widgets/jupyterlab-manager\",\n      \"version\": \"5.0.15\",\n      \"path\": \"C:\\\\projects\\\\projectX\\\\.venv\\\\share\\\\jupyter\\\\labextensions\\\\@jupyter-widgets\\\\jupyterlab-manager\",\n      \"dependencies\": 40,\n      \"hasLockfile\": false\n    },\n    ...\n    {\n      \"project\": \"jupyterlab-plotly\",\n      \"version\": \"6.0.1\",\n      \"path\": \"C:\\\\projects\\\\projectY\\\\.venv\\\\share\\\\jupyter\\\\labextensions\\\\jupyterlab-plotly\",\n      \"dependencies\": 7,\n      \"hasLockfile\": false\n    },\n    {\n      \"project\": \"sample-nodejs-project\",\n      \"version\": \"1.0.0\",\n      \"path\": \"C:\\\\projects\\\\sample-nodejs-project\",\n      \"dependencies\": 2,\n      \"hasLockfile\": true\n    }\n  ]\n}"
