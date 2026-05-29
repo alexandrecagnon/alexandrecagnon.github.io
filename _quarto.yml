@@ -38,6 +38,7 @@ format:
       - styles/mermaid.css
       - styles/code-language-badges.css
       - styles/code-with-output.css
+      - styles/snippet-steps.css
     include-in-header: includes/code-language-badges.html
     mermaid:
       theme: neutral

@@ -1,101 +1,111 @@
 ---
-title: "Fast Azure Function creation, test and deployment"
-date: 2026-05-19
-description: "Documenting my fast Azure Function creation, testing and deployment workflow from zero to up in Azure"
-image: ../../images/blog/teddy_bear_it_rotten_roots.webp
-image-alt: "Teddy bear typing code with rotten roots"
-categories: [Azure, Azure Functions, Python, HTTP]
+title: "Azure Function creation and deployment"
+date: 2026-05-29
+description: "Detailed steps of local Azure Function creation and deployment to Azure Cloud."
+image: ../../images/blog/teddy_bear_azure_function_launch.webp
+image-alt: "Teddy bear managing a mess of configurations to launch an Azure Function"
+categories: [Azure, Azure Functions, Python]
 draft: true
 ---
 
-I have significant experience in deploying data engineering code encapsulated in a container at a cloud provider. It was quite good at processing GBs of structured and semi-structured data on a micro-batch basic. At the time it made sense to go this direction because the selected cloud provider did not provide serverless computing and reserving CPU/MEM ressources (VMs for Kubernetes workers) for the container was relatively cheap and easy to manage.
-Lately I passed the Azure Fabric Data Engineer certification [(source)](https://learn.microsoft.com/en-us/users/alexandrecagnon-1774/) to get my hands dirty on top of the shelf products from a major cloud provider. While Fabric is a powerful plateform, I feel that it has a too heavy cost overhead for small and medium sized projects. The certificate only covered some of the many possibilities of Fabric and Azure in general. One thing I really wanted to experience is serverless computing, more specifically Function-as-a-Service (FaaS) because of its potential for large cost and sustainability gains.
+I recently passed the Azure Fabric Data Engineer certification [(source)](https://learn.microsoft.com/en-us/users/alexandrecagnon-1774/) to get my hands dirty with top-shelf products from a major cloud provider. While Fabric is a powerful platform I feel that it carries a too steep a cost overhead for small and medium-sized projects. One thing that could looks less costly to implement some data engineering tasks is serverless computing — specifically Function-as-a-Service (FaaS). 
 
-There are countless articles about creating Azure functions and an extensive documentation on how to from Microsoft. I'll take the party of fully ignoring any external documentation and only relying on Microsoft's documentation. I also use AI search (free Perplexity mainly) to help clarify some points. This strategy is used to reduce documentation swamping.
-Also, I will iterate with only the most necessary additional configurations to reduce conofiguration complexity to the maximum. As the article show, a minimalist Function App already requires a heavy setup on your the local system and on Azure. This method should help cut through the *noise* of an extensive documentation and help deploy and run something as quickly as possible, a good start to iterate and build anything from. 
-In this regard, this article is not a comprehensive guide but a quick start for someone who wants to create a simple Azure Function and deploy it to Azure. There is no intention to cover all possibilities, pitfalls and best practices on configurations, architecture choices, function choices, etc. That's more context specific and is part of the iterative process of learning and adapting for the specific use case.
+There are countless articles about Azure Functions and an extensive official Microsoft documentation. To avoid documentation overload, only Microsoft's documentation and specific ah-hoc free AI search from Perplexity are used. The goal is not to reinvent the wheel but to shrink the learning curve and show how to navigate issues that arise during the setup process (there are many more than expected). It should be a good starting point to iterate from for more complex use cases.
 
-# Hit Microsoft's documentation on Azure Functions
+# Microsoft's documentation on Azure Functions
 
-There's plenty of official documentation to work from as a starting point on [Microsoft's documentation on Azure Functions](https://learn.microsoft.com/en-us/azure/azure-functions/).
+There's plenty of official documentation to work from as a starting point on [Microsoft's Azure Functions documentation](https://learn.microsoft.com/en-us/azure/azure-functions/).
 
-The [(Quickstart: Create a function in Azure from the command line)](https://learn.microsoft.com/en-us/azure/azure-functions/how-to-create-function-azure-cli?tabs=go%2Cwindows%2Cbash%2Cazure-cli&pivots=programming-language-python) is heavily used.
+The [Quickstart: Create a function in Azure from the command line](https://learn.microsoft.com/en-us/azure/azure-functions/how-to-create-function-azure-cli?tabs=go%2Cwindows%2Cbash%2Cazure-cli&pivots=programming-language-python) is also heavily used.
 
 
 # The workflow to create a simple Azure Function
 
+**Basic Function App Deployment to Azure**
 ```{mermaid}
 %%| fig-width: 10
 flowchart TD
-title["<b>Basic Function App Deployment to Azure</b>"]
 
 A[Setup local development environment] --> B[Create 1 http triggered function]
 B --> C[Create the Function App in Azure]
-C --> D[Deploy the Function App in Azure]
-D --> E[Run the Function from laptop]
-
-style title fill:none,stroke:none,color:#2c3e50,font-size:20px
+C --> D[Deploy local Function App to Azure]
+D --> E[Run Function from local machine]
 ```
 
 # Single Dummy Function Deployment
 
 ## Setup local development environment
 
-## Install Azure Functions Core Tools
+### Install Azure Functions Core Tools
 
-Follow the instructions [(Install the Azure Functions Core Tools)](https://learn.microsoft.com/en-us/azure/azure-functions/functions-run-local?tabs=windows%2Cisolated-process%2Cnode-v4%2Cpython-v2%2Chttp-trigger%2Ccontainer-apps&pivots=programming-language-python).
+Follow the instructions [Install the Azure Functions Core Tools](https://learn.microsoft.com/en-us/azure/azure-functions/functions-run-local?tabs=windows%2Cisolated-process%2Cnode-v4%2Cpython-v2%2Chttp-trigger%2Ccontainer-apps&pivots=programming-language-python).
 
-Test installation success
+Verify the installation:
+
+:::: {.code-output}
 ```powershell
-PS C:\Users\alexa> func --version
-4.8.0
+func --version
 ```
 
-### Install Azurite
+<pre class="output-pane">4.8.0</pre>
+::::
 
-A Function App needs a *system* storage by default to function. Running Azurite locally allows to simulate a storage account for the Function App. Detailed [(Azurite installation instructions source)](https://learn.microsoft.com/en-us/azure/storage/common/storage-install-azurite?toc=%2Fazure%2Fstorage%2Fblobs%2Ftoc.json&bc=%2Fazure%2Fstorage%2Fblobs%2Fbreadcrumb%2Ftoc.json&tabs=visual-studio%2Cblob-storage) can be found in the Azure Blob storage documentation.
+### Install Azurite storage emulator
 
-My short installation instructions on Windows are
+A Function App needs a default *system* storage to work. Running Azurite locally allows simulating a storage account for the Function App. Detailed [Azurite installation instructions](https://learn.microsoft.com/en-us/azure/storage/common/storage-install-azurite?toc=%2Fazure%2Fstorage%2Fblobs%2Ftoc.json&bc=%2Fazure%2Fstorage%2Fblobs%2Fbreadcrumb%2Ftoc.json&tabs=visual-studio%2Cblob-storage) can be found in the Azure Blob storage documentation.
+
+Installation steps for Windows:
 
 1. Install Node.js from [nodejs.org](https://nodejs.org/en/download)
-2. Install Azurite with nmp
-```dosbat
+2. Install Azurite with npm
+
+```bat
 npm install -g azurite
 ```
 
-Test installation success
+Verify the installation:
+
+:::: {.code-output}
 ```powershell
 azurite --version
-3.35.0
 ```
+
+<pre class="output-pane">3.35.0</pre>
+::::
 
 ## Create 1 HTTP triggered function
 
-## Generate a new Function App template 
+### Generate a new Function App template 
 
 Using Azure Functions Core Tools CLI, generate a new Function App template in a directory of your choice.
 
+:::: {.code-output}
 ```powershell
 mkdir http_az_function_app
 cd http_az_function_app
 func init demo-function --worker-runtime python --model V2
-PS C:\...\http_az_function_app> func init demo-function --worker-runtime python --model V2
+```
 
-The new Python programming model is generally available. Learn more at https://aka.ms/pythonprogrammingmodel
+<div class="code-output">
+<pre class="output-pane">The new Python programming model is generally available. Learn more at https://aka.ms/pythonprogrammingmodel
 Writing requirements.txt
 Writing function_app.py
 Writing .gitignore
 Writing host.json
 Writing local.settings.json
-Writing C:\Users\alexa\Documents\PRO_PROJECTS\http_az_function_app\demo-function\.vscode\extensions.json
+Writing C:\...\http_az_function_app\demo-function\.vscode\extensions.json</pre>
+</div>
+::::
+
+The project directory is now structured as follows:
+
+:::: {.code-output}
+```powershell
+tree . /f
 ```
 
-The directory of the project is now structured as follows
-
-```powershell
-PS C:\...\http_az_function_app> tree . /f
-
-C:\...\HTTP_AZ_FUNCTION_APP
+<div class="code-output">
+<pre class="output-pane">C:\...\HTTP_AZ_FUNCTION_APP
 └───demo-function
     │   .gitignore
     │   function_app.py
@@ -104,76 +114,100 @@ C:\...\HTTP_AZ_FUNCTION_APP
     │   requirements.txt
     │
     └───.vscode
-            extensions.json
+            extensions.json</pre>
+</div>
+::::
+
+### Creating a Python virtual environment
+
+To test the function locally in a reproducible environment, create a Python virtual environment inside the Azure Function App project. With pyenv, the latest listed stable Python version is 3.14.3. I used 3.13.12 (the latest v3.13 release) because it is the [latest Python version supported by Azure Functions](https://learn.microsoft.com/en-us/azure/azure-functions/functions-versions?tabs=isolated-process%2Cv4&pivots=programming-language-python) at the time of writing.
+
+For a robust Python environment setup, I use [(this PowerShell script)](../../snippets/2026-05-22-python_venv_powershell/index.qmd).
+
+Working directory: `demo-function`
+
+:::: {.code-output}
+```powershell
+C:\...\tools\create-python-venv.ps1
 ```
 
-## Creating a virtual environment
-
-To test the function locally in a reproducible environment, let's create a Python visrtual environment within the Azure Function App project. With my system's pyenv, the latest listed stable Python version is 3.14.3. However, we will use the latest v3.13 (3.13.12) because it is as of today the [(latest Python version supported by Azure Functions)](https://learn.microsoft.com/en-us/azure/azure-functions/functions-versions?tabs=isolated-process%2Cv4&pivots=programming-language-python).
-
-For a robust Python environment setup, I use a PowerShell script [(Create a Python venv on Windows)](../../snippets/2026-05-22-python_venv_powershell/index.qmd).
-
-```powershell
-PS C:\...\http_az_function_app> cd .\demo-Function\
-PS C:\...\http_az_function_app\demo-function> C:\...\tools\create-python-venv.ps1
-:: [Info] ::  Mirror: https://www.python.org/ftp/python
+<div class="code-output">
+<pre class="output-pane">:: [Info] ::  Mirror: https://www.python.org/ftp/python
 Requirement already satisfied: pip in c:\...\http_az_function_app\demo-function\.venv\lib\site-packages (25.3)
 Collecting pip
-[...]
+...
 Successfully installed packaging-26.2 pip-26.1.1 setuptools-82.0.1 wheel-0.47.0
 Collecting azure-functions (from -r requirements.txt (line 5))
-[...]
+...
 Installing collected packages: markupsafe, werkzeug, azure-functions
 Successfully installed azure-functions-2.1.0 markupsafe-3.0.3 werkzeug-3.1.8
-success creating .venv
+success creating .venv</pre>
+</div>
+::::
+
+### Test the function locally
+
+Testing the function after activating the Python virtual environment.
+
+Working directory: `demo-function`   
+Virtual environment: `.venv` (activated)
+
+1. Starting a local Azurite storage emulator
+
+:::: {.code-output}
+```powershell
+azurite --silent --location azurite --debug azurite/debug.log
 ```
 
-## Test the azure function locally
-
-Testing the function after activating the virtual environment.
-
-- starting a local Azurite storage emulator with `azurite`
-```powershell
-PS C:\...\http_az_function_app\demo-function> . .\\.venv\\Scripts\\Activate.ps1
-(.venv) PS C:\...\http_az_function_app\demo-function> azurite --silent --location azurite --debug azurite/debug.log
-Azurite Blob service is starting at http://127.0.0.1:10000
+<div class="code-output">
+<pre class="output-pane">Azurite Blob service is starting at http://127.0.0.1:10000
 Azurite Blob service is successfully listening at http://127.0.0.1:10000
 Azurite Queue service is starting at http://127.0.0.1:10001
 Azurite Queue service is successfully listening at http://127.0.0.1:10001
 Azurite Table service is starting at http://127.0.0.1:10002
-Azurite Table service is successfully listening at http://127.0.0.1:10002
-```
-- start the function App with `func start`
-```powershell
-(.venv) PS C:\...\http_az_function_app\demo-function> func start
+Azurite Table service is successfully listening at http://127.0.0.1:10002</pre>
+</div>
+::::
 
-Azure Functions Core Tools
+2. Starting the Function App with `func start`
+
+:::: {.code-output}
+```powershell
+func start
+```
+
+<div class="code-output">
+<pre class="output-pane">Azure Functions Core Tools
 Core Tools Version:       4.8.0+ec58eb7110992ea02aa19e9c060e45ac8882cc02 (64-bit)
 Function Runtime Version: 4.1046.100.25610
 
 [2026-05-25T08:47:53.299Z] No job functions found. Try making your job classes and methods public. If you're using binding extensions (e.g. Azure Storage, ServiceBus, Timers, etc.) make sure you've called the registration method for the extension(s) in your startup code (e.g. builder.AddAzureStorage(), builder.AddServiceBus(), builder.AddTimers(), etc.).
 For detailed output, run func with --verbose flag.
-[2026-05-25T08:47:58.439Z] Host lock lease acquired by instance ID '00000000000000000000000030C52BF0'.
-```
+[2026-05-25T08:47:58.439Z] Host lock lease acquired by instance ID '00000000000000000000000030C52BF0'.</pre>
+</div>
+:::: 
 
-So the function App starts successfully. No usefull actions are done for now because Function(s) are yet to be created.
+The function App starts successfully. No functions are registered yet, so there's righfully *no job functions found*.
 
-## Create a dummy HTTP triggered function
+### Create a dummy Function from template
 
-Let's create a HTTP triggered Function that takes an input *name* and returns a success message with it or a failure message otherwise.
+Let's create a dummy HTTP triggered function that takes an input *name* and returns a success message with it or a failure message otherwise.
 
-### Create a function from template
-From [(Function creation documentation)](https://learn.microsoft.com/en-us/azure/azure-functions/functions-run-local?tabs=windows%2Cisolated-process%2Cnode-v4%2Cpython-v2%2Chttp-trigger%2Ccontainer-apps&pivots=programming-language-python#create-func), we can use `func new` to create a new Function.
+Working directory: `demo-function`   
+Virtual environment: `.venv` (activated)
 
+:::: {.code-output}
 ```powershell
-(.venv) PS C:\...\PRO_PROJECTS\http_az_function_app\demo-function> func new --template "Http Trigger" --name helloName --authlevel "function" --language python
-The function "helloName" was created successfully from the "Http Trigger" template.
+func new --template "Http Trigger" --name helloName --authlevel "function" --language python
 ```
 
-The function was added to the function_app.py file as follows:
+<pre class="output-pane">The function "helloName" was created successfully from the "Http Trigger" template.</pre>
+::::
+
+A Function is added to the `function_app.py` file as follows:
 
 ```python
-[...]
+...
 
 @app.route(route="helloName", auth_level=func.AuthLevel.FUNCTION)
 def helloName(req: func.HttpRequest) -> func.HttpResponse:
@@ -197,56 +231,77 @@ def helloName(req: func.HttpRequest) -> func.HttpResponse:
         )
 ```
 
-Adjust the settings of local.settings.json to test locally ?
-
 ### Test the function
 
-As in previous local test:
+As in the previous local test:
 
-- start Azurite with `azurite --silent --location azurite --debug azurite/debug.log`
-- start the function app with `func start`. The newly added function will now be listed
+Working directory: `demo-function`   
+Virtual environment: `.venv` (activated)
+
+- Start Azurite with `azurite --silent --location azurite --debug azurite/debug.log`
+- Start the function app. The newly added function is now listed:
+
+:::: {.code-output}
 ```powershell
-[...]
+func start
+```
+
+<div class="code-output">
+<pre class="output-pane">...
 [2026-05-26T01:49:55.832Z] Worker process started and initialized.
 
 Functions:
 
         helloName:  http://localhost:7071/api/helloName
-[...]
-```
-- call the HTTP triggered function with the command (In PowerShell the native `Invoke-RestMethod` is used instead of curl) `Invoke-RestMethod -Uri "http://localhost:7071/api/helloName" -Method Post -ContentType "application/json" -Body '{"name":"Johny Doe"}'`
+...</pre>
+</div>
+::::
+
+- Call the HTTP triggered function (in PowerShell, use `Invoke-RestMethod` instead of curl):
+
+:::: {.code-output}
 ```powershell
-(.venv) PS C:\xx\http_az_function_app\demo-function> Invoke-RestMethod -Uri "http://localhost:7071/api/helloName" -Method Post -ContentType "application/json" -Body '{"name":"Johny Doe"}'
-Hello, Johny Doe. This HTTP triggered function executed successfully.
+Invoke-RestMethod -Uri "http://localhost:7071/api/helloName" -Method Post -ContentType "application/json" -Body '{"name":"Johny Doe"}'
 ```
 
-The function works as expected locally, let's now create a Function App in Azure to deploy it in Azure.
+<pre class="output-pane">Hello, Johny Doe. This HTTP triggered function executed successfully.</pre>
+::::
+
+The function works as expected locally. Let's now create a Function App in Azure to deploy it.
 
 
 ## Create the Function App in Azure
 
-#### Install Azure CLI
+### Install Azure CLI
 
-To interact with your Azure account from the command line, install Azure CLI from [Azure CLI](https://learn.microsoft.com/en-us/cli/azure/install-azure-cli-windows?view=azure-cli-latest&pivots=winget). 
+To interact with your Azure account from the command line, install Azure CLI from [Azure CLI](https://learn.microsoft.com/en-us/cli/azure/install-azure-cli-windows?view=azure-cli-latest&pivots=winget).
 
-**Test installation success:**
+Running on PowerShell 7.6.1:
+
+:::: {.code-output}
 ```powershell
-PowerShell 7.6.1
-PS C:\Users\alexa> az --version
-azure-cli                         2.86.0
-[...output truncated...]
-``` 
+az --version
+```
+
+<pre class="output-pane">azure-cli                         2.86.0
+...</pre>
+::::
 
 ### Create required Azure components
 
-This [(documentation)](https://learn.microsoft.com/en-us/azure/azure-functions/how-to-create-function-azure-cli?tabs=go%2Cwindows%2Cbash%2Cazure-cli&pivots=programming-language-python#create-a-local-code-project-and-function)provides a list of required Azure resources to create a Function App before being able to deploy the Function App on our local system to the Azure Function App on Azure.
+This [documentation](https://learn.microsoft.com/en-us/azure/azure-functions/how-to-create-function-azure-cli?tabs=go%2Cwindows%2Cbash%2Cazure-cli&pivots=programming-language-python#create-a-local-code-project-and-function) provides a list of required Azure resources to create before deploying a Function App.
 
 1. Create an Azure account on [Azure](https://portal.azure.com/)
-2. Use/Create a Subscription on the Azure portal manually - here I named it `subscription_demos`
-3. Login to Azure account and Subscription selection with `az login`
+2. Use/Create a Subscription on the Azure portal manually — I named it `subscription_demos`
+3. Log in to the Azure account and select the subscription with `az login`:
+
+:::: {.code-output}
 ```powershell
-PS C:\> az login
-Select the account you want to log in with. For more information on login with Azure CLI, see https://go.microsoft.com/fwlink/?linkid=2271136
+az login
+```
+
+<div class="code-output">
+<pre class="output-pane">Select the account you want to log in with. For more information on login with Azure CLI, see https://go.microsoft.com/fwlink/?linkid=2271136
 
 Retrieving tenants and subscriptions for the selection...
 
@@ -262,14 +317,22 @@ The default is marked with an *; the default tenant is 'Default Directory' and s
 Select a subscription and tenant (Type a number or Enter for no changes): 2
 
 Tenant: Default Directory
-Subscription: subscription_demos (xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx)
-```
-4. Create a Resource Group (logical container for related resources) - `func-app-demos-rg` here
-- select the best available region for the Function App (Flex Consumption) with this az functionapp [(command)](https://github.com/MicrosoftDocs/azure-docs/blob/main/includes/functions-flex-supported-regions-cli.md) - `southeastasia` in my case
-- run the resource group creation command `az group create --name "func-app-demos-rg" --location "southeastasia"`
+Subscription: subscription_demos (xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx)</pre>
+</div>
+::::
+
+4. Create a Resource Group (logical container for related resources) — `func-app-demos-rg` here
+
+- Select the best available region for the Function App (Flex Consumption) with this az functionapp [command](https://github.com/MicrosoftDocs/azure-docs/blob/main/includes/functions-flex-supported-regions-cli.md) — `southeastasia` in my case
+- Run the resource group creation command:
+
+:::: {.code-output}
 ```powershell
-(.venv) PS C:\...\http_az_function_app\demo-function> az group create --name "func-app-demos-rg" --location "southeastasia"
-{
+az group create --name "func-app-demos-rg" --location "southeastasia"
+```
+
+<div class="code-output">
+<pre class="output-pane">{
   "id": "/subscriptions/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/resourceGroups/func-app-demos-rg",
   "location": "southeastasia",
   "managedBy": null,
@@ -279,35 +342,46 @@ Subscription: subscription_demos (xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx)
   },
   "tags": null,
   "type": "Microsoft.Resources/resourceGroups"
-}
-```
-5. Create a Storage Account (used by the Functions host to maintain state and other information about your functions)- `httpazfuncappsa` here.
+}</pre>
+</div>
+::::
+
+5. Create a Storage Account (used by the Functions host to maintain state and other information about your functions) — `httpazfuncappsa` here.
 
 **Register the Subscription to use Microsoft.Storage**
+
+:::: {.code-output}
 ```powershell
 az provider register --namespace Microsoft.Storage
 ```
+::::
 
 **Create the storage account**
-```powershell
-(.venv) PS C:\...\http_az_function_app\demo-function> az storage account create --name "httpazfuncappsa" --location "southeastasia" --resource-group "func-app-demos-rg" --sku "Standard_LRS" --allow-blob-public-access false --allow-shared-key-access false
 
-{
+:::: {.code-output}
+```powershell
+az storage account create --name "httpazfuncappsa" --location "southeastasia" --resource-group "func-app-demos-rg" --sku "Standard_LRS" --allow-blob-public-access false --allow-shared-key-access false
+```
+
+<div class="code-output">
+<pre class="output-pane">{
   "accessTier": "Hot",
   "accountMigrationInProgress": null,
   "allowBlobPublicAccess": false,
   "allowCrossTenantReplication": false,
   "allowSharedKeyAccess": false,
-  [...output truncated...]
+  ...
   "type": "Microsoft.Storage/storageAccounts",
   "zones": null
-}
-```
+}</pre>
+</div>
+::::
 
-6. A user-assigned managed identity (the Functions host uses to connect to the default storage account) 
+6. A user-assigned managed identity (the Functions host uses to connect to the default storage account)
 
-The following commands creates a "Storage Blob Data Owner" role to the storage account (full access to Azure Storage blob containers and data) that will be used by the Function App to get access to the storage.
+The following commands create a "Storage Blob Data Owner" role assignment on the storage account (full access to Azure Storage blob containers and data) that the Function App will use to access storage.
 
+:::: {.code-output}
 ```powershell
 $output = az identity create --name "httpazfuncappsa-user" --resource-group "func-app-demos-rg" --location "southeastasia" --query "{userId:id, principalId:principalId, clientId:clientId}" -o json
 
@@ -317,32 +391,39 @@ $clientId = ($output | ConvertFrom-Json).clientId
 $storageId = az storage account show --resource-group "func-app-demos-rg" --name httpazfuncappsa --query 'id' -o tsv
 
 az role assignment create --assignee-object-id $principalId --assignee-principal-type ServicePrincipal --role "Storage Blob Data Owner" --scope $storageId
+```
 
-#results
-WARNING: Resource provider 'Microsoft.ManagedIdentity' used by this operation is not registered. We are registering for you.
+<div class="code-output">
+<pre class="output-pane">WARNING: Resource provider 'Microsoft.ManagedIdentity' used by this operation is not registered. We are registering for you.
 WARNING: Registration succeeded.
 {
   "condition": null,
-  [...output truncated...]
+  ...
   "scope": "/subscriptions/ef3c8ea4-a143-4356-8236-a2f08dc5a3a0/resourceGroups/func-app-demos-rg/providers/Microsoft.Storage/storageAccounts/httpazfuncappsa",
   "type": "Microsoft.Authorization/roleAssignments",
   "updatedBy": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
   "updatedOn": "2026-05-26T07:39:31.845940+00:00"
-}
-```
+}</pre>
+</div>
+::::
 
-7. Create a Function App (provides the environment for executing your function code) - `httpazfuncapp` here
+7. Create a Function App (provides the environment for executing your function code) — `httpazfuncapp` here
 
 **Register the Subscription to use Microsoft.Web**
+
 ```powershell
 az provider register --namespace Microsoft.Web
 ```
 
 **Create the Function App**
+
+:::: {.code-output}
 ```powershell
 az functionapp create --resource-group "func-app-demos-rg" --name httpazfuncapp --flexconsumption-location "southeastasia" --runtime python --runtime-version "3.13" --storage-account httpazfuncappsa --deployment-storage-auth-type UserAssignedIdentity --deployment-storage-auth-value "httpazfuncappsa-user" --https-only true --instance-memory 512 --tags Environment=Demo
+```
 
-Creating deployment storage account container 'app-package-httpazfuncapp-5265228' ...
+<div class="code-output">
+<pre class="output-pane">Creating deployment storage account container 'app-package-httpazfuncapp-5265228' ...
 Resource provider 'Microsoft.OperationalInsights' used by this operation is not registered. We are registering for you.
 Registration succeeded.
 Resource provider 'microsoft.insights' used by this operation is not registered. We are registering for you.
@@ -350,33 +431,40 @@ Registration succeeded.
 Application Insights "httpazfuncapp" was created for this Function App. You can visit https://portal.azure.com/#resource/subscriptions/ef3c8ea4-a143-4356-8236-a2f08dc5a3a0/resourceGroups/func-app-demos-rg/providers/microsoft.insights/components/httpazfuncapp/overview to view your Application Insights component
 {
   "id": "/subscriptions/ef3c8ea4-a143-4356-8236-a2f08dc5a3a0/resourceGroups/func-app-demos-rg/providers/Microsoft.Web/sites/httpazfuncapp",
-  [...output truncated...]
+  ...
   "resourceGroup": "func-app-demos-rg",
   "type": "Microsoft.Web/sites"
-}
-```
+}</pre>
+</div>
 
-Notes: 
-- running `az functionapp create` automatically "created an associated Azure Application Insights instance in the same resource group... The instance incurs no costs until you activate it." [(documentation)](https://learn.microsoft.com/en-us/azure/azure-functions/how-to-create-function-azure-cli?tabs=go%2Cwindows%2Cbash%2Cazure-cli&pivots=programming-language-csharp#create-supporting-azure-resources-for-your-function). You cannot disable its usage by removing the  APPLICATIONINSIGHTS_CONNECTION_STRING from the Function App Environment Variables. if you want to reactivate it in the future you can always get the key back from the application Insights instance information in Azure. For more information on Application Insights integration with Azure Function App go to [(Enable Application Insights integration)](https://learn.microsoft.com/en-us/azure/azure-functions/configure-monitoring?tabs=v2#enable-application-insights-integration). An better alternative however is to use the user-assigned managed identity already created in step 6 for the Function App to access the Application Insights instance [(Documentation)](https://learn.microsoft.com/en-us/azure/azure-functions/how-to-create-function-azure-cli?tabs=go%2Cwindows%2Cbash%2Cazure-cli&pivots=programming-language-csharp#update-application-settings):
+Notes:
+- Running `az functionapp create` automatically creates an associated Azure Application Insights instance in the same resource group. "The instance incurs no costs until you activate it." [(documentation)](https://learn.microsoft.com/en-us/azure/azure-functions/how-to-create-function-azure-cli?tabs=go%2Cwindows%2Cbash%2Cazure-cli&pivots=programming-language-csharp#create-supporting-azure-resources-for-your-function). You cannot disable its usage by removing the `APPLICATIONINSIGHTS_CONNECTION_STRING` from the Function App Environment Variables. If you want to reactivate it later, you can retrieve the key from the Application Insights instance in Azure. For more information on Application Insights integration with Azure Function App, see [Enable Application Insights integration](https://learn.microsoft.com/en-us/azure/azure-functions/configure-monitoring?tabs=v2#enable-application-insights-integration). A better alternative is to use the user-assigned managed identity already created in step 6 for the Function App to access the Application Insights instance [(Documentation)](https://learn.microsoft.com/en-us/azure/azure-functions/how-to-create-function-azure-cli?tabs=go%2Cwindows%2Cbash%2Cazure-cli&pivots=programming-language-csharp#update-application-settings):
+
+:::: {.code-output}
 ```powershell
 clientId=$(az identity show --name httpazfuncappsa-user --resource-group func-app-demos-rg --query 'clientId' -o tsv)
 
 az functionapp config appsettings set --name httpazfuncapp --resource-group "func-app-demos-rg" APPLICATIONINSIGHTS_AUTHENTICATION_STRING="ClientId=$clientId;Authorization=AAD"
 ```
+::::
 
-- the additional parameters where added on top of the default parameters of the `az functionapp create` command provided in the documentation: `--https-only true --instance-memory 512 --tags Environment=Demo` for improved security, minimise ressource usage and better tracking of the Function App in Azure.
+- The additional parameters `--https-only true --instance-memory 512 --tags Environment=Demo` were added on top of the defaults in the documentation for improved security, minimized resource usage, and better tracking of the Function App in Azure.
 
-8. Upgrade Function App default storage account to user-assigned managed identity
-Replace the default AzureWebJobsStorage connection string setting with several settings that are prefixed with AzureWebJobsStorage__ settings.
+8. Upgrade the Function App default storage account to user-assigned managed identity.
+Replace the default `AzureWebJobsStorage` connection string setting with several settings prefixed with `AzureWebJobsStorage__`.
 
 **Create 3 new environment variables for the Function App:**
+
+:::: {.code-output}
 ```powershell
 $clientId = az identity show --name httpazfuncappsa-user --resource-group func-app-demos-rg --query 'clientId' -o tsv
 
 az functionapp config appsettings set --name httpazfuncapp --resource-group "func-app-demos-rg" --settings AzureWebJobsStorage__accountName=httpazfuncappsa AzureWebJobsStorage__credential=managedidentity AzureWebJobsStorage__clientId=$clientId
+```
+::::
 
-# results
-[
+<div class="code-output">
+<pre class="output-pane">[
   {
     "name": "AzureWebJobsStorage",
     "slotSetting": false,
@@ -397,15 +485,19 @@ az functionapp config appsettings set --name httpazfuncapp --resource-group "fun
     "slotSetting": false,
     "value": null
   }
-]
-```
+]</pre>
+</div>
+::::
 
 **Delete the old environment variable:**
+
+:::: {.code-output}
 ```powershell
 az functionapp config appsettings delete --name httpazfuncapp --resource-group "func-app-demos-rg" --setting-names AzureWebJobsStorage
+```
 
-# results
-[
+<div class="code-output">
+<pre class="output-pane">[
   {
     "name": "AzureWebJobsStorage__accountName",
     "slotSetting": false,
@@ -421,14 +513,16 @@ az functionapp config appsettings delete --name httpazfuncapp --resource-group "
     "slotSetting": false,
     "value": null
   }
-]
-```
+]</pre>
+</div>
+::::
 
-#### Create a .funcignore file
+### Create a .funcignore file
 
-To prevent useless files to be pushed to the Azure Function App, we need to create a `.functionignore` file with the following contents:
+To prevent unnecessary files from being pushed to the Azure Function App, create a `.funcignore` file with the following contents:
 
-```text
+<div class="code-output">
+<pre class="output-pane">
 __pycache__/
 .venv/
 .vscode/
@@ -437,15 +531,24 @@ azurite/
 .gitignore
 .python-version
 local.settings.json
-```
+</pre>
+</div>
 
-## Deploy the Function App in Azure
+## Deploy local Function App to Azure
 
-Deploy the Azure local project to the Azure Function App using `func azure functionapp publish <APP_NAME>` command.
+Deploy the local project to the Azure Function App using `func azure functionapp publish <APP_NAME>`.
 
+Working directory: `demo-function`  
+Virtual environment: `.venv` (activated)
+
+:::: {.code-output}
 ```powershell
-(.venv) PS C:\...\http_az_function_app\demo-function> func azure functionapp publish httpazfuncapp
-Getting site publishing info...
+func azure functionapp publish httpazfuncapp
+```
+::::
+
+<div class="code-output">
+<pre class="output-pane">Getting site publishing info...
 [2026-05-26T10:52:42.148Z] Starting the function app deployment...
 [2026-05-26T10:52:42.156Z] Creating archive for current directory...
 Performing remote build for functions project.
@@ -454,7 +557,7 @@ Deployment in progress, please wait...
 Starting deployment pipeline.
 [Kudu-SourcePackageUriDownloadStep] Skipping download. Zip package is present at /tmp/zipdeploy/7984310a-1ec7-445a-85ab-47dcdde7bcd8.zip
 [Kudu-ValidationStep] starting.
-[...output truncated...]
+...
 [Kudu-CleanUpStep] completed.
 Finished deployment pipeline.
 [Kudu-SyncTriggerStep] completed.
@@ -464,11 +567,13 @@ Host status: {"id":"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx","state":"Running","version
 [2026-05-26T10:55:08.765Z] The deployment was successful!
 Functions in httpazfuncapp:
     helloName - [httpTrigger]
-        Invoke url: https://httpazfuncapp.azurewebsites.net/api/helloname
-```
+        Invoke url: https://httpazfuncapp.azurewebsites.net/api/helloname</pre>
+</div>
+::::
 
-## Check that the Function has been successfully deployed
+### Check that the Function has been successfully deployed
 
+:::: {.code-output}
 ```powershell
 # Get functions from the Function App
 $functions = az functionapp function list `
@@ -483,40 +588,55 @@ $functions | Select-Object `
   @{Name="IsDisabled";Expression={$_.isDisabled}},
   @{Name="InvokeUrlTemplate";Expression={$_.invokeUrlTemplate}} |
   Format-Table -AutoSize
-
-# results
-Name      Type        Route     IsDisabled InvokeUrlTemplate
-----      ----        -----     ---------- -----------------
-helloName httpTrigger helloName      False https://httpazfuncapp.azurewebsites.net/api/helloname
 ```
 
-## Run the Function from laptop
+<div class="code-output">
+<pre class="output-pane">Name      Type        Route     IsDisabled InvokeUrlTemplate
+----      ----        -----     ---------- -----------------
+helloName httpTrigger helloName      False https://httpazfuncapp.azurewebsites.net/api/helloname</pre>
+</div>
+::::
 
-The [(documentation)](https://learn.microsoft.com/en-us/azure/azure-functions/how-to-create-function-azure-cli?tabs=go%2Cwindows%2Cbash%2Cazure-cli&pivots=programming-language-python#invoke-the-function-on-azure) suggests to test the Function with the key from the Function. Note that it is not the best practice to use a key and store it in the code. A better alternative is to connect through the `az login` command without using key after the login.
+## Run Function from local machine
 
-### Getting Function key
-Getting the API key.
+The [documentation](https://learn.microsoft.com/en-us/azure/azure-functions/how-to-create-function-azure-cli?tabs=go%2Cwindows%2Cbash%2Cazure-cli&pivots=programming-language-python#invoke-the-function-on-azure) suggests testing the function with the function key. Note that using a hardcoded key in code is not best practice. A better alternative is to authenticate through `az login` without using a key.
 
+### Getting the Function key
+
+:::: {.code-output}
 ```powershell
 az login
 func azure functionapp list-functions httpazfuncapp --show-keys
-Functions in httpazfuncapp:
-    helloName - [httpTrigger]
-        Invoke url: https://httpazfuncapp.azurewebsites.net/api/helloname?code=xxxxx
 ```
 
-### Run Function with key
-Call the Function from the laptop using the Invoke URL template.
-Note that the Function call with fail if connection to azure is not established.
+<div class="code-output">
+<pre class="output-pane">Functions in httpazfuncapp:
+    helloName - [httpTrigger]
+        Invoke url: https://httpazfuncapp.azurewebsites.net/api/helloname?code=xxxxx</pre>
+</div>
+::::
 
+### Run the function with a key
 
+Call the function from the local machine using the Invoke URL:
+
+:::: {.code-output}
 ```powershell
-# with az login
 Invoke-RestMethod -Uri "https://httpazfuncapp.azurewebsites.net/api/helloname?code=xxxx" -Method Post -ContentType "application/json" -Body '{"name":"Johny Doe"}'
-Hello, Johny Doe. This HTTP triggered function executed successfully.
+```
 
-# without az login
+<pre class="output-pane">Hello, Johny Doe. This HTTP triggered function executed successfully.</pre>
+::::
+
+Note that the function call will fail if there is no connection to Azure:
+
+:::: {.code-output}
+```powershell
 az logout
 Invoke-RestMethod -Uri "https://httpazfuncapp.azurewebsites.net/api/helloname?code=xxxx" -Method Post -ContentType "application/json" -Body '{"name":"Johny Doe"}'
-Invoke-RestMethod: Response status code does not indicate success: 401 (Unauthorized).
 ```
+
+<div class="code-output">
+<pre class="output-pane">Invoke-RestMethod: Response status code does not indicate success: 401 (Unauthorized).</pre>
+</div>
+::::
