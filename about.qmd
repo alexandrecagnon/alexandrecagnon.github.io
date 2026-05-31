@@ -129,7 +129,7 @@ Provided support for POS-BOS-HOS applications across 300+ petrol stations; autom
   **2016:** Chartered Financial Analyst (CFA) Program, passed Level I
 
 ## Education
-  **2010-2011:** ['MSc Business Analysis and Consulting`](https://www.strath.ac.uk/courses/postgraduatetaught/businessanalysisconsulting/#coursecontent), University of Strathclyde, Glasgow (UK)   
+  **2010-2011:** [MSc Business Analysis and Consulting](https://www.strath.ac.uk/courses/postgraduatetaught/businessanalysisconsulting/#coursecontent), University of Strathclyde, Glasgow (UK)   
   **2008-2010:** BA/BA(Hons) Business Management with Economics, Edinburgh Napier University (UK)   
   **2006-2009:** Licence in Economics and Management, Université Sorbonne Paris Nord (France)   
 

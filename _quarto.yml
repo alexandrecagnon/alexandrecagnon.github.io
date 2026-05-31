@@ -39,7 +39,9 @@ format:
       - styles/code-language-badges.css
       - styles/code-with-output.css
       - styles/snippet-steps.css
-    include-in-header: includes/code-language-badges.html
+    include-in-header:
+      - includes/google-analytics.html
+      - includes/code-language-badges.html
     mermaid:
       theme: neutral
       config:
