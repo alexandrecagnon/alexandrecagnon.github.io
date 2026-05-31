@@ -8,7 +8,7 @@ format:
     toc-title: "On this page"
 ---
 
-_Last updated: 19 May 2026_
+_Last updated: 31 May 2026_
 
 This privacy policy explains what data is collected when you visit alexandre.cagnon.com and how it is used.
 
@@ -20,9 +20,16 @@ See [GitHub's privacy statement](https://docs.github.com/en/site-policy/privacy-
 
 ## Analytics & Cookies
 
-This site does not set up any first-party analytics tracking or cookies.
+This site uses [Google Analytics](https://analytics.google.com/) to understand how visitors interact with the content. Google Analytics collects:
 
-GitHub may do so - see [GitHub's privacy statement](https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement) for details.
+- Pages visited and time spent on each page
+- Referring website or search engine
+- General geographic location (country/region level)
+- Browser type and device category
+
+Google Analytics uses cookies to distinguish unique visitors. No personally identifiable information is collected through analytics. You can opt out of Google Analytics by installing the [Google Analytics Opt-out Browser Add-on](https://tools.google.com/dlpage/gaoptout).
+
+GitHub may also collect technical information as part of hosting — see [GitHub's privacy statement](https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement) for details.
 
 ## Third-party links
 

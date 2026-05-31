@@ -284,7 +284,7 @@
     "href": "about.html#education",
     "title": "About",
     "section": "Education",
-    "text": "Education\n2010-2011: ’MSc Business Analysis and Consulting`, University of Strathclyde, Glasgow (UK)\n2008-2010: BA/BA(Hons) Business Management with Economics, Edinburgh Napier University (UK)\n2006-2009: Licence in Economics and Management, Université Sorbonne Paris Nord (France)"
+    "text": "Education\n2010-2011: MSc Business Analysis and Consulting, University of Strathclyde, Glasgow (UK)\n2008-2010: BA/BA(Hons) Business Management with Economics, Edinburgh Napier University (UK)\n2006-2009: Licence in Economics and Management, Université Sorbonne Paris Nord (France)"
   },
   {
     "objectID": "about.html#languages",
@@ -396,7 +396,7 @@
     "href": "privacy.html",
     "title": "Privacy Policy",
     "section": "",
-    "text": "Last updated: 19 May 2026\nThis privacy policy explains what data is collected when you visit alexandre.cagnon.com and how it is used."
+    "text": "Last updated: 31 May 2026\nThis privacy policy explains what data is collected when you visit alexandre.cagnon.com and how it is used."
   },
   {
     "objectID": "privacy.html#hosting",
@@ -410,7 +410,7 @@
     "href": "privacy.html#analytics-cookies",
     "title": "Privacy Policy",
     "section": "Analytics & Cookies",
-    "text": "Analytics & Cookies\nThis site does not set up any first-party analytics tracking or cookies.\nGitHub may do so - see GitHub’s privacy statement for details."
+    "text": "Analytics & Cookies\nThis site uses Google Analytics to understand how visitors interact with the content. Google Analytics collects:\n\nPages visited and time spent on each page\nReferring website or search engine\nGeneral geographic location (country/region level)\nBrowser type and device category\n\nGoogle Analytics uses cookies to distinguish unique visitors. No personally identifiable information is collected through analytics. You can opt out of Google Analytics by installing the Google Analytics Opt-out Browser Add-on.\nGitHub may also collect technical information as part of hosting — see GitHub’s privacy statement for details."
   },
   {
     "objectID": "privacy.html#third-party-links",
