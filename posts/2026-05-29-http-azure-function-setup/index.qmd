@@ -380,7 +380,7 @@ This [documentation](https://learn.microsoft.com/en-us/azure/azure-functions/how
    {
      "condition": null,
      ...
-     "scope": "/subscriptions/ef3c8ea4-a143-4356-8236-a2f08dc5a3a0/resourceGroups/func-app-demos-rg/providers/Microsoft.Storage/storageAccounts/httpazfuncappsa",
+     "scope": "/subscriptions/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/resourceGroups/func-app-demos-rg/providers/Microsoft.Storage/storageAccounts/httpazfuncappsa",
      "type": "Microsoft.Authorization/roleAssignments",
      "updatedBy": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
      "updatedOn": "2026-05-26T07:39:31.845940+00:00"
@@ -407,9 +407,9 @@ This [documentation](https://learn.microsoft.com/en-us/azure/azure-functions/how
    Registration succeeded.
    Resource provider 'microsoft.insights' used by this operation is not registered. We are registering for you.
    Registration succeeded.
-   Application Insights "httpazfuncapp" was created for this Function App. You can visit https://portal.azure.com/#resource/subscriptions/ef3c8ea4-a143-4356-8236-a2f08dc5a3a0/resourceGroups/func-app-demos-rg/providers/microsoft.insights/components/httpazfuncapp/overview to view your Application Insights component
+   Application Insights "httpazfuncapp" was created for this Function App. You can visit https://portal.azure.com/#resource/subscriptions/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/resourceGroups/func-app-demos-rg/providers/microsoft.insights/components/httpazfuncapp/overview to view your Application Insights component
    {
-     "id": "/subscriptions/ef3c8ea4-a143-4356-8236-a2f08dc5a3a0/resourceGroups/func-app-demos-rg/providers/Microsoft.Web/sites/httpazfuncapp",
+     "id": "/subscriptions/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/resourceGroups/func-app-demos-rg/providers/Microsoft.Web/sites/httpazfuncapp",
      ...
      "resourceGroup": "func-app-demos-rg",
      "type": "Microsoft.Web/sites"
@@ -417,13 +417,15 @@ This [documentation](https://learn.microsoft.com/en-us/azure/azure-functions/how
    ::::
 
    **Notes on Application Insights:**
-   Running `az functionapp create` automatically creates an associated Azure Application Insights instance in the same resource group. "The instance incurs no costs until you activate it." [(documentation)](https://learn.microsoft.com/en-us/azure/azure-functions/how-to-create-function-azure-cli?tabs=go%2Cwindows%2Cbash%2Cazure-cli&pivots=programming-language-csharp#create-supporting-azure-resources-for-your-function). You cannot disable its usage by removing the `APPLICATIONINSIGHTS_CONNECTION_STRING` from the Function App Environment Variables. If you want to reactivate it later, you can retrieve the key from the Application Insights instance in Azure. For more information on Application Insights integration with Azure Function App, see [Enable Application Insights integration](https://learn.microsoft.com/en-us/azure/azure-functions/configure-monitoring?tabs=v2#enable-application-insights-integration). A better alternative is to use the user-assigned managed identity already created in step 6 for the Function App to access the Application Insights instance [(Documentation)](https://learn.microsoft.com/en-us/azure/azure-functions/how-to-create-function-azure-cli?tabs=go%2Cwindows%2Cbash%2Cazure-cli&pivots=programming-language-csharp#update-application-settings):
+   - Running `az functionapp create` automatically creates an associated Azure Application Insights instance in the same resource group. "The instance incurs no costs until you activate it." [(documentation)](https://learn.microsoft.com/en-us/azure/azure-functions/how-to-create-function-azure-cli?tabs=go%2Cwindows%2Cbash%2Cazure-cli&pivots=programming-language-csharp#create-supporting-azure-resources-for-your-function). You cannot disable its usage by removing the `APPLICATIONINSIGHTS_CONNECTION_STRING` from the Function App Environment Variables. If you want to reactivate it later, you can retrieve the key from the Application Insights instance in Azure. For more information on Application Insights integration with Azure Function App, see [Enable Application Insights integration](https://learn.microsoft.com/en-us/azure/azure-functions/configure-monitoring?tabs=v2#enable-application-insights-integration). A better alternative is to use the user-assigned managed identity already created in step 6 for the Function App to access the Application Insights instance [(Documentation)](https://learn.microsoft.com/en-us/azure/azure-functions/how-to-create-function-azure-cli?tabs=go%2Cwindows%2Cbash%2Cazure-cli&pivots=programming-language-csharp#update-application-settings):
 
-   ```bash
+   :::: {.code-output}
+   ```powershell
    clientId=$(az identity show --name httpazfuncappsa-user --resource-group func-app-demos-rg --query 'clientId' -o tsv)
 
    az functionapp config appsettings set --name httpazfuncapp --resource-group "func-app-demos-rg" APPLICATIONINSIGHTS_AUTHENTICATION_STRING="ClientId=$clientId;Authorization=AAD"
    ```
+   ::::
 
    - The additional parameters `--https-only true --instance-memory 512 --tags Environment=Demo` were added on top of the defaults in the documentation for improved security, minimized resource usage, and better tracking of the Function App in Azure.
 
@@ -530,7 +532,7 @@ Finished deployment pipeline.
 [Kudu-SyncTriggerStep] completed.
 Checking the app health...Host status endpoint: https://httpazfuncapp.azurewebsites.net/admin/host/status
 . done
-Host status: {"id":"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx","state":"Running","version":"4.1048.200.26180","versionDetails":"4.1048.200+dfc109ad0152e6166b1a6d7a95f64a7459da96b3","platformVersion":"","instanceId":"0--a1d65bb7-24d7-404e-8cc1-8b2f3044690c","computerName":"","processUptime":402011,"functionAppContentEditingState":"NotAllowed","extensionBundle":{"id":"Microsoft.Azure.Functions.ExtensionBundle","version":"4.35.0"}}
+Host status: {"id":"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx","state":"Running","version":"4.1048.200.26180","versionDetails":"4.1048.200+dfc109ad0152e6166b1a6d7a95f64a7459da96b3","platformVersion":"","instanceId":"0--xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx","computerName":"","processUptime":402011,"functionAppContentEditingState":"NotAllowed","extensionBundle":{"id":"Microsoft.Azure.Functions.ExtensionBundle","version":"4.35.0"}}
 [2026-05-26T10:55:08.765Z] The deployment was successful!
 Functions in httpazfuncapp:
     helloName - [httpTrigger]

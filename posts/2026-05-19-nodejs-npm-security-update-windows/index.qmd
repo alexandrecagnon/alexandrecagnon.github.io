@@ -2,8 +2,8 @@
 title: "Security upgrades on my Node.js, npm and Azurite"
 date: 2026-05-19
 description: "A Fireship video sent me down a rabbit hole — turns out my Node.js had CVEs and my Azurite was quietly sitting on vulnerable dependencies."
-image: ../../images/blog/teddy_bear_it_rotten_roots.webp
-image-alt: "Teddy bear typing code with rotten roots"
+image: ../../images/blog/teddy_bear_npm_security_audit.webp
+image-alt: "Smiling teddy bear giving a thumbs-up beside an npm audit report showing 38 critical vulnerabilities, with rotten roots creeping up from the floor"
 categories: [npm, Node.js, Security update, Windows]
 draft: false
 ---

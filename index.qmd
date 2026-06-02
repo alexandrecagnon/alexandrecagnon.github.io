@@ -16,7 +16,7 @@ format:
 
 ::: {.home-page}
 ::: {.home-sidebar}
-![](images/photo_alexandre_cagnon_pro.jpg){.home-photo .rounded .img-fluid fig-alt="Alexandre Cagnon"}
+![](images/photo_alexandre_cagnon_pro.webp){.home-photo .rounded .img-fluid fig-alt="Alexandre Cagnon"}
 
 ::: {.home-name .fw-semibold .mt-3}
 Alexandre Cagnon

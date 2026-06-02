@@ -1,0 +1,358 @@
+---
+title: "Azure Function App: CI/CD, Blueprints, and Durable Orchestration"
+date: 2026-05-31
+description: "From a bare-bones Function App to a production-ready setup: CI/CD pipeline, deployment slots, Blob storage I/O, Application Insights monitoring, multi-function blueprints, and Durable Function orchestration patterns."
+image: ../../images/blog/teddy_bear_azure_function_launch.webp
+image-alt: "Teddy bear wiring up pipelines and orchestrating Azure Functions"
+categories: [Azure, Azure Functions, Python, CI/CD, Durable Functions, Windows]
+draft: true
+---
+
+This post picks up where [Minimalistic Azure Function App creation](../2026-05-29-http-azure-function-setup/index.qmd) left off. The previous article brought a single HTTP-triggered Function from a local machine to Azure with minimal ceremony. That foundation is enough to add production-oriented features one layer at a time:
+
+1. Automate deployments with a CI/CD pipeline backed by GitHub Actions.
+2. Eliminate downtime during redeployments with deployment slots.
+3. Read and write data through Azure Blob Storage from within Function code.
+4. Observe runtime behaviour with Application Insights and the built-in Function logger.
+5. Structure a growing Function App as a set of Blueprint modules so each Function lives in its own file.
+6. Orchestrate a single Function call — and a fan-out over *n* parameter sets — with Durable Functions.
+7. Chain several Functions in sequence — again with a single call and a fan-out — using Durable orchestrators.
+
+Each section is self-contained: apply them in any order that suits your project. All examples extend the `httpazfuncapp` Function App created in the previous post.
+
+# Reference documentation
+
+<!-- TODO: add relevant Microsoft documentation links per section once written -->
+
+- [Continuous delivery by using GitHub Actions](https://learn.microsoft.com/en-us/azure/azure-functions/functions-how-to-github-actions)
+- [Azure Functions deployment slots](https://learn.microsoft.com/en-us/azure/azure-functions/functions-deployment-slots)
+- [Azure Blob Storage bindings for Azure Functions](https://learn.microsoft.com/en-us/azure/azure-functions/functions-bindings-storage-blob)
+- [Monitor Azure Functions](https://learn.microsoft.com/en-us/azure/azure-functions/functions-monitoring)
+- [Azure Functions Python developer guide — Blueprints](https://learn.microsoft.com/en-us/azure/azure-functions/functions-reference-python#blueprints)
+- [What are Durable Functions?](https://learn.microsoft.com/en-us/azure/azure-functions/durable/durable-functions-overview)
+
+# Workflow overview
+
+```{mermaid}
+%%| fig-align: center
+%%| fig-width: 7
+%%{init: {"flowchart": {"htmlLabels": false, "padding": 12, "nodeSpacing": 30, "rankSpacing": 38}, "themeVariables": {"fontSize": "13px"}}}%%
+flowchart TD
+
+A["Minimalistic Function App\n(previous post)"] --> B["CI/CD with GitHub Actions"]
+B --> C["Deployment slots\n(zero-downtime swap)"]
+C --> D["Blob Storage I/O"]
+D --> E["Application Insights monitoring"]
+E --> F["Multi-function blueprints"]
+F --> G["Durable orchestration\n(fan-out single / n params)"]
+G --> H["Durable chaining\n(fan-out single / n params)"]
+```
+
+# CI/CD with GitHub Actions
+
+Manually running `func azure functionapp publish` works for exploration but does not scale. Connecting the Function App to a GitHub repository lets every push to `main` trigger an automated build-and-deploy pipeline.
+
+## Create a GitHub repository
+
+<!-- TODO: walk through creating a GitHub repo, pushing the local project, and adding the .funcignore / .gitignore that was set up in the previous post -->
+
+## Configure the Function App for GitHub deployment
+
+<!-- TODO: show how to obtain publish credentials (or use OIDC / federated identity), add them as GitHub Actions secrets, and link them to the Function App in the Azure portal or with az CLI -->
+
+## Add a GitHub Actions workflow
+
+<!-- TODO: provide the workflow YAML (build Python environment, run tests if any, publish with func azure functionapp publish or az functionapp deployment source config-zip) -->
+
+## Verify the pipeline
+
+<!-- TODO: show a first push that triggers the workflow, confirm the Function App reflects the new version -->
+
+
+# Zero-downtime deployments with deployment slots
+
+The default `func azure functionapp publish` replaces the running version immediately. Deployment slots let you deploy to a *staging* slot, smoke-test it, and then swap it into production atomically — with no cold-start gap for end-users.
+
+## Create a staging slot
+
+<!-- TODO: az functionapp deployment slot create, explain slot-specific app settings -->
+
+```powershell
+az functionapp deployment slot create `
+  --name httpazfuncapp `
+  --resource-group "func-app-demos-rg" `
+  --slot staging
+```
+
+## Deploy to the staging slot
+
+<!-- TODO: func azure functionapp publish with --slot flag, or the GitHub Actions workflow targeting the slot -->
+
+## Smoke-test the staging slot
+
+<!-- TODO: show how to call the staging endpoint (slot-specific URL), confirm the new version behaves correctly -->
+
+## Swap staging → production
+
+<!-- TODO: az functionapp deployment slot swap, explain what is swapped (code, non-sticky settings) vs what stays (sticky / slot-specific settings) -->
+
+```powershell
+az functionapp deployment slot swap `
+  --name httpazfuncapp `
+  --resource-group "func-app-demos-rg" `
+  --slot staging `
+  --target-slot production
+```
+
+<!-- TODO: add a note on integrating the swap step into the GitHub Actions workflow after a successful staging test -->
+
+
+# Blob Storage I/O
+
+The Function App already has a system storage account for internal Azure Functions state. For application-level data persistence — reading configuration files, writing results — a separate Blob Storage container is preferable so application data is isolated from the Functions runtime storage.
+
+## Create a Blob container
+
+<!-- TODO: az storage container create on the existing storage account (or a new dedicated one), assign the managed identity the "Storage Blob Data Contributor" role on the new container -->
+
+## Install the Azure Storage SDK
+
+<!-- TODO: add azure-storage-blob to requirements.txt, pip install in the venv -->
+
+## Add Blob I/O to a Function
+
+<!-- TODO: show a minimal example: download a JSON config blob at the start of the function, process it, write a result blob; use DefaultAzureCredential so it works both locally (az login) and in Azure (managed identity) -->
+
+```python
+# TODO: example snippet — read a blob, process, write a result blob
+from azure.identity import DefaultAzureCredential
+from azure.storage.blob import BlobServiceClient
+
+def _get_blob_client(account_name: str, container: str, blob_name: str):
+    credential = DefaultAzureCredential()
+    service = BlobServiceClient(
+        account_url=f"https://{account_name}.blob.core.windows.net",
+        credential=credential,
+    )
+    return service.get_blob_client(container=container, blob=blob_name)
+```
+
+## Test locally with Azurite
+
+<!-- TODO: explain how to point DefaultAzureCredential / BlobServiceClient at the local Azurite endpoint for offline development, and how to create a container in Azurite -->
+
+
+# Application Insights monitoring
+
+`az functionapp create` already provisioned an Application Insights instance and wired it to the Function App via `APPLICATIONINSIGHTS_CONNECTION_STRING`. The standard Python `logging` module is the only integration needed in code.
+
+## Using the Function App logger
+
+<!-- TODO: explain that `logging.getLogger(__name__)` inside a Function is automatically captured by the Application Insights SDK; show a before/after of the helloName function with structured log levels (info, warning, error) -->
+
+```python
+import logging
+
+_log = logging.getLogger(__name__)
+
+# Inside a Function:
+_log.info("Processing request for name=%s", name)
+_log.warning("No name provided, returning default response")
+_log.error("Unexpected error: %s", exc, exc_info=True)
+```
+
+## Querying logs in Application Insights
+
+<!-- TODO: show a KQL query in the Azure portal Log Analytics workspace to retrieve traces emitted by the Function, filter by severity level, and correlate with the invocation ID -->
+
+```kusto
+-- TODO: example KQL — traces from httpazfuncapp in the last hour
+traces
+| where cloud_RoleName == "httpazfuncapp"
+| where timestamp > ago(1h)
+| order by timestamp desc
+| project timestamp, severityLevel, message, operation_Id
+```
+
+## Setting up alerts
+
+<!-- TODO: briefly show how to create an alert rule on failed invocation count or exception rate, triggered by the Application Insights data -->
+
+
+# Multi-function blueprints
+
+As the Function App grows, putting all Functions in a single `function_app.py` becomes hard to navigate. Python Blueprints let each logical group of Functions live in its own module while registering with the same app instance.
+
+## Project structure with blueprints
+
+<!-- TODO: show the target directory layout: function_app.py (thin, only imports and registers blueprints), blueprints/hello.py, blueprints/data.py, etc. -->
+
+```
+demo-function/
+├── function_app.py          # registers all blueprints
+├── blueprints/
+│   ├── __init__.py
+│   ├── hello.py             # helloName function
+│   └── data.py              # Blob I/O functions
+├── requirements.txt
+└── host.json
+```
+
+## Creating a Blueprint module
+
+<!-- TODO: show a blueprint file: import func, create a Blueprint(), decorate Functions with the Blueprint instance, then in function_app.py do app.register_blueprint(bp) -->
+
+```python
+# blueprints/hello.py
+import azure.functions as func
+
+bp = func.Blueprint()
+
+@bp.route(route="helloName", auth_level=func.AuthLevel.FUNCTION)
+def hello_name(req: func.HttpRequest) -> func.HttpResponse:
+    ...
+```
+
+```python
+# function_app.py
+import azure.functions as func
+from blueprints.hello import bp as hello_bp
+from blueprints.data import bp as data_bp
+
+app = func.FunctionApp()
+app.register_blueprint(hello_bp)
+app.register_blueprint(data_bp)
+```
+
+## Test after refactoring
+
+<!-- TODO: local func start + Invoke-RestMethod to confirm all Functions still appear and respond correctly after the split -->
+
+
+# Durable orchestration — single function, fan-out
+
+Durable Functions extend the standard Azure Functions model with stateful orchestration. This section covers the simplest pattern: calling a single *activity* Function, first with one parameter set, then fanning out across *n* parameter sets in parallel.
+
+## Install the Durable Functions extension
+
+<!-- TODO: add azure-functions-durable to requirements.txt; install the Durable extension bundle or update host.json extensionBundle version -->
+
+## Activity function
+
+<!-- TODO: define a @bp.activity_trigger activity that performs a unit of work (e.g. process one row) -->
+
+```python
+# blueprints/activities.py
+import azure.functions as func
+
+bp = func.Blueprint()
+
+@bp.activity_trigger(input_name="params")
+def process_item(params: dict) -> dict:
+    # TODO: replace with real logic
+    return {"processed": params["item_id"]}
+```
+
+## Orchestrator — single call
+
+<!-- TODO: define an orchestrator that calls process_item once with a fixed parameter dict -->
+
+```python
+@bp.orchestration_trigger(context_name="ctx")
+def orchestrate_single(ctx: func.DurableOrchestrationContext):
+    params = {"item_id": "abc-001"}
+    result = yield ctx.call_activity("process_item", params)
+    return result
+```
+
+## Orchestrator — fan-out over n parameter sets
+
+<!-- TODO: show the fan-out / fan-in pattern: build a list of tasks with ctx.call_activity, yield task.all(), collect results -->
+
+```python
+@bp.orchestration_trigger(context_name="ctx")
+def orchestrate_fanout(ctx: func.DurableOrchestrationContext):
+    param_sets = ctx.get_input()   # list of dicts passed by the client
+    tasks = [ctx.call_activity("process_item", p) for p in param_sets]
+    results = yield ctx.task_all(tasks)
+    return results
+```
+
+## HTTP client function to trigger the orchestration
+
+<!-- TODO: show the @bp.route HTTP starter that creates a new orchestration instance and returns the check-status URLs -->
+
+## Test locally
+
+<!-- TODO: start Azurite + func start, trigger the HTTP client function with one param set and then with an array of param sets, poll the status URL -->
+
+
+# Durable chaining — single and fan-out
+
+Chaining runs a sequence of activity Functions where the output of one feeds into the next. This is useful when a pipeline must execute steps in order (extract → transform → load).
+
+## Activity functions for a pipeline
+
+<!-- TODO: define 3 activity functions: extract_data, transform_data, load_data — each taking the previous step's output as input -->
+
+```python
+@bp.activity_trigger(input_name="params")
+def extract_data(params: dict) -> dict:
+    # TODO: read from Blob or external source
+    return {"raw": [...]}
+
+@bp.activity_trigger(input_name="data")
+def transform_data(data: dict) -> dict:
+    # TODO: apply transformations
+    return {"transformed": [...]}
+
+@bp.activity_trigger(input_name="data")
+def load_data(data: dict) -> dict:
+    # TODO: write to Blob or external target
+    return {"loaded_count": len(data["transformed"])}
+```
+
+## Orchestrator — single pipeline call
+
+<!-- TODO: yield each activity in sequence, passing the output of one as the input of the next -->
+
+```python
+@bp.orchestration_trigger(context_name="ctx")
+def chain_pipeline(ctx: func.DurableOrchestrationContext):
+    params = ctx.get_input()
+    raw      = yield ctx.call_activity("extract_data", params)
+    transformed = yield ctx.call_activity("transform_data", raw)
+    result   = yield ctx.call_activity("load_data", transformed)
+    return result
+```
+
+## Orchestrator — fan-out chained pipelines over n parameter sets
+
+<!-- TODO: run the full chain independently for each parameter set in parallel using task_all; discuss trade-offs (parallelism vs resource pressure on Flex Consumption) -->
+
+```python
+@bp.orchestration_trigger(context_name="ctx")
+def chain_fanout(ctx: func.DurableOrchestrationContext):
+    param_sets = ctx.get_input()
+
+    async def run_chain(p):
+        raw         = yield ctx.call_activity("extract_data", p)
+        transformed = yield ctx.call_activity("transform_data", raw)
+        return      yield ctx.call_activity("load_data", transformed)
+
+    tasks = [ctx.call_activity_with_retry(...) for p in param_sets]
+    # TODO: refine — show sub-orchestration pattern for clean fan-out of full chains
+    results = yield ctx.task_all(tasks)
+    return results
+```
+
+<!-- TODO: explain sub-orchestrators as an alternative to keep the top-level orchestrator readable -->
+
+## Test locally
+
+<!-- TODO: start Azurite + func start, trigger chain_pipeline with a single param set, then chain_fanout with an array -->
+
+
+# Conclusion
+
+<!-- TODO: write conclusion once all sections are drafted — summarise what was added on top of the minimalistic setup and how these patterns compose into a production-ready Function App -->
