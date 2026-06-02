@@ -8,8 +8,8 @@ project:
   # Authoring docs live in docs/ (Markdown for humans); do not publish them as site pages
   render:
     - "*.qmd"
-    - "posts/**/*"
-    - "snippets/**/*"
+    - "posts/**/index.qmd"
+    - "snippets/**/index.qmd"
 
 execute:
   freeze: auto

@@ -697,7 +697,7 @@ WARNING: Registration succeeded.
 {
   "condition": null,
   ...
-  "scope": "/subscriptions/ef3c8ea4-a143-4356-8236-a2f08dc5a3a0/resourceGroups/func-app-demos-rg/providers/Microsoft.Storage/storageAccounts/httpazfuncappsa",
+  "scope": "/subscriptions/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/resourceGroups/func-app-demos-rg/providers/Microsoft.Storage/storageAccounts/httpazfuncappsa",
   "type": "Microsoft.Authorization/roleAssignments",
   "updatedBy": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
   "updatedOn": "2026-05-26T07:39:31.845940+00:00"
@@ -714,18 +714,23 @@ Resource provider 'Microsoft.OperationalInsights' used by this operation is not 
 Registration succeeded.
 Resource provider 'microsoft.insights' used by this operation is not registered. We are registering for you.
 Registration succeeded.
-Application Insights "httpazfuncapp" was created for this Function App. You can visit https://portal.azure.com/#resource/subscriptions/ef3c8ea4-a143-4356-8236-a2f08dc5a3a0/resourceGroups/func-app-demos-rg/providers/microsoft.insights/components/httpazfuncapp/overview to view your Application Insights component
+Application Insights "httpazfuncapp" was created for this Function App. You can visit https://portal.azure.com/#resource/subscriptions/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/resourceGroups/func-app-demos-rg/providers/microsoft.insights/components/httpazfuncapp/overview to view your Application Insights component
 {
-  "id": "/subscriptions/ef3c8ea4-a143-4356-8236-a2f08dc5a3a0/resourceGroups/func-app-demos-rg/providers/Microsoft.Web/sites/httpazfuncapp",
+  "id": "/subscriptions/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/resourceGroups/func-app-demos-rg/providers/Microsoft.Web/sites/httpazfuncapp",
   ...
   "resourceGroup": "func-app-demos-rg",
   "type": "Microsoft.Web/sites"
 }</pre>
 </div>
-<p><strong>Notes on Application Insights:</strong> Running <code>az functionapp create</code> automatically creates an associated Azure Application Insights instance in the same resource group. “The instance incurs no costs until you activate it.” <a href="https://learn.microsoft.com/en-us/azure/azure-functions/how-to-create-function-azure-cli?tabs=go%2Cwindows%2Cbash%2Cazure-cli&amp;pivots=programming-language-csharp#create-supporting-azure-resources-for-your-function">(documentation)</a>. You cannot disable its usage by removing the <code>APPLICATIONINSIGHTS_CONNECTION_STRING</code> from the Function App Environment Variables. If you want to reactivate it later, you can retrieve the key from the Application Insights instance in Azure. For more information on Application Insights integration with Azure Function App, see <a href="https://learn.microsoft.com/en-us/azure/azure-functions/configure-monitoring?tabs=v2#enable-application-insights-integration">Enable Application Insights integration</a>. A better alternative is to use the user-assigned managed identity already created in step 6 for the Function App to access the Application Insights instance <a href="https://learn.microsoft.com/en-us/azure/azure-functions/how-to-create-function-azure-cli?tabs=go%2Cwindows%2Cbash%2Cazure-cli&amp;pivots=programming-language-csharp#update-application-settings">(Documentation)</a>:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="va">clientId</span><span class="op">=</span><span class="va">$(</span><span class="ex">az</span> identity show <span class="at">--name</span> httpazfuncappsa-user <span class="at">--resource-group</span> func-app-demos-rg <span class="at">--query</span> <span class="st">'clientId'</span> <span class="at">-o</span> tsv<span class="va">)</span></span>
+<p><strong>Notes on Application Insights:</strong></p>
+<ul>
+<li>Running <code>az functionapp create</code> automatically creates an associated Azure Application Insights instance in the same resource group. “The instance incurs no costs until you activate it.” <a href="https://learn.microsoft.com/en-us/azure/azure-functions/how-to-create-function-azure-cli?tabs=go%2Cwindows%2Cbash%2Cazure-cli&amp;pivots=programming-language-csharp#create-supporting-azure-resources-for-your-function">(documentation)</a>. You cannot disable its usage by removing the <code>APPLICATIONINSIGHTS_CONNECTION_STRING</code> from the Function App Environment Variables. If you want to reactivate it later, you can retrieve the key from the Application Insights instance in Azure. For more information on Application Insights integration with Azure Function App, see <a href="https://learn.microsoft.com/en-us/azure/azure-functions/configure-monitoring?tabs=v2#enable-application-insights-integration">Enable Application Insights integration</a>. A better alternative is to use the user-assigned managed identity already created in step 6 for the Function App to access the Application Insights instance <a href="https://learn.microsoft.com/en-us/azure/azure-functions/how-to-create-function-azure-cli?tabs=go%2Cwindows%2Cbash%2Cazure-cli&amp;pivots=programming-language-csharp#update-application-settings">(Documentation)</a>:</li>
+</ul>
+<div class="code-output">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="sourceCode powershell code-with-copy"><code class="sourceCode powershell"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>clientId<span class="op">=$(</span>az identity show <span class="op">--</span>name httpazfuncappsa-user <span class="op">--</span>resource-group func-app-demos-rg <span class="op">--</span>query <span class="st">'clientId'</span> <span class="op">-</span>o tsv<span class="op">)</span></span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="ex">az</span> functionapp config appsettings set <span class="at">--name</span> httpazfuncapp <span class="at">--resource-group</span> <span class="st">"func-app-demos-rg"</span> APPLICATIONINSIGHTS_AUTHENTICATION_STRING=<span class="st">"ClientId=</span><span class="va">$clientId</span><span class="st">;Authorization=AAD"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>az functionapp config appsettings <span class="fu">set</span> <span class="op">--</span>name httpazfuncapp <span class="op">--</span>resource-group <span class="st">"func-app-demos-rg"</span> APPLICATIONINSIGHTS_AUTHENTICATION_STRING<span class="op">=</span><span class="st">"ClientId=</span><span class="va">$clientId</span><span class="st">;Authorization=AAD"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
 <ul>
 <li>The additional parameters <code>--https-only true --instance-memory 512 --tags Environment=Demo</code> were added on top of the defaults in the documentation for improved security, minimized resource usage, and better tracking of the Function App in Azure.</li>
 </ul></li>
@@ -816,7 +821,7 @@ Finished deployment pipeline.
 [Kudu-SyncTriggerStep] completed.
 Checking the app health...Host status endpoint: https://httpazfuncapp.azurewebsites.net/admin/host/status
 . done
-Host status: {"id":"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx","state":"Running","version":"4.1048.200.26180","versionDetails":"4.1048.200+dfc109ad0152e6166b1a6d7a95f64a7459da96b3","platformVersion":"","instanceId":"0--a1d65bb7-24d7-404e-8cc1-8b2f3044690c","computerName":"","processUptime":402011,"functionAppContentEditingState":"NotAllowed","extensionBundle":{"id":"Microsoft.Azure.Functions.ExtensionBundle","version":"4.35.0"}}
+Host status: {"id":"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx","state":"Running","version":"4.1048.200.26180","versionDetails":"4.1048.200+dfc109ad0152e6166b1a6d7a95f64a7459da96b3","platformVersion":"","instanceId":"0--xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx","computerName":"","processUptime":402011,"functionAppContentEditingState":"NotAllowed","extensionBundle":{"id":"Microsoft.Azure.Functions.ExtensionBundle","version":"4.35.0"}}
 [2026-05-26T10:55:08.765Z] The deployment was successful!
 Functions in httpazfuncapp:
     helloName - [httpTrigger]

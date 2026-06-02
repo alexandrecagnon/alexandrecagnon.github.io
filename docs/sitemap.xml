@@ -1,24 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://alexandrecagnon.github.io/snippets/2026-05-29-pyenv-update-windows/index.html</loc>
-    <lastmod>2026-05-29T04:12:45.748Z</lastmod>
+    <loc>https://alexandrecagnon.github.io/snippets/2026-05-31-azure-function-dummy-deploy/index.html</loc>
+    <lastmod>2026-06-02T10:36:50.968Z</lastmod>
   </url>
   <url>
-    <loc>https://alexandrecagnon.github.io/snippets/2026-05-22-python_venv_powershell/index.html</loc>
-    <lastmod>2026-05-28T09:10:57.510Z</lastmod>
+    <loc>https://alexandrecagnon.github.io/snippets/2026-05-28-push-local-project-to-github-repo/index.html</loc>
+    <lastmod>2026-05-28T14:03:25.813Z</lastmod>
   </url>
   <url>
-    <loc>https://alexandrecagnon.github.io/snippets.html</loc>
-    <lastmod>2026-05-22T03:55:15.327Z</lastmod>
+    <loc>https://alexandrecagnon.github.io/snippets/2026-05-22-find-nodejs-projects-powershell/index.html</loc>
+    <lastmod>2026-05-28T09:11:01.029Z</lastmod>
+  </url>
+  <url>
+    <loc>https://alexandrecagnon.github.io/privacy.html</loc>
+    <lastmod>2026-05-31T03:50:22.500Z</lastmod>
   </url>
   <url>
     <loc>https://alexandrecagnon.github.io/posts/2026-05-29-http-azure-function-setup/index.html</loc>
-    <lastmod>2026-05-29T14:50:26.160Z</lastmod>
+    <lastmod>2026-06-02T08:44:07.239Z</lastmod>
   </url>
   <url>
     <loc>https://alexandrecagnon.github.io/posts/2026-05-19-nodejs-npm-security-update-windows/index.html</loc>
-    <lastmod>2026-05-29T14:58:21.158Z</lastmod>
+    <lastmod>2026-06-02T10:02:59.509Z</lastmod>
   </url>
   <url>
     <loc>https://alexandrecagnon.github.io/disclaimer.html</loc>
@@ -38,18 +42,18 @@
   </url>
   <url>
     <loc>https://alexandrecagnon.github.io/index.html</loc>
-    <lastmod>2026-05-22T03:54:58.798Z</lastmod>
+    <lastmod>2026-06-02T10:04:19.771Z</lastmod>
   </url>
   <url>
-    <loc>https://alexandrecagnon.github.io/privacy.html</loc>
-    <lastmod>2026-05-31T03:50:22.500Z</lastmod>
+    <loc>https://alexandrecagnon.github.io/snippets.html</loc>
+    <lastmod>2026-05-22T03:55:15.327Z</lastmod>
   </url>
   <url>
-    <loc>https://alexandrecagnon.github.io/snippets/2026-05-22-find-nodejs-projects-powershell/index.html</loc>
-    <lastmod>2026-05-28T09:11:01.029Z</lastmod>
+    <loc>https://alexandrecagnon.github.io/snippets/2026-05-22-python_venv_powershell/index.html</loc>
+    <lastmod>2026-05-28T09:10:57.510Z</lastmod>
   </url>
   <url>
-    <loc>https://alexandrecagnon.github.io/snippets/2026-05-28-push-local-project-to-github-repo/index.html</loc>
-    <lastmod>2026-05-28T14:03:25.813Z</lastmod>
+    <loc>https://alexandrecagnon.github.io/snippets/2026-05-29-pyenv-update-windows/index.html</loc>
+    <lastmod>2026-05-29T04:12:45.748Z</lastmod>
   </url>
 </urlset>
